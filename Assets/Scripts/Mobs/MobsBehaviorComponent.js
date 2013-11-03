@@ -1,5 +1,6 @@
 ﻿#pragma strict
 
+/*------ PUBLIC SECTION ------*/
 /// @brief holds a ref on a Player's GameObject.
 public var mcPlayer: GameObject;
 
@@ -12,6 +13,8 @@ public var mcDeathAnimationName = "Death";
 public var mcDetectPlayerOnDistance: float = 50.0f;
 public var mcRotationSpeed: float = 1.5f;
 public var mcMobsSpeed: float = 1.0f;
+public var mcMobsAttackArc: float = 2.0f;
+public var mcDeathDelay: float = 1.0f;
 
 var mcMinimalDistanceToPlayer: float = 4.0f;
 public function set MinimalDistanceToPlayer(value: float)
@@ -24,10 +27,10 @@ public function get MinimalDistanceToPlayer(): float
   return mcMinimalDistanceToPlayer;
 }
 
+/*------ PRIVATE SECTION ------*/
 /// Player's components.
 private var mcPlayerBehavior: PlayerBehavior;
 private var mcPlayerTransform: Transform;
-
 
 // holds current animtion name.
 private var mcCurrentAnimationName = "Idle";
@@ -45,6 +48,7 @@ private var mcPlayerWithinVisibleDistance: boolean = false;
 /// MobsStats component.
 private var mcMobsStats: MobsStats;
 
+/*------ METHODS SECTION ------*/
 function Awake()
 {
     mcMotor = GetComponent(CharacterMotor);
@@ -79,6 +83,12 @@ function Start ()
 
 function Update ()
 {
+  if (mcMobsStats.Health == 0)
+  {
+    playDeath();
+    mcMotor.inputMoveDirection = Vector3.zero;
+    return;
+  }
   // Check whether we can 'see' Player or not.
   var vectorBetweenObjects = mcPlayerTransform.position - transform.position;
   mcSqrDistanceBetweenPlayerAndMob = vectorBetweenObjects.sqrMagnitude;
@@ -176,15 +186,38 @@ private function updateAnimation()
 
 private function updateDamageToPlayer()
 {
-  if (animation.IsPlaying(mcAttackAnimationName)) // ok, we are playing an attack animation, it is time to 'hit' a player.
+  if (!mcMinimalDistanceIsNotReached) // ok, it is time to 'hit' a player (as soon as attack animation is over).
   {
-    Invoke("applyDamageToPlayer", animation[mcAttackAnimationName].length);
+    var playerPos = mcPlayerTransform.position;
+    playerPos.y = transform.position.y;
+    var rotationThatPointsToPlayer = Quaternion.LookRotation(playerPos - transform.position);
+    var angle = Quaternion.Angle(transform.rotation, rotationThatPointsToPlayer);
+    if (angle <= mcMobsAttackArc)
+    {
+      Invoke("applyDamageToPlayer", animation[mcAttackAnimationName].length);
+    }
   }
 }
 
 function applyDamage(damage: Damage)
 {
   mcMobsStats.applyDamage(damage);
+}
+
+function playDeath()
+{
+  if (!animation.IsPlaying(mcDeathAnimationName))
+  {
+    animation.CrossFade(mcDeathAnimationName);
+    Invoke("destroyMobObject", animation[mcDeathAnimationName].length + mcDeathDelay);
+    animation[mcDeathAnimationName].wrapMode = WrapMode.ClampForever;
+    animation.wrapMode = WrapMode.ClampForever;
+  }
+}
+
+private function destroyMobObject()
+{
+  Destroy(gameObject);
 }
 
 @script RequireComponent (Animation)

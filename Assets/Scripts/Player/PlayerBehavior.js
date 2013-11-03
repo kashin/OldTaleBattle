@@ -1,5 +1,8 @@
 ﻿#pragma strict
 
+public var mcMagicAttackProjectile: GameObject;
+public var mcProjectileFiresUpper: float = 3.0f;
+
 public var mcAttackAnimation = "Attack";
 public var mcIdleAnimation = "Idle";
 public var mcMoveAnimation = "Run";
@@ -14,6 +17,13 @@ function Awake()
 
 function Update()
 {
+  if (Input.GetButtonDown("Magic Attack"))
+  {
+    if (mcMagicAttackProjectile)
+    {
+      Instantiate(mcMagicAttackProjectile, transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
+    }
+  }
   updateAnimation();
 }
 
