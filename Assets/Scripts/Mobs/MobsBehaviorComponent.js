@@ -24,8 +24,10 @@ public function get MinimalDistanceToPlayer(): float
   return mcMinimalDistanceToPlayer;
 }
 
+/// Player's components.
+private var mcPlayerBehavior: PlayerBehavior;
 private var mcPlayerTransform: Transform;
-private var mcPlayerWithinVisibleDistance: boolean = false;
+
 
 // holds current animtion name.
 private var mcCurrentAnimationName = "Idle";
@@ -38,9 +40,15 @@ private var mcSqrDistanceBetweenPlayerAndMob: float = 0.0f;
 /// @brief @c true if we are not too close to a player to keep walking and @c false otherwise
 private var mcMinimalDistanceIsNotReached: boolean = true;
 
+private var mcPlayerWithinVisibleDistance: boolean = false;
+
+/// MobsStats component.
+private var mcMobsStats: MobsStats;
+
 function Awake()
 {
     mcMotor = GetComponent(CharacterMotor);
+    mcMobsStats = GetComponent(MobsStats);
     mcSqrDetectPlayerOnDistance = mcDetectPlayerOnDistance * mcDetectPlayerOnDistance;
     mcSqrMinimalDistanceToPlayer  = mcMinimalDistanceToPlayer * mcMinimalDistanceToPlayer;
 }
@@ -54,6 +62,7 @@ function Start ()
   if (mcPlayer)
   {
     mcPlayerTransform = mcPlayer.transform;
+    mcPlayerBehavior = mcPlayer.GetComponent(PlayerBehavior);
   }
   else
   {
@@ -65,6 +74,7 @@ function Start ()
   updatePlayerWithinVisibleDistance();
   animation.wrapMode = WrapMode.Loop;
   animation.Play();
+  animation[mcAttackAnimationName].wrapMode = WrapMode.Once;
 }
 
 function Update ()
@@ -75,6 +85,7 @@ function Update ()
   updatePlayerWithinVisibleDistance();
   updateMinimalDistanceToPlayerReached();
   updateAnimation();
+  updateDamageToPlayer();
 
   // It is a time to attack Player if we can see him/her.
   if (mcPlayerWithinVisibleDistance)
@@ -126,6 +137,13 @@ private function updateMinimalDistanceToPlayerReached()
   }
 }
 
+function applyDamageToPlayer()
+{
+  // it is time to attack our Player.
+  var damage = mcMobsStats.getAttackDamage();
+  mcPlayerBehavior.applyDamage(damage);
+  CancelInvoke();
+}
 
 /// @brief updates current animation according to a mob's state.
 private function updateAnimation()
@@ -156,6 +174,20 @@ private function updateAnimation()
   }
 }
 
-@script RequireComponent (CharacterMotor)
+private function updateDamageToPlayer()
+{
+  if (animation.IsPlaying(mcAttackAnimationName)) // ok, we are playing an attack animation, it is time to 'hit' a player.
+  {
+    Invoke("applyDamageToPlayer", animation[mcAttackAnimationName].length);
+  }
+}
+
+function applyDamage(damage: Damage)
+{
+  mcMobsStats.applyDamage(damage);
+}
+
 @script RequireComponent (Animation)
+@script RequireComponent (CharacterMotor)
+@script RequireComponent (MobsStats)
 @script AddComponentMenu ("Mobs/Mobs Behavior")
