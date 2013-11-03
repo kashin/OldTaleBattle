@@ -3,6 +3,11 @@
 public var mcSpeed: float = 0.5f;
 public var mcLifeTime: float = 0.2f;
 public var mcCollideWithPlayer: boolean = false;
+var mcManaCost: float = 10.0f;
+public function get ManaCost(): int
+{
+  return mcManaCost;
+}
 
 /*--- PROJECTILE'S DAMAGE STATS---*/
 var mcDamage: int = 10;

@@ -1,6 +1,19 @@
 ﻿#pragma strict
 
-public var mcMagicAttackProjectile: GameObject;
+var mcMagicAttackProjectile: GameObject;
+public function set MagicAttackProjectile(value: GameObject)
+{
+  mcMagicAttackProjectile = value;
+  if (mcMagicAttackProjectile)
+  {
+    mcProjectileBehavior = mcMagicAttackProjectile.GetComponent(ProjectileBehavior);
+  }
+}
+public function get MagicAttackProjectile(): GameObject
+{
+  return mcMagicAttackProjectile;
+}
+
 public var mcProjectileFiresUpper: float = 3.0f;
 
 public var mcAttackAnimation = "Attack";
@@ -9,19 +22,32 @@ public var mcMoveAnimation = "Run";
 public var mcDeathAnimation = "Death";
 
 private var mcPlayerStats: PlayerStats;
+private var mcProjectileBehavior: ProjectileBehavior;
 
 function Awake()
 {
   mcPlayerStats = gameObject.GetComponent(PlayerStats);
 }
 
+function Start()
+{
+  if (mcMagicAttackProjectile)
+  {
+    mcProjectileBehavior = mcMagicAttackProjectile.GetComponent(ProjectileBehavior);
+  }
+}
+
 function Update()
 {
   if (Input.GetButtonDown("Magic Attack"))
   {
-    if (mcMagicAttackProjectile)
+    if (mcProjectileBehavior)
     {
-      Instantiate(mcMagicAttackProjectile, transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
+      if (mcProjectileBehavior.ManaCost <= mcPlayerStats.Mana)
+      {
+        mcPlayerStats.applyManaChange(-mcProjectileBehavior.ManaCost);
+        Instantiate(mcMagicAttackProjectile, transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
+      }
     }
   }
   updateAnimation();

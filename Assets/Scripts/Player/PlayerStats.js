@@ -12,9 +12,9 @@ public function get Strength(): int
 public function set Strength(value: int)
 {
   mcStrength = value;
-  MaxHealth = MaxHealth + (mcBaseHealth * mcStrength / mcBaseStrength);
+  MaxHealth = MaxHealth + (mcBaseHealth * (mcStrength - mcBaseStrength) / mcBaseStrength);
 }
-var mcBaseStrength: int =10;
+var mcBaseStrength: int = 10;
 
 /// Intelligent increases Player's Mana.
 var mcIntelligent: int = 10;
@@ -25,7 +25,7 @@ public function get Intelligent(): int
 public function set Intelligent(value: int)
 {
   mcIntelligent = value;
-  MaxMana = MaxMana + (mcBaseMana * mcIntelligent / mcBaseIntelligent);
+  MaxMana = MaxMana + (mcBaseMana * (mcIntelligent - mcBaseIntelligent) / mcBaseIntelligent);
 }
 var mcBaseIntelligent: int = 10;
 
@@ -83,6 +83,14 @@ public function get Mana(): int
 {
   return mcMana;
 }
+private function set Mana(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcMana = value;
+}
 
 /// Contains player's Max mana level.
 var mcMaxMana: int = 100;
@@ -109,14 +117,19 @@ function Start()
   Strength = mcStrength; // sets MaxHealth as well.
   Intelligent = mcIntelligent; // Sets MaxMana as well.
   Health = MaxHealth;
-  mcMana = MaxMana;
+  Mana = MaxMana;
 }
 
 public function applyDamage(damage: Damage)
 {
   // TODO: check type's resistant to calculate the real damage.
   var healthDrain = damage.DamageValue;
-  Health = Health - healthDrain;
+  Health -= healthDrain;
+}
+
+public function applyManaChange(manaChangedValue: int)
+{
+  Mana += manaChangedValue;
 }
 
 @script AddComponentMenu ("Player/Player Stats")
