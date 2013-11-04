@@ -56,8 +56,8 @@ if (mcFullHealthBar && mcEmptyBar)
     GUI.Box(Rect(0,0, mcBarSize.x, mcBarSize.y), mcEmptyBar);
     GUI.BeginGroup(Rect(1, 1, mcBarSize.x * mcHealthSize, mcBarSize.y));
       GUI.Box(Rect(0, 0, mcBarSize.x, mcBarSize.y), mcFullHealthBar);
-      GUI.Label(Rect( mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Health.ToString());
     GUI.EndGroup();
+    GUI.Label(Rect( mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Health.ToString());
   GUI.EndGroup();
 }
 
@@ -68,8 +68,8 @@ if (mcFullManaBar && mcEmptyBar)
     GUI.Box(Rect(0,0, mcBarSize.x, mcBarSize.y), mcEmptyBar);
     GUI.BeginGroup(Rect(1, 1, mcBarSize.x * mcManaSize, mcBarSize.y));
       GUI.Box(Rect(0, 0, mcBarSize.x, mcBarSize.y), mcFullManaBar);
-      GUI.Label(Rect(mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Mana.ToString());
     GUI.EndGroup();
+    GUI.Label(Rect(mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Mana.ToString());
   GUI.EndGroup();
 }
 
