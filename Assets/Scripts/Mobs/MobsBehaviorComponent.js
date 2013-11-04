@@ -27,6 +27,16 @@ public function get MinimalDistanceToPlayer(): float
   return mcMinimalDistanceToPlayer;
 }
 
+/*------ PROTECTED SECTION ------*/
+/// Used to keep Mob in Idle state till it is possible to attack again.
+protected var mcIsRechargingAttack: boolean = false; //TODO: do we need it?
+
+/// @brief @c true if we are not too close to a player to keep walking and @c false otherwise
+protected var mcMinimalDistanceIsNotReached: boolean = true;
+
+/// MobsStats component.
+protected var mcMobsStats: MobsStats;
+
 /*------ PRIVATE SECTION ------*/
 /// Player's components.
 private var mcPlayerBehavior: PlayerBehavior;
@@ -40,13 +50,7 @@ private var mcSqrDetectPlayerOnDistance: float;
 private var mcSqrMinimalDistanceToPlayer: float;
 private var mcSqrDistanceBetweenPlayerAndMob: float = 0.0f;
 
-/// @brief @c true if we are not too close to a player to keep walking and @c false otherwise
-private var mcMinimalDistanceIsNotReached: boolean = true;
-
 private var mcPlayerWithinVisibleDistance: boolean = false;
-
-/// MobsStats component.
-private var mcMobsStats: MobsStats;
 
 /*------ METHODS SECTION ------*/
 function Awake()
@@ -59,6 +63,7 @@ function Awake()
 
 function Start ()
 {
+  Debug.Log("Mob");
   if (mcPlayer == null)
   {
     mcPlayer = GameObject.FindGameObjectWithTag("Player");
@@ -94,8 +99,8 @@ function Update ()
   mcSqrDistanceBetweenPlayerAndMob = vectorBetweenObjects.sqrMagnitude;
   updatePlayerWithinVisibleDistance();
   updateMinimalDistanceToPlayerReached();
-  updateAnimation();
   updateDamageToPlayer();
+  updateAnimation();
 
   // It is a time to attack Player if we can see him/her.
   if (mcPlayerWithinVisibleDistance)
@@ -166,7 +171,7 @@ private function updateAnimation()
       animation.CrossFade(mcWalkAnimationName);
     }
   }
-  else if (!mcMinimalDistanceIsNotReached)
+  else if (!mcMinimalDistanceIsNotReached && !mcIsRechargingAttack)
   {
     // ok, it is time to attack our player!
     if ( !animation.IsPlaying(mcAttackAnimationName))
@@ -184,9 +189,9 @@ private function updateAnimation()
   }
 }
 
-private function updateDamageToPlayer()
+protected function updateDamageToPlayer()
 {
-  if (!mcMinimalDistanceIsNotReached) // ok, it is time to 'hit' a player (as soon as attack animation is over).
+  if (!mcMinimalDistanceIsNotReached && mcMobsStats.Health > 0) // ok, it is time to 'hit' a player (as soon as attack animation is over).
   {
     var playerPos = mcPlayerTransform.position;
     playerPos.y = transform.position.y;
@@ -204,6 +209,11 @@ function applyDamage(damage: Damage)
   mcMobsStats.applyDamage(damage);
 }
 
+private function destroyMobObject()
+{
+  Destroy(gameObject);
+}
+
 function playDeath()
 {
   if (!animation.IsPlaying(mcDeathAnimationName))
@@ -213,11 +223,6 @@ function playDeath()
     animation[mcDeathAnimationName].wrapMode = WrapMode.ClampForever;
     animation.wrapMode = WrapMode.ClampForever;
   }
-}
-
-private function destroyMobObject()
-{
-  Destroy(gameObject);
 }
 
 @script RequireComponent (Animation)

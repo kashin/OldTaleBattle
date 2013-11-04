@@ -3,6 +3,7 @@
 public var mcSpeed: float = 0.5f;
 public var mcLifeTime: float = 0.2f;
 public var mcCollideWithPlayer: boolean = false;
+public var mcCollideWithEnemy: boolean = true;
 var mcManaCost: float = 10.0f;
 public function get ManaCost(): int
 {
@@ -36,12 +37,15 @@ function OnTriggerEnter(other : Collider)
   }
   else if (other.gameObject.tag == "Enemy")
   {
-    var mobsComponent: MobsBehaviorComponent = other.gameObject.GetComponent(MobsBehaviorComponent);
-    if (mobsComponent != null)
+    if (mcCollideWithEnemy)
     {
-      mobsComponent.applyDamage(new Damage(mcDamageType, mcDamage));
+      var mobsComponent: MobsBehaviorComponent = other.gameObject.GetComponent(MobsBehaviorComponent);
+      if (mobsComponent != null)
+      {
+        mobsComponent.applyDamage(new Damage(mcDamageType, mcDamage));
+      }
+      collisionHandled = true;
     }
-    collisionHandled = true;
   }
   else if (other.gameObject.tag != "MagicAttack")
   {
