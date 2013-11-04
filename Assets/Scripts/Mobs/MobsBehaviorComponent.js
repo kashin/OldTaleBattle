@@ -51,6 +51,7 @@ private var mcSqrMinimalDistanceToPlayer: float;
 private var mcSqrDistanceBetweenPlayerAndMob: float = 0.0f;
 
 private var mcPlayerWithinVisibleDistance: boolean = false;
+private var mcRotationThatLooksAtPlayer: Quaternion;
 
 /*------ METHODS SECTION ------*/
 function Awake()
@@ -63,7 +64,6 @@ function Awake()
 
 function Start ()
 {
-  Debug.Log("Mob");
   if (mcPlayer == null)
   {
     mcPlayer = GameObject.FindGameObjectWithTag("Player");
@@ -94,6 +94,10 @@ function Update ()
     mcMotor.inputMoveDirection = Vector3.zero;
     return;
   }
+  var playerPos = mcPlayerTransform.position;
+  playerPos.y = transform.position.y;
+  mcRotationThatLooksAtPlayer = Quaternion.LookRotation(playerPos - transform.position);
+
   // Check whether we can 'see' Player or not.
   var vectorBetweenObjects = mcPlayerTransform.position - transform.position;
   mcSqrDistanceBetweenPlayerAndMob = vectorBetweenObjects.sqrMagnitude;
@@ -119,10 +123,8 @@ function Update ()
 
     // Constantly rotating our mob so that it 'follows' Player's movement if we can see him/her.
     // We should rotate only in y direction to keep mob 'stable'.
-    var playerPos = mcPlayerTransform.position;
-    playerPos.y = transform.position.y;
     var rotationAdditionalVelocity = mcSqrDistanceBetweenPlayerAndMob / mcSqrDetectPlayerOnDistance;
-    var newRotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(playerPos - transform.position), mcRotationSpeed * Time.deltaTime / rotationAdditionalVelocity);
+    var newRotation = Quaternion.Lerp(transform.rotation, mcRotationThatLooksAtPlayer, mcRotationSpeed * Time.deltaTime / rotationAdditionalVelocity);
     transform.rotation = newRotation;
   }
   else
@@ -157,7 +159,10 @@ function applyDamageToPlayer()
   // it is time to attack our Player.
   var damage = mcMobsStats.getAttackDamage();
   mcPlayerBehavior.applyDamage(damage);
-  CancelInvoke();
+  if (mcMobsStats.Health != 0)
+  {
+    CancelInvoke();
+  }
 }
 
 /// @brief updates current animation according to a mob's state.
@@ -193,10 +198,7 @@ protected function updateDamageToPlayer()
 {
   if (!mcMinimalDistanceIsNotReached && mcMobsStats.Health > 0) // ok, it is time to 'hit' a player (as soon as attack animation is over).
   {
-    var playerPos = mcPlayerTransform.position;
-    playerPos.y = transform.position.y;
-    var rotationThatPointsToPlayer = Quaternion.LookRotation(playerPos - transform.position);
-    var angle = Quaternion.Angle(transform.rotation, rotationThatPointsToPlayer);
+    var angle = Quaternion.Angle(transform.rotation, mcRotationThatLooksAtPlayer);
     if (angle <= mcMobsAttackArc)
     {
       Invoke("applyDamageToPlayer", animation[mcAttackAnimationName].length);

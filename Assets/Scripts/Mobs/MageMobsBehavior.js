@@ -34,7 +34,12 @@ class MageMobsBehavior extends MobsBehaviorComponent
       var projectileBehavior = projectile.GetComponent(ProjectileBehavior);
       projectileBehavior.mcCollideWithPlayer = true;
       projectileBehavior.mcCollideWithEnemy = false;
+      CancelInvoke();
     }
-    CancelInvoke();
   }
 }
+
+@script RequireComponent (Animation)
+@script RequireComponent (CharacterMotor)
+@script RequireComponent (MobsStats)
+@script AddComponentMenu ("Mobs/Mage Mobs Behavior")

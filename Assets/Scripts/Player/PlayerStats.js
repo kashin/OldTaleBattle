@@ -12,7 +12,7 @@ public function get Strength(): int
 public function set Strength(value: int)
 {
   mcStrength = value;
-  MaxHealth = MaxHealth + (mcBaseHealth * (mcStrength - mcBaseStrength) / mcBaseStrength);
+  MaxHealth = mcBaseHealth + (mcBaseHealth * (mcStrength - mcBaseStrength) / mcBaseStrength);
 }
 var mcBaseStrength: int = 10;
 
@@ -25,15 +25,25 @@ public function get Intelligent(): int
 public function set Intelligent(value: int)
 {
   mcIntelligent = value;
-  MaxMana = MaxMana + (mcBaseMana * (mcIntelligent - mcBaseIntelligent) / mcBaseIntelligent);
+  MaxMana = mcBaseMana + (mcBaseMana * (mcIntelligent - mcBaseIntelligent) / mcBaseIntelligent);
 }
 var mcBaseIntelligent: int = 10;
 
-/// Will power increases Player's magic damage.
+/// Will power increases Player's magic damage and mana regeneration.
 var mcWillPower: int = 10;
+public function get WillPower(): int
+{
+  return mcWillPower;
+}
+public function set WillPower(value: int)
+{
+  mcWillPower = value;
+  ManaRegeneration = mcBaseWillPower + (mcBaseWillPower * (mcWillPower - mcBaseWillPower) / mcBaseWillPower);
+}
 var mcBaseWillPower: int = 10;
 
 /// Increases posibility to avoid attacks.
+// TODO: add this possiblity to avoid attack.
 var mcAgility: int = 10;
 var mcBaseAgility: int = 10;
 
@@ -89,7 +99,14 @@ private function set Mana(value: int)
   {
     value = 0;
   }
-  mcMana = value;
+  if (value > mcMaxMana)
+  {
+    mcMana = mcMaxMana;
+  }
+  else
+  {
+    mcMana = value;
+  }
 }
 
 /// Contains player's Max mana level.
@@ -112,10 +129,30 @@ private function set MaxMana(value: int)
 }
 var mcBaseMana: int = 100;
 
+/// Player's Mana regeneration. Read-only property. Depends on a Player's will power.
+public var mcManaRegeneration: int;
+public function get ManaRegeneration(): int
+{
+  return mcManaRegeneration;
+}
+private function set ManaRegeneration(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcManaRegeneration = value;
+}
+
+private var mcBaseManaRegeneration: int = 10;
+
+
+/*-------  METHODS  -------*/
 function Start()
 {
   Strength = mcStrength; // sets MaxHealth as well.
   Intelligent = mcIntelligent; // Sets MaxMana as well.
+  WillPower = mcWillPower;
   Health = MaxHealth;
   Mana = MaxMana;
 }
@@ -130,6 +167,11 @@ public function applyDamage(damage: Damage)
 public function applyManaChange(manaChangedValue: int)
 {
   Mana += manaChangedValue;
+}
+
+public function doManaRegeneration()
+{
+  Mana += ManaRegeneration;
 }
 
 @script AddComponentMenu ("Player/Player Stats")

@@ -16,14 +16,21 @@ public function get MagicAttackProjectile(): GameObject
 
 public var mcProjectileFiresUpper: float = 3.0f;
 
+public var mcManaRegenerationCycleTime: float = 10.0f;
+
 public var mcAttackAnimation = "Attack";
 public var mcIdleAnimation = "Idle";
 public var mcMoveAnimation = "Run";
 public var mcDeathAnimation = "Death";
 
+/*--- PRIVATE SECTION---*/
 private var mcPlayerStats: PlayerStats;
 private var mcProjectileBehavior: ProjectileBehavior;
 
+private var mcRegenerateMana = true;
+
+
+/*--- METHODS SECTION---*/
 function Awake()
 {
   mcPlayerStats = gameObject.GetComponent(PlayerStats);
@@ -50,6 +57,7 @@ function Update()
       }
     }
   }
+  updateManaRegenerationCycle();
   updateAnimation();
 }
 
@@ -72,6 +80,21 @@ private function updateAnimation()
 public function applyDamage(damage: Damage)
 {
   mcPlayerStats.applyDamage(damage);
+}
+
+private function updateManaRegenerationCycle()
+{
+  if (mcRegenerateMana)
+  {
+    Invoke("regenerateMana", mcManaRegenerationCycleTime);
+    mcRegenerateMana = false;
+  }
+}
+
+private function regenerateMana()
+{
+  mcPlayerStats.doManaRegeneration();
+  mcRegenerateMana = true;
 }
 
 @script RequireComponent (Animation)

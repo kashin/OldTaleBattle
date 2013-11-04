@@ -3,6 +3,8 @@
 /// holds a list of mobs that can be spawned by this spawn point.
 public var mcMobs: GameObject[];
 
+public var mcPlayer: GameObject;
+
 /*
  * At the beggining Spawn point spawns only 'first' type of mobs, then it spawns two types of mobs, etc.
  */
@@ -12,41 +14,56 @@ public var mcIncreaseMobsTime: float = 30.0f;
 public var mcMaxRespawnInTime: float = 30.0f;
 
 private var mcMobsListSizeForRandom: int = 1;
-private var mcNextSpawnAtTime: float;
-private var mcNextIncreaseMobsTime: float;
+private var mcItIsTimeToIncreaseListSize = true;
+private var mcItIsTimeToSpawnNewMob = true;
 
 function Start()
 {
-  updateNextSpawnAtTime();
+  updateSpawnNewMob();
   updateNextIncreaseMobsTime();
 }
 
 function Update()
 {
-  if ( mcNextIncreaseMobsTime <= Time.time )
-  {
-    updateNextIncreaseMobsTime();
-    if (mcMobsListSizeForRandom < mcMobs.Length)
-    {
-      mcMobsListSizeForRandom++;
-    }
-  }
-  if ( mcNextSpawnAtTime <= Time.time )
-  {
-    // it is time to spawn a new mob.
-    var maxMobNumber = Mathf.Min(mcMobsListSizeForRandom, mcMobs.Length) - 1; // index is started from 0, so that's why we have -1.
-    var index = Random.Range(0, maxMobNumber);
-    Instantiate(mcMobs[index], transform.position, transform.rotation);
-    updateNextSpawnAtTime();
-  }
+  updateNextIncreaseMobsTime();
+  updateSpawnNewMob();
 }
 
 private function updateNextIncreaseMobsTime()
 {
-  mcNextIncreaseMobsTime = Time.time + mcIncreaseMobsTime;
+  if (mcItIsTimeToIncreaseListSize)
+  {
+    mcItIsTimeToIncreaseListSize = false;
+    Invoke("increaseMobsListSizeForRandom", Time.time + mcIncreaseMobsTime);
+  }
 }
 
-private function updateNextSpawnAtTime()
+private function updateSpawnNewMob()
 {
-  mcNextSpawnAtTime = Time.time + Random.Range(1.0f, mcMaxRespawnInTime);
+  if (mcItIsTimeToSpawnNewMob)
+  {
+    mcItIsTimeToSpawnNewMob = false;
+    Invoke("spawnNewMob", Time.time + Random.Range(1.0f, mcMaxRespawnInTime) );
+  }
+}
+
+protected function spawnNewMob()
+{
+  // it is time to spawn a new mob.
+  var maxMobNumber = Mathf.Min(mcMobsListSizeForRandom, mcMobs.Length) - 1; // index is started from 0, so that's why we have -1.
+  var index = Random.Range(0, maxMobNumber);
+  var position = transform.position;
+  var mob = Instantiate(mcMobs[index], position, transform.rotation);
+  mob.GetComponent(MobsBehaviorComponent).mcPlayer = mcPlayer;
+  mcItIsTimeToSpawnNewMob = true;
+}
+
+protected function increaseMobsListSizeForRandom()
+{
+  if (mcMobsListSizeForRandom < mcMobs.Length)
+  {
+    mcMobsListSizeForRandom++;
+  }
+  mcMaxRespawnInTime *= 0.95; // decrease spawn time every mcIncreaseMobsTime seconds.
+  mcItIsTimeToIncreaseListSize = true;
 }
