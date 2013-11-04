@@ -13,6 +13,9 @@ public var mcIncreaseMobsTime: float = 30.0f;
 /// Maximum time between spawns.
 public var mcMaxRespawnInTime: float = 30.0f;
 
+/// Decrease spawn time to currentSpawnTime * mcDecreaseSpawnTime seconds.
+public var mcDecreaseSpawnTime: float = 0.9;
+
 private var mcMobsListSizeForRandom: int = 1;
 private var mcItIsTimeToIncreaseListSize = true;
 private var mcItIsTimeToSpawnNewMob = true;
@@ -34,7 +37,7 @@ private function updateNextIncreaseMobsTime()
   if (mcItIsTimeToIncreaseListSize)
   {
     mcItIsTimeToIncreaseListSize = false;
-    Invoke("increaseMobsListSizeForRandom", Time.time + mcIncreaseMobsTime);
+    Invoke("increaseMobsListSizeForRandom", mcIncreaseMobsTime);
   }
 }
 
@@ -43,7 +46,7 @@ private function updateSpawnNewMob()
   if (mcItIsTimeToSpawnNewMob)
   {
     mcItIsTimeToSpawnNewMob = false;
-    Invoke("spawnNewMob", Time.time + Random.Range(1.0f, mcMaxRespawnInTime) );
+    Invoke("spawnNewMob", Random.Range(1.0f, mcMaxRespawnInTime) );
   }
 }
 
@@ -64,6 +67,6 @@ protected function increaseMobsListSizeForRandom()
   {
     mcMobsListSizeForRandom++;
   }
-  mcMaxRespawnInTime *= 0.95; // decrease spawn time every mcIncreaseMobsTime seconds.
+  mcMaxRespawnInTime *= mcDecreaseSpawnTime; // decrease spawn time every mcIncreaseMobsTime seconds.
   mcItIsTimeToIncreaseListSize = true;
 }
