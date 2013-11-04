@@ -3,7 +3,7 @@
 /// This component contains Player's stats and updates Player's speed/damage/etc according to this stats.
 
 /*-------  STATS  -------*/
-/// Strength is a stat that increases Player's health and physical damage.
+/// Strength is a stat that increases Player's health and physical(Melee) damage.
 var mcStrength: int = 10;
 public function get Strength(): int
 {
@@ -13,8 +13,12 @@ public function set Strength(value: int)
 {
   mcStrength = value;
   MaxHealth = mcBaseHealth + (mcBaseHealth * (mcStrength - mcBaseStrength) / mcBaseStrength);
+  MeleeDamage = mcBaseMeleeDamage + (mcStrength - mcBaseStrength);
 }
 var mcBaseStrength: int = 10;
+
+
+
 
 /// Intelligent increases Player's Mana.
 var mcIntelligent: int = 10;
@@ -29,6 +33,9 @@ public function set Intelligent(value: int)
 }
 var mcBaseIntelligent: int = 10;
 
+
+
+
 /// Will power increases Player's magic damage and mana regeneration.
 var mcWillPower: int = 10;
 public function get WillPower(): int
@@ -42,10 +49,16 @@ public function set WillPower(value: int)
 }
 var mcBaseWillPower: int = 10;
 
+
+
+
 /// Increases posibility to avoid attacks.
 // TODO: add this possiblity to avoid attack.
 var mcAgility: int = 10;
 var mcBaseAgility: int = 10;
+
+
+
 
 /*-------  HEALTH  -------*/
 /// Contains current Player's health. Read-only property.
@@ -85,6 +98,9 @@ private function set MaxHealth(value: int)
   }
 }
 var mcBaseHealth: int = 100;
+
+
+
 
 /*-------  MANA  -------*/
 /// Contains current Player's mana. Read-only property.
@@ -147,6 +163,58 @@ private function set ManaRegeneration(value: int)
 private var mcBaseManaRegeneration: int = 10;
 
 
+/*-------  EXPERIENCE  -------*/
+var mcExperience: int = 0;
+public function get Experience(): int
+{
+  return mcExperience;
+}
+private function set Experience(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcExperience = value;
+}
+
+
+/*-------  LEVEL  -------*/
+/// Level depends on a current experience
+var mcLevel: int = 1;
+public function get Level(): int
+{
+  return mcLevel;
+}
+private function set Level(value: int)
+{
+  if (value < 1)
+  {
+    value = 1;
+  }
+  mcLevel = value;
+}
+
+
+
+/*-------  MELEE ATTACK-------*/
+var mcMeleeDamage: int = 10.0f;
+private function set MeleeDamage(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcMeleeDamage = value;
+}
+public function get MeleeDamage(): int
+{
+  return mcMeleeDamage;
+}
+private var mcBaseMeleeDamage: float = 10.0f;
+
+
+
 /*-------  METHODS  -------*/
 function Start()
 {
@@ -172,6 +240,11 @@ public function applyManaChange(manaChangedValue: int)
 public function doManaRegeneration()
 {
   Mana += ManaRegeneration;
+}
+
+public function getMeleeDamage(): Damage
+{
+  return new Damage(DamageType.Physical, mcMeleeDamage);
 }
 
 @script AddComponentMenu ("Player/Player Stats")

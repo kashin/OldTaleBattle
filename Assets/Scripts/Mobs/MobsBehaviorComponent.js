@@ -156,12 +156,15 @@ private function updateMinimalDistanceToPlayerReached()
 
 function applyDamageToPlayer()
 {
-  // it is time to attack our Player.
-  var damage = mcMobsStats.getAttackDamage();
-  mcPlayerBehavior.applyDamage(damage);
-  if (mcMobsStats.Health != 0)
+  if (mcMobsStats.Health > 0)
   {
-    CancelInvoke();
+    // it is time to attack our Player.
+    var damage = mcMobsStats.getAttackDamage();
+    mcPlayerBehavior.applyDamage(damage);
+    if (mcMobsStats.Health != 0)
+    {
+      CancelInvoke();
+    }
   }
 }
 

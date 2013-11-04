@@ -1,1 +1,3 @@
 // Write here anything that you want to do with a current code (no new features here :) )
+0) Move Damage related classes into a separate script.
+1) Create a general Stats class that will contain similar properties for Mobs and Player.
