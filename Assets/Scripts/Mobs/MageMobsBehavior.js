@@ -3,7 +3,7 @@ class MageMobsBehavior extends MobsBehaviorComponent
 {
   /// Holds a prefab of a Mage's projectile.
   public var mcAttackProjectile: GameObject;
-  public var mcProjectileAppearsUpper: float = 2.0f;
+  public var mcProjectileAppearsUpper: float = 3.0f;
 
   private var mcNextAttackTime: float = 0.0f;
 

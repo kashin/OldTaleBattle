@@ -3,3 +3,5 @@
 1) Create a general Stats class that will contain similar properties for Mobs and Player.
 2) Update InGame UI implementation. We shouldn't always update Health/Mana level in Update() method. So, it is better to implement callbacks for healthChanged and manaChanged signals from Player's stats.
 3) Remove collider from mobs when they are starting death animation.
+4) Limit on max mobs count on a map at the same time?
+5) Increase performance (mobs limit on map at the same time and probably something else).

@@ -53,6 +53,12 @@ private var mcSqrDistanceBetweenPlayerAndMob: float = 0.0f;
 private var mcPlayerWithinVisibleDistance: boolean = false;
 private var mcRotationThatLooksAtPlayer: Quaternion;
 
+private var mcPosition: Vector3;
+private var mcPlayerPosition: Vector3;
+
+
+
+
 /*------ METHODS SECTION ------*/
 function Awake()
 {
@@ -86,7 +92,7 @@ function Start ()
   animation[mcAttackAnimationName].wrapMode = WrapMode.Once;
 }
 
-function Update ()
+function Update()
 {
   if (mcMobsStats.Health == 0)
   {
@@ -94,12 +100,17 @@ function Update ()
     mcMotor.inputMoveDirection = Vector3.zero;
     return;
   }
-  var playerPos = mcPlayerTransform.position;
+
+  // Saving positions for this update() call.
+  mcPlayerPosition = mcPlayerTransform.position;
+  mcPosition = transform.position;
+
+  var playerPos = mcPlayerPosition;
   playerPos.y = transform.position.y;
-  mcRotationThatLooksAtPlayer = Quaternion.LookRotation(playerPos - transform.position);
+  mcRotationThatLooksAtPlayer = Quaternion.LookRotation(playerPos - mcPosition);
 
   // Check whether we can 'see' Player or not.
-  var vectorBetweenObjects = mcPlayerTransform.position - transform.position;
+  var vectorBetweenObjects = mcPlayerPosition - mcPosition;
   mcSqrDistanceBetweenPlayerAndMob = vectorBetweenObjects.sqrMagnitude;
   updatePlayerWithinVisibleDistance();
   updateMinimalDistanceToPlayerReached();

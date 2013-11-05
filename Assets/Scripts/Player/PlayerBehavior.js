@@ -155,10 +155,19 @@ private function checkApplyDamage()
     if(Physics.Raycast(position, direction, rayCastHit, mcMeleeAttackRange))
     {
       // ok, we just hit something.
-      if (rayCastHit.collider.tag == "Enemy")
+      if (rayCastHit.collider.CompareTag("Enemy"))
       {
         var behaviorComponent = rayCastHit.collider.gameObject.GetComponent(MobsBehaviorComponent);
         behaviorComponent.applyDamage(mcPlayerStats.getMeleeDamage());
+        break;
+      }
+      else if (rayCastHit.collider.transform.parent && rayCastHit.collider.transform.parent.CompareTag("Enemy")) // hack for Character Controller workaround.
+      {
+        behaviorComponent = rayCastHit.collider.transform.parent.GetComponent(MobsBehaviorComponent);
+        if (behaviorComponent)
+        {
+          behaviorComponent.applyDamage(mcPlayerStats.getMeleeDamage());
+        }
         break;
       }
     }
