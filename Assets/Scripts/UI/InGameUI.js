@@ -1,5 +1,8 @@
 ﻿#pragma strict
 
+public class InGameUI extends MonoBehaviour implements PlayerStatsListener
+{
+
 // Sizes
 public var mcHealthBarPos: Vector2 = new Vector2(10,20);
 public var mcManaBarPos: Vector2 = new Vector2(10,20);
@@ -39,6 +42,17 @@ function Start()
   if (mcPlayer)
   {
     mcPlayerStats = mcPlayer.GetComponent(PlayerStats);
+    if (mcPlayerStats)
+    {
+      mcPlayerStats.addPlayerStatsListener(this);
+      // Update health value.
+      mcHealthSize = mcPlayerStats.Health;
+      mcHealthSize /=  mcPlayerStats.MaxHealth;
+
+      // Update mana value.
+      mcManaSize = mcPlayerStats.Mana;
+      mcManaSize /=  mcPlayerStats.MaxMana;
+    }
   }
   else
   {
@@ -75,15 +89,25 @@ if (mcFullManaBar && mcEmptyBar)
 
 }
 
-function Update()
+
+///--- PlayerStats listener interface ---///
+function onHealthChanged(health: int)
 {
   // Update health value.
-  mcHealthSize = mcPlayerStats.Health;
+  mcHealthSize = health;
   mcHealthSize /=  mcPlayerStats.MaxHealth;
+}
 
+function onManaChanged(mana: int)
+{
   // Update mana value.
-  mcManaSize = mcPlayerStats.Mana;
+  mcManaSize = mana;
   mcManaSize /=  mcPlayerStats.MaxMana;
 }
+
+function onLevelChanged(level: int)
+{}
+
+} // InGameUI class
 
 @script AddComponentMenu ("UI/In-Game UI")

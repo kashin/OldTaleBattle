@@ -1,6 +1,19 @@
-﻿#pragma strict
+﻿import System.Collections.Generic;
 
 /// This component contains Player's stats and updates Player's speed/damage/etc according to this stats.
+/*-------  STATS LISTENER INTERFACE -------*/
+interface PlayerStatsListener
+{
+  /// callback that is caleed when Health is changed.
+  function onHealthChanged(health: int);
+  function onManaChanged(mana: int);
+  function onLevelChanged(level: int);
+}
+
+private var mcStatsListeners = new List.<PlayerStatsListener>();
+
+
+
 
 /*-------  STATS  -------*/
 /// Strength is a stat that increases Player's health and physical(Melee) damage.
@@ -69,13 +82,16 @@ public function get Health(): int
 }
 private function set Health(value: int)
 {
-  if (value >= 0)
+  if (value < 0)
   {
-    mcHealth = value;
+    value = 0;
   }
-  else
+  mcHealth = value;
+
+  // inform listeners that health is changed.
+  for (var i = 0; i < mcStatsListeners.Count; i++)
   {
-    mcHealth = 0;
+    mcStatsListeners[i].onHealthChanged(mcHealth);
   }
 }
 
@@ -117,11 +133,14 @@ private function set Mana(value: int)
   }
   if (value > mcMaxMana)
   {
-    mcMana = mcMaxMana;
+    value = mcMaxMana;
   }
-  else
+  mcMana = value;
+
+  // inform listeners that mana is changed.
+  for (var i = 0; i < mcStatsListeners.Count; i++)
   {
-    mcMana = value;
+    mcStatsListeners[i].onManaChanged(mcMana);
   }
 }
 
@@ -163,6 +182,8 @@ private function set ManaRegeneration(value: int)
 private var mcBaseManaRegeneration: int = 10;
 
 
+
+
 /*-------  EXPERIENCE  -------*/
 var mcExperience: int = 0;
 public function get Experience(): int
@@ -176,7 +197,9 @@ private function set Experience(value: int)
     value = 0;
   }
   mcExperience = value;
+  Level = mcExperience / mcExperienceLevelBase;
 }
+private var mcExperienceLevelBase: int = 1000;
 
 
 /*-------  LEVEL  -------*/
@@ -193,7 +216,15 @@ private function set Level(value: int)
     value = 1;
   }
   mcLevel = value;
+
+  // inform listeners that level is changed.
+  for (var i = 0; i < mcStatsListeners.Count; i++)
+  {
+    mcStatsListeners[i].onLevelChanged(mcLevel);
+  }
 }
+
+
 
 
 
@@ -245,6 +276,16 @@ public function doManaRegeneration()
 public function getMeleeDamage(): Damage
 {
   return new Damage(DamageType.Physical, mcMeleeDamage);
+}
+
+public function addPlayerStatsListener(listener: PlayerStatsListener)
+{
+  mcStatsListeners.Add(listener);
+}
+
+public function removePlayerStatsListener(listener: PlayerStatsListener)
+{
+  mcStatsListeners.Remove(listener);
 }
 
 @script AddComponentMenu ("Player/Player Stats")

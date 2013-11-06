@@ -7,6 +7,8 @@ import System.Collections.Generic;
 public var mcMobs: GameObject[];
 public var mcSpawnPoint: GameObject;
 
+public var mcUseHardcodedSpawnPointsPositions: boolean = false;
+
 /// Difference in X of where we can place spawn point compare to a controller's position
 public var mcSpawnPointsX: float = 150;
 /// Difference in Z of where we can place spawn point compare to a controller's position
@@ -22,13 +24,22 @@ function Awake()
   var cam = Camera.main;
   var maxSizeZ = cam.orthographicSize;
   var maxSizeX = maxSizeZ * cam.aspect;
-  if (mcSpawnPointsX > maxSizeX)
+  if (mcUseHardcodedSpawnPointsPositions)
   {
-    mcSpawnPointsX = maxSizeX - 10.0f;
+    // Let's make sure that hard coded values are not outside of a visible area.
+    if (mcSpawnPointsX > maxSizeX)
+    {
+      mcSpawnPointsX = maxSizeX - 10.0f;
+    }
+    if (mcSpawnPointsZ > maxSizeZ)
+    {
+      mcSpawnPointsZ = maxSizeZ - 10.0f;
+    }
   }
-  if (mcSpawnPointsZ > maxSizeZ)
+  else
   {
-    mcSpawnPointsZ = maxSizeZ - 10.0f;
+    mcSpawnPointsX = maxSizeX - 7.0f;
+    mcSpawnPointsZ = maxSizeZ - 7.0f;
   }
 }
 
