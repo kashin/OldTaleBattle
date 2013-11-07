@@ -1,7 +1,7 @@
 ﻿import System.Collections.Generic;
 
 /// This component contains Player's stats and updates Player's speed/damage/etc according to this stats.
-/*-------  STATS LISTENER INTERFACE -------*/
+/*------------------------------------------ PLAYER STATS LISTENER INTERFACE ------------------------------------------*/
 interface PlayerStatsListener
 {
   /// callback that is caleed when Health is changed.
@@ -15,7 +15,7 @@ private var mcStatsListeners = new List.<PlayerStatsListener>();
 
 
 
-/*-------  STATS  -------*/
+/*------------------------------------------  STATS  ------------------------------------------*/
 /// Strength is a stat that increases Player's health and physical(Melee) damage.
 var mcStrength: int = 10;
 public function get Strength(): int
@@ -33,6 +33,7 @@ var mcBaseStrength: int = 10;
 
 
 
+/*------------------------------------------  INTELLIGENT  ------------------------------------------*/
 /// Intelligent increases Player's Mana.
 var mcIntelligent: int = 10;
 public function get Intelligent(): int
@@ -49,6 +50,7 @@ var mcBaseIntelligent: int = 10;
 
 
 
+/*------------------------------------------  WILL POWER  ------------------------------------------*/
 /// Will power increases Player's magic damage and mana regeneration.
 var mcWillPower: int = 10;
 public function get WillPower(): int
@@ -65,6 +67,7 @@ var mcBaseWillPower: int = 10;
 
 
 
+/*------------------------------------------  AGILITY  ------------------------------------------*/
 /// Increases posibility to avoid attacks.
 // TODO: add this possiblity to avoid attack.
 var mcAgility: int = 10;
@@ -73,7 +76,7 @@ var mcBaseAgility: int = 10;
 
 
 
-/*-------  HEALTH  -------*/
+/*------------------------------------------  HEALTH  ------------------------------------------*/
 /// Contains current Player's health. Read-only property.
 var mcHealth: int;
 public function get Health(): int
@@ -118,7 +121,7 @@ var mcBaseHealth: int = 100;
 
 
 
-/*-------  MANA  -------*/
+/*------------------------------------------  MANA  ------------------------------------------*/
 /// Contains current Player's mana. Read-only property.
 var mcMana: int;
 public function get Mana(): int
@@ -184,7 +187,7 @@ private var mcBaseManaRegeneration: int = 10;
 
 
 
-/*-------  EXPERIENCE  -------*/
+/*------------------------------------------ EXPERIENCE  ------------------------------------------*/
 var mcExperience: int = 0;
 public function get Experience(): int
 {
@@ -202,7 +205,7 @@ private function set Experience(value: int)
 private var mcExperienceLevelBase: int = 1000;
 
 
-/*-------  LEVEL  -------*/
+/*------------------------------------------  LEVEL  ------------------------------------------*/
 /// Level depends on a current experience
 var mcLevel: int = 1;
 public function get Level(): int
@@ -228,7 +231,7 @@ private function set Level(value: int)
 
 
 
-/*-------  MELEE ATTACK-------*/
+/*------------------------------------------  MELEE ATTACK ------------------------------------------*/
 var mcMeleeDamage: int = 10.0f;
 private function set MeleeDamage(value: int)
 {
@@ -246,7 +249,7 @@ private var mcBaseMeleeDamage: float = 10.0f;
 
 
 
-/*-------  METHODS  -------*/
+/*------------------------------------------  METHODS  ------------------------------------------*/
 function Start()
 {
   Strength = mcStrength; // sets MaxHealth as well.

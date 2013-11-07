@@ -1,6 +1,7 @@
-﻿#pragma strict
+﻿public class MobsBehaviorComponent  extends BasicDynamicGameObject
+{
 
-/*------ PUBLIC SECTION ------*/
+/*------------------------------------------ PUBLIC SECTION ------------------------------------------*/
 /// @brief holds a ref on a Player's GameObject.
 public var mcPlayer: GameObject;
 
@@ -27,7 +28,7 @@ public function get MinimalDistanceToPlayer(): float
   return mcMinimalDistanceToPlayer;
 }
 
-/*------ PROTECTED SECTION ------*/
+/*------------------------------------------ PROTECTED SECTION ------------------------------------------*/
 /// Used to keep Mob in Idle state till it is possible to attack again.
 protected var mcIsRechargingAttack: boolean = false; //TODO: do we need it?
 
@@ -37,7 +38,7 @@ protected var mcMinimalDistanceIsNotReached: boolean = true;
 /// MobsStats component.
 protected var mcMobsStats: MobsStats;
 
-/*------ PRIVATE SECTION ------*/
+/*------------------------------------------ PRIVATE SECTION ------------------------------------------*/
 /// Player's components.
 private var mcPlayerBehavior: PlayerBehavior;
 private var mcPlayerTransform: Transform;
@@ -45,7 +46,6 @@ private var mcPlayerTransform: Transform;
 // holds current animtion name.
 private var mcCurrentAnimationName = "Idle";
 
-private var mcMotor: CharacterMotor;
 private var mcSqrDetectPlayerOnDistance: float;
 private var mcSqrMinimalDistanceToPlayer: float;
 private var mcSqrDistanceBetweenPlayerAndMob: float = 0.0f;
@@ -57,19 +57,18 @@ private var mcPosition: Vector3;
 private var mcPlayerPosition: Vector3;
 
 
-
-
-/*------ METHODS SECTION ------*/
+/*------------------------------------------ METHODS SECTION ------------------------------------------*/
 function Awake()
 {
-    mcMotor = GetComponent(CharacterMotor);
-    mcMobsStats = GetComponent(MobsStats);
-    mcSqrDetectPlayerOnDistance = mcDetectPlayerOnDistance * mcDetectPlayerOnDistance;
-    mcSqrMinimalDistanceToPlayer  = mcMinimalDistanceToPlayer * mcMinimalDistanceToPlayer;
+  super.Awake();
+  mcMobsStats = GetComponent(MobsStats);
+  mcSqrDetectPlayerOnDistance = mcDetectPlayerOnDistance * mcDetectPlayerOnDistance;
+  mcSqrMinimalDistanceToPlayer  = mcMinimalDistanceToPlayer * mcMinimalDistanceToPlayer;
 }
 
 function Start ()
 {
+  super.Start();
   if (mcPlayer == null)
   {
     mcPlayer = GameObject.FindGameObjectWithTag("Player");
@@ -94,6 +93,10 @@ function Start ()
 
 function Update()
 {
+  if (mcGameLogicStoped)
+  {
+    return;
+  }
   if (mcMobsStats.Health == 0)
   {
     playDeath();
@@ -144,6 +147,7 @@ function Update()
     mcMotor.inputMoveDirection = Vector3.zero;
   }
 }
+
 
 /// @brief sets new player visible within distance value and notifies turns service about it.
 private function updatePlayerWithinVisibleDistance()
@@ -240,6 +244,8 @@ function playDeath()
     animation.wrapMode = WrapMode.ClampForever;
   }
 }
+
+} // MobsBehaviorComponent
 
 @script RequireComponent (Animation)
 @script RequireComponent (CharacterMotor)

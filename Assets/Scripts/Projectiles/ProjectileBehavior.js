@@ -1,4 +1,6 @@
-﻿#pragma strict
+﻿
+public class ProjectileBehavior extends BasicDynamicGameObject
+{
 
 public var mcSpeed: float = 0.5f;
 public var mcLifeTime: float = 0.2f;
@@ -10,14 +12,17 @@ public function get ManaCost(): int
   return mcManaCost;
 }
 
-/*--- PROJECTILE'S DAMAGE STATS---*/
+/*------------------------------------------ PROJECTILE'S DAMAGE STATS ------------------------------------------*/
 var mcDamage: int = 10;
 var mcBaseDamage: int = 10;
 var mcDamageType: DamageType = DamageType.Fire;
 
 function Update()
 {
-  transform.position += transform.forward * mcSpeed;
+  if (!mcGameLogicStoped)
+  {
+    transform.position += transform.forward * mcSpeed;
+  }
 }
 
 function OnTriggerEnter(other : Collider)
@@ -65,3 +70,6 @@ function OnTriggerEnter(other : Collider)
     Destroy(gameObject, mcLifeTime);
   }
 }
+
+
+} // ProjectileBehavior

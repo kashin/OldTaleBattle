@@ -1,5 +1,6 @@
 ﻿#pragma strict
-
+class RespawnBehavior extends MonoBehaviour implements GameEventsListener
+{
 /// holds a list of mobs that can be spawned by this spawn point.
 public var mcMobs: GameObject[];
 
@@ -20,16 +21,31 @@ private var mcMobsListSizeForRandom: int = 1;
 private var mcItIsTimeToIncreaseListSize = true;
 private var mcItIsTimeToSpawnNewMob = true;
 
+private var mcStopRespawns: boolean = false;
+
 function Start()
 {
   updateSpawnNewMob();
   updateNextIncreaseMobsTime();
+  var gameDirectorObject = GameObject.FindGameObjectWithTag("GameDirector");
+  if (gameDirectorObject)
+  {
+    var gameDirector = gameDirectorObject.GetComponent(GameDirector);
+    gameDirector.addGameEventsListener(this);
+  }
+  else
+  {
+    Debug.LogError("BasicDynamicGameObject.Start(): GameDirector's GameObject not found");
+  }
 }
 
 function Update()
 {
-  updateNextIncreaseMobsTime();
-  updateSpawnNewMob();
+  if (!mcStopRespawns)
+  {
+    updateNextIncreaseMobsTime();
+    updateSpawnNewMob();
+  }
 }
 
 private function updateNextIncreaseMobsTime()
@@ -70,3 +86,12 @@ protected function increaseMobsListSizeForRandom()
   mcMaxRespawnInTime *= mcDecreaseSpawnTime; // decrease spawn time every mcIncreaseMobsTime seconds.
   mcItIsTimeToIncreaseListSize = true;
 }
+
+function onGameStateChanged(gameState: GameState)
+{
+  mcStopRespawns = gameState != GameState.Playing;
+}
+
+} // Respawn Behavior
+
+@script AddComponentMenu ("Respawn/Respawn Behavior")

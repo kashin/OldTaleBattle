@@ -1,6 +1,7 @@
-﻿#pragma strict
-
-/*--- MAGIC PROJECTILE ---*/
+﻿
+public class PlayerBehavior extends BasicDynamicGameObject
+{
+/*------------------------------------------ MAGIC ATTACK ------------------------------------------*/
 var mcMagicAttackProjectile: GameObject;
 public function set MagicAttackProjectile(value: GameObject)
 {
@@ -19,7 +20,7 @@ public var mcProjectileFiresUpper: float = 3.0f;
 
 
 
-/*--- MELEE ATTACK ---*/
+/*------------------------------------------ MELEE ATTACK ------------------------------------------*/
 public var mcMeleeAttackRange: float = 10.0f;
 public var mcMeleeAttackArcAngle: float = 0.3f;
 private var mcIsMeleeAttackInProgress: boolean = false;
@@ -27,13 +28,13 @@ private var mcIsMeleeAttackInProgress: boolean = false;
 
 
 
-/*--- MANA REGENERATION ---*/
+/*------------------------------------------ MANA REGENERATION ------------------------------------------*/
 public var mcManaRegenerationCycleTime: float = 10.0f;
 
 
 
 
-/*--- ANIMATIONS NAMES ---*/
+/*------------------------------------------ ANIMATIONS NAMES ------------------------------------------*/
 public var mcAttackAnimation = "Attack";
 public var mcIdleAnimation = "Idle";
 public var mcMoveAnimation = "Run";
@@ -42,7 +43,7 @@ public var mcDeathAnimation = "Death";
 
 
 
-/*--- PRIVATE SECTION---*/
+/*------------------------------------------ PRIVATE SECTION ------------------------------------------*/
 private var mcPlayerStats: PlayerStats;
 private var mcProjectileBehavior: ProjectileBehavior;
 
@@ -51,16 +52,18 @@ private var mcRegenerateMana = true;
 
 
 
-/*--- METHODS SECTION---*/
+/*------------------------------------------ METHODS SECTION ------------------------------------------*/
 
-/*--- MONOBEHAVIOR IMPLEMENTATION---*/
+/*------------------------------------------ MONOBEHAVIOR IMPLEMENTATION ------------------------------------------*/
 function Awake()
 {
+  super.Awake();
   mcPlayerStats = gameObject.GetComponent(PlayerStats);
 }
 
 function Start()
 {
+  super.Start();
   if (mcMagicAttackProjectile)
   {
     mcProjectileBehavior = mcMagicAttackProjectile.GetComponent(ProjectileBehavior);
@@ -69,6 +72,10 @@ function Start()
 
 function Update()
 {
+  if (mcGameLogicStoped)
+  {
+    return;
+  }
   if (Input.GetButtonDown("Magic Attack"))
   {
     if (mcProjectileBehavior)
@@ -92,7 +99,7 @@ function Update()
 
 
 
-/*--- COMPONENT METHODS ---*/
+/*------------------------------------------ COMPONENT METHODS ------------------------------------------*/
 private function updateAnimation()
 {
   if (mcPlayerStats.Health == 0)
@@ -173,6 +180,8 @@ private function checkApplyDamage()
     }
   }
 }
+
+} // PlayerBehavior
 
 @script RequireComponent (Animation)
 @script RequireComponent (PlayerStats)
