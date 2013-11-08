@@ -53,6 +53,8 @@ function onManaChanged(mana: int)
 function onLevelChanged(level: int)
 {}
 
+function onAvailableSkillPointsChanged(availablePoints: int)
+{}
 
 
 
@@ -79,6 +81,12 @@ public function requestChangeMainMenuState(shown: boolean)
 {
   // TODO: can we 'show full screen UI' and show Main Menu at the same time?
   onGameStateChanged(shown ? GameState.MainMenuShown : GameState.Playing);
+}
+
+public function requestChangeFullScreenUIState(open: boolean)
+{
+  // TODO: can we 'show full screen UI' and show Main Menu at the same time?
+  onGameStateChanged(open ? GameState.FullScreenUIOpened : GameState.Playing);
 }
 
 /*------------------------------------------ Handling GAME EVENTS LISTENERS ------------------------------------------*/

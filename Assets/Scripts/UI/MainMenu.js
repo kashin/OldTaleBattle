@@ -119,6 +119,12 @@ private function drawMainMenu()
           {
             Application.LoadLevel(mcAvailableLevels[i]);
           }
+          else
+          {
+            // Level is already running, let's close Main Menu then.
+            // Asking to close a Main Menu.
+            mcGameDirectorComponent.requestChangeMainMenuState(!mcMenuShown);
+          }
         }
         nextButtonPosY += mcButtonSize.y + mcSpaceBetweenButtons;
       }

@@ -127,6 +127,11 @@ public function applyDamage(damage: Damage)
   mcPlayerStats.applyDamage(damage);
 }
 
+public function applyScore(score: int)
+{
+  mcPlayerStats.applyScore(score);
+}
+
 private function updateManaRegenerationCycle()
 {
   if (mcRegenerateMana)

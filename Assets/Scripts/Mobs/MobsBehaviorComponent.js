@@ -242,6 +242,7 @@ function playDeath()
     Invoke("destroyMobObject", animation[mcDeathAnimationName].length + mcDeathDelay);
     animation[mcDeathAnimationName].wrapMode = WrapMode.ClampForever;
     animation.wrapMode = WrapMode.ClampForever;
+    mcPlayerBehavior.applyScore(mcMobsStats.getScoreValue());
   }
 }
 

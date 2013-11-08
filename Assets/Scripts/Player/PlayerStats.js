@@ -8,6 +8,7 @@ interface PlayerStatsListener
   function onHealthChanged(health: int);
   function onManaChanged(mana: int);
   function onLevelChanged(level: int);
+  function onAvailableSkillPointsChanged(availablePoints: int);
 }
 
 private var mcStatsListeners = new List.<PlayerStatsListener>();
@@ -16,19 +17,30 @@ private var mcStatsListeners = new List.<PlayerStatsListener>();
 
 
 /*------------------------------------------  STATS  ------------------------------------------*/
+
+/*------------------------------------------  STRENGTH  ------------------------------------------*/
 /// Strength is a stat that increases Player's health and physical(Melee) damage.
 var mcStrength: int = 10;
 public function get Strength(): int
 {
   return mcStrength;
 }
-public function set Strength(value: int)
+private function set Strength(value: int)
 {
   mcStrength = value;
   MaxHealth = mcBaseHealth + (mcBaseHealth * (mcStrength - mcBaseStrength) / mcBaseStrength);
   MeleeDamage = mcBaseMeleeDamage + (mcStrength - mcBaseStrength);
 }
 var mcBaseStrength: int = 10;
+
+public function increaseStrength(increase: int)
+{
+  if (AvailableSkillPoints > 0)
+  {
+    Strength += increase;
+  }
+  useAvailableSkillPoints(increase);
+}
 
 
 
@@ -40,12 +52,21 @@ public function get Intelligent(): int
 {
   return mcIntelligent;
 }
-public function set Intelligent(value: int)
+private function set Intelligent(value: int)
 {
   mcIntelligent = value;
   MaxMana = mcBaseMana + (mcBaseMana * (mcIntelligent - mcBaseIntelligent) / mcBaseIntelligent);
 }
 var mcBaseIntelligent: int = 10;
+
+public function increaseIntelligent(increase: int)
+{
+  if (AvailableSkillPoints > 0)
+  {
+    Intelligent += increase;
+  }
+  useAvailableSkillPoints(increase);
+}
 
 
 
@@ -64,6 +85,14 @@ public function set WillPower(value: int)
 }
 var mcBaseWillPower: int = 10;
 
+public function increaseWillPower(increase: int)
+{
+  if (AvailableSkillPoints > 0)
+  {
+    WillPower += increase;
+  }
+  useAvailableSkillPoints(increase);
+}
 
 
 
@@ -108,12 +137,12 @@ private function set MaxHealth(value: int)
 {
   if (value > mcMaxHealth)
   {
-    mcHealth = value; // restore health if max health is changed to a bigger value.
+    Health = value; // restore health if max health is changed to a bigger value.
   }
   mcMaxHealth = value;
-  if (mcMaxHealth < mcHealth) // something decreased our max Health level, let's 'fix' current health level.
+  if (mcMaxHealth < Health) // something decreased our max Health level, let's 'fix' current health level.
   {
-    mcHealth = mcMaxHealth;
+    Health = mcMaxHealth;
   }
 }
 var mcBaseHealth: int = 100;
@@ -134,10 +163,6 @@ private function set Mana(value: int)
   {
     value = 0;
   }
-  if (value > mcMaxMana)
-  {
-    value = mcMaxMana;
-  }
   mcMana = value;
 
   // inform listeners that mana is changed.
@@ -157,12 +182,12 @@ private function set MaxMana(value: int)
 {
   if (value > mcMaxMana)
   {
-    mcMana = value; // restore mana if max mana is changed to a bigger value.
+    Mana = value; // restore mana if max mana is changed to a bigger value.
   }
   mcMaxMana = value;
   if (mcMaxMana < mcMana) // something decreased our max Mana level, let's 'fix' current mana level.
   {
-    mcMana = mcMaxMana;
+    Mana = mcMaxMana;
   }
 }
 var mcBaseMana: int = 100;
@@ -200,9 +225,9 @@ private function set Experience(value: int)
     value = 0;
   }
   mcExperience = value;
-  Level = mcExperience / mcExperienceLevelBase;
+  Level = 1 + mcExperience / mcExperienceLevelBase;
 }
-private var mcExperienceLevelBase: int = 1000;
+private var mcExperienceLevelBase: int = 100;
 
 
 /*------------------------------------------  LEVEL  ------------------------------------------*/
@@ -214,10 +239,16 @@ public function get Level(): int
 }
 private function set Level(value: int)
 {
+  if (value == mcLevel)
+  {
+    return;
+  }
+
   if (value < 1)
   {
     value = 1;
   }
+  AvailableSkillPoints += value - mcLevel;
   mcLevel = value;
 
   // inform listeners that level is changed.
@@ -226,8 +257,37 @@ private function set Level(value: int)
     mcStatsListeners[i].onLevelChanged(mcLevel);
   }
 }
+/*------------------------------------------  AVAILABLE SKILL POINTS  ------------------------------------------*/
+/// Available skill points are increased when Player gains a level.
+var mcAvailableSkillPoints: int = 0;
+public function get AvailableSkillPoints(): int
+{
+  return mcAvailableSkillPoints;
+}
+private function set AvailableSkillPoints(value: int)
+{
+  if (value == mcAvailableSkillPoints)
+  {
+    return;
+  }
 
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcAvailableSkillPoints = value;
 
+  // inform listeners that available skill points are changed.
+  for (var i = 0; i < mcStatsListeners.Count; i++)
+  {
+    mcStatsListeners[i].onAvailableSkillPointsChanged(mcAvailableSkillPoints);
+  }
+}
+
+private function useAvailableSkillPoints(usedPoints: int)
+{
+  AvailableSkillPoints -= usedPoints;
+}
 
 
 
@@ -264,6 +324,11 @@ public function applyDamage(damage: Damage)
   // TODO: check type's resistant to calculate the real damage.
   var healthDrain = damage.DamageValue;
   Health -= healthDrain;
+}
+
+public function applyScore(score: int)
+{
+  Experience += score;
 }
 
 public function applyManaChange(manaChangedValue: int)

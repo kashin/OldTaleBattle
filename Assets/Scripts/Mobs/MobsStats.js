@@ -10,6 +10,7 @@ enum DamageType
   Mental
 }
 
+/*------------------------------------------ DAMAGE CLASS ------------------------------------------*/
 /// This class represents a damage that any character on a scene receives during attack.
 public class Damage
 {
@@ -34,13 +35,15 @@ public class Damage
   }
 }
 
-/*----- STATS -----*/
+/*------------------------------------------ STATS ------------------------------------------*/
+
+
+/*------------------------------------------ MOBS DAMAGE ------------------------------------------*/
 /// Contains mob's damage.
-/*----- DAMAGE -----*/
 var mcDamage: int = 10;
 var mcDamageType: DamageType = DamageType.Physical;
 
-/*----- HEALTH -----*/
+/*------------------------------------------ MOBS HEALTH ------------------------------------------*/
 /// Contains current mob's health.
 var mcHealth: int = 20;
 public function get Health(): int
@@ -56,6 +59,23 @@ private function set Health(value: int)
   mcHealth = value;
 }
 
+/*------------------------------------------ MOBS SCORE ------------------------------------------*/
+/// Contains current mob's health.
+var mcScore: int = 20;
+public function get Score(): int
+{
+  return mcScore;
+}
+private function set Score(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcScore = value;
+}
+
+/*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
 public function getAttackDamage(): Damage
 {
   return new Damage(mcDamageType, mcDamage);
@@ -64,6 +84,11 @@ public function getAttackDamage(): Damage
 public function applyDamage(damage: Damage)
 {
   Health -= damage.DamageValue;
+}
+
+public function getScoreValue(): int
+{
+  return Score;
 }
 
 @script AddComponentMenu ("Mobs/Mobs Stats")
