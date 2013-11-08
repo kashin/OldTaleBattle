@@ -25,8 +25,6 @@ private var mcStopRespawns: boolean = false;
 
 function Start()
 {
-  updateSpawnNewMob();
-  updateNextIncreaseMobsTime();
   var gameDirectorObject = GameObject.FindGameObjectWithTag("GameDirector");
   if (gameDirectorObject)
   {
@@ -36,6 +34,11 @@ function Start()
   else
   {
     Debug.LogError("BasicDynamicGameObject.Start(): GameDirector's GameObject not found");
+  }
+  if (!mcStopRespawns)
+  {
+    updateSpawnNewMob();
+    updateNextIncreaseMobsTime();
   }
 }
 
