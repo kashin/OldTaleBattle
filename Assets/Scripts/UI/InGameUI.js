@@ -205,6 +205,14 @@ private function closeSkillsScreen()
   mcGameDirectorComponent.requestChangeFullScreenUIState(false);
 }
 
+///------------------------------------------ GAME EVENTS LISTENER INTERFACE ------------------------------------------///
+function onGameStateChanged(gameState: GameState)
+{
+  super.onGameStateChanged(gameState);
+  mcSkillsCamera.enabled = gameState == GameState.FullScreenUIOpened;
+}
+
+
 ///------------------------------------------ PlayerStats listener interface ------------------------------------------///
 function onHealthChanged(health: int)
 {
