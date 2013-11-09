@@ -17,6 +17,24 @@ var mcDamage: int = 10;
 var mcBaseDamage: int = 10;
 var mcDamageType: DamageType = DamageType.Fire;
 
+var mcCharactersWillPower: int = 10;
+public function set CharactersWillPower(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcCharactersWillPower = value;
+  // Change damage according to an assigned Character's Will Power.
+  mcDamage = mcBaseCharactersWillPower + (mcBaseCharactersWillPower * (mcCharactersWillPower - mcBaseCharactersWillPower) / mcBaseCharactersWillPower);
+}
+public function get CharactersWillPower(): int
+{
+  return mcCharactersWillPower;
+}
+private var mcBaseCharactersWillPower: int = 10;
+
+/*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
 function Update()
 {
   if (!mcGameLogicStoped)

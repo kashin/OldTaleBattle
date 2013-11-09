@@ -12,10 +12,16 @@ public var mcSkillsElementSize: Vector2 = Vector2(100, 30); // TODO: should depe
 
 /*------------------------------------------ TEXTS ------------------------------------------*/
 public var mcOpenSkillsScreenButtonText = "C";
+
 public var mcAvailableSkillPointsText = "Skill Points:";
 public var mcStrengthSkillText = "Strength:";
 public var mcIntelligentSkillText = "Intelligent:";
 public var mcWillPowerSkillText = "Will Power:";
+
+public var mcHealthValueText = "Health:";
+public var mcManaValueText = "Mana:";
+public var mcMeleeAttackValueText = "Melee damage:";
+public var mcMagicAttackValueText = "Magic damage:";
 
 
 /*------------------------------------------ STYLES ------------------------------------------*/
@@ -30,6 +36,7 @@ public var mcFullManaBar : Texture2D;
 
 // SKILLS SCREEN TEXTURES
 public var mcLeftSkillsSectionTexture: Texture2D;
+public var mcRightSkillsSectionTexture: Texture2D;
 
 /*------------------------------------------ GAMEOBJECTS ------------------------------------------*/
 /// @brief holds a ref on a Player's GameObject.
@@ -45,6 +52,9 @@ private var mcOpenSkillsScreenButtonPos: Vector2 = Vector2(0, 0);
 private var mcAvailableSkillPointsChanged: boolean = false;
 
 private var mcLeftSkillsSectionSize: Vector2 = Vector2(0,0);
+
+private var mcRightSkillsSectionSize: Vector2 = Vector2(0,0);
+private var mcRightSkillsSectionPos: Vector2 = Vector2(0,0);
 
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
 function Start()
@@ -74,8 +84,13 @@ function Start()
     Debug.LogError("InGameUI: Player's object is not found!");
   }
   mcManaBarPos.x = Screen.width - mcBarSize.x - mcHealthBarPos.x;
+
   mcLeftSkillsSectionSize.x = Screen.width / 3;
   mcLeftSkillsSectionSize.y = Screen.height;
+  mcRightSkillsSectionSize.x = Screen.width / 3;
+  mcRightSkillsSectionSize.y = Screen.height;
+  mcRightSkillsSectionPos.x = mcRightSkillsSectionSize.x * 2;
+
   mcOpenSkillsScreenButtonPos.x = (Screen.width / 2) - (mcOpenSkillsButtonSize.x / 2);
   mcOpenSkillsScreenButtonPos.y = Screen.height * 0.02;
 }
@@ -148,6 +163,7 @@ private function drawFullScreenInGameUI()
 {
   // Let's draw Skills page.
   drawLeftSkillsScreenSection();
+  drawRightSkillsScreenSection();
 }
 
 private function drawLeftSkillsScreenSection()
@@ -182,7 +198,6 @@ private function drawLeftSkillsScreenSection()
     nextLeftSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
 
     // Will Power
-
     GUI.BeginGroup(Rect(nextLeftSectionPosition.x, nextLeftSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y));
       GUI.Label(Rect(0, 0, mcSkillsElementSize.x, mcSkillsElementSize.y), mcWillPowerSkillText + " " + mcPlayerStats.WillPower.ToString(), mcSkillsLabelsStyle);
       if (mcPlayerStats.AvailableSkillPoints > 0 && GUI.Button(Rect(mcSkillsElementSize.x - 20, 0, 20, 20), "+"))
@@ -190,7 +205,45 @@ private function drawLeftSkillsScreenSection()
         mcPlayerStats.increaseWillPower(1);
       }
     GUI.EndGroup();
+    nextLeftSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
 
+/*
+  /// TODO: Make Agility stat useful.
+    // Agility
+    GUI.BeginGroup(Rect(nextLeftSectionPosition.x, nextLeftSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y));
+      GUI.Label(Rect(0, 0, mcSkillsElementSize.x, mcSkillsElementSize.y), mcWillPowerSkillText + " " + mcPlayerStats.WillPower.ToString(), mcSkillsLabelsStyle);
+      if (mcPlayerStats.AvailableSkillPoints > 0 && GUI.Button(Rect(mcSkillsElementSize.x - 20, 0, 20, 20), "+"))
+      {
+        mcPlayerStats.increaseWillPower(1);
+      }
+    GUI.EndGroup();
+    nextLeftSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
+*/
+  GUI.EndGroup();
+}
+
+private function drawRightSkillsScreenSection()
+{
+  // Stats group.
+  GUI.BeginGroup(Rect(mcRightSkillsSectionPos.x, mcRightSkillsSectionPos.y, mcRightSkillsSectionSize.x, mcRightSkillsSectionSize.y));
+    GUI.DrawTexture(Rect(0, 0, mcRightSkillsSectionSize.x, mcRightSkillsSectionSize.y), mcRightSkillsSectionTexture, ScaleMode.StretchToFill);
+    var nextRightSectionPosition = Vector2(20, 20); // TODO: remove hardcoded values...
+
+    // Current Player's Health
+    GUI.Label(Rect(nextRightSectionPosition.x, nextRightSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y), mcHealthValueText + " " + mcPlayerStats.Health.ToString(), mcSkillsLabelsStyle);
+    nextRightSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
+
+    // Current Player's Mana
+    GUI.Label(Rect(nextRightSectionPosition.x, nextRightSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y), mcManaValueText + " " + mcPlayerStats.Mana.ToString(), mcSkillsLabelsStyle);
+    nextRightSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
+
+    // Current Player's Melee Attack
+    GUI.Label(Rect(nextRightSectionPosition.x, nextRightSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y), mcMeleeAttackValueText + " " + mcPlayerStats.MeleeDamage.ToString(), mcSkillsLabelsStyle);
+    nextRightSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
+
+    // Current Player's Melee Attack
+    GUI.Label(Rect(nextRightSectionPosition.x, nextRightSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y), mcMagicAttackValueText + " " + mcPlayerStats.MagicDamage.ToString(), mcSkillsLabelsStyle);
+    nextRightSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
   GUI.EndGroup();
 }
 

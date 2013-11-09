@@ -2,20 +2,6 @@
 public class PlayerBehavior extends BasicDynamicGameObject
 {
 /*------------------------------------------ MAGIC ATTACK ------------------------------------------*/
-var mcMagicAttackProjectile: GameObject;
-public function set MagicAttackProjectile(value: GameObject)
-{
-  mcMagicAttackProjectile = value;
-  if (mcMagicAttackProjectile)
-  {
-    mcProjectileBehavior = mcMagicAttackProjectile.GetComponent(ProjectileBehavior);
-  }
-}
-public function get MagicAttackProjectile(): GameObject
-{
-  return mcMagicAttackProjectile;
-}
-
 public var mcProjectileFiresUpper: float = 3.0f;
 
 
@@ -45,7 +31,6 @@ public var mcDeathAnimation = "Death";
 
 /*------------------------------------------ PRIVATE SECTION ------------------------------------------*/
 private var mcPlayerStats: PlayerStats;
-private var mcProjectileBehavior: ProjectileBehavior;
 
 private var mcRegenerateMana = true;
 
@@ -64,10 +49,6 @@ function Awake()
 function Start()
 {
   super.Start();
-  if (mcMagicAttackProjectile)
-  {
-    mcProjectileBehavior = mcMagicAttackProjectile.GetComponent(ProjectileBehavior);
-  }
 }
 
 function Update()
@@ -78,14 +59,7 @@ function Update()
   }
   if (Input.GetButtonDown("Magic Attack"))
   {
-    if (mcProjectileBehavior)
-    {
-      if (mcProjectileBehavior.ManaCost <= mcPlayerStats.Mana)
-      {
-        mcPlayerStats.applyManaChange(-mcProjectileBehavior.ManaCost);
-        Instantiate(mcMagicAttackProjectile, transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
-      }
-    }
+    mcPlayerStats.useMagicAttack(transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
   }
   if (!mcIsMeleeAttackInProgress && Input.GetButtonDown("Melee Attack"))
   {

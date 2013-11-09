@@ -80,8 +80,16 @@ public function get WillPower(): int
 }
 public function set WillPower(value: int)
 {
+  if (value < 0)
+  {
+    value = 0;
+  }
   mcWillPower = value;
   ManaRegeneration = mcBaseWillPower + (mcBaseWillPower * (mcWillPower - mcBaseWillPower) / mcBaseWillPower);
+  if (mcMagicAttackBehavior)
+  {
+    mcMagicAttackBehavior.CharactersWillPower = WillPower;
+  }
 }
 var mcBaseWillPower: int = 10;
 
@@ -192,6 +200,7 @@ private function set MaxMana(value: int)
 }
 var mcBaseMana: int = 100;
 
+/*------------------------------------------  MANA  REGENERATION ------------------------------------------*/
 /// Player's Mana regeneration. Read-only property. Depends on a Player's will power.
 public var mcManaRegeneration: int;
 public function get ManaRegeneration(): int
@@ -308,6 +317,58 @@ public function get MeleeDamage(): int
 private var mcBaseMeleeDamage: float = 10.0f;
 
 
+/*------------------------------------------  MAGIC ATTACK ------------------------------------------*/
+/// Holds a game object that is used as a Magic Attack.
+var mcMagicAttack: GameObject;
+public function set MagicAttack(value: GameObject)
+{
+  mcMagicAttack = value;
+  if (mcMagicAttack)
+  {
+    mcMagicAttackBehavior = mcMagicAttack.GetComponent(ProjectileBehavior);
+    mcMagicAttackBehavior.CharactersWillPower = WillPower;
+  }
+}
+public function get MagicAttack(): GameObject
+{
+  return mcMagicAttack;
+}
+private var mcMagicAttackBehavior: ProjectileBehavior; // TODO: replace by a MagicAttackStats.
+
+public function get MagicDamage(): int
+{
+  var damage = 0;
+  if (mcMagicAttackBehavior)
+  {
+    damage = mcMagicAttackBehavior.mcDamage;
+  }
+  return damage;
+}
+
+public function get MagicAttackType(): DamageType
+{
+  var type: DamageType;
+  if (mcMagicAttackBehavior)
+  {
+    type = mcMagicAttackBehavior.mcDamageType;
+  }
+  return type;
+}
+
+public function useMagicAttack(position: Vector3, rotation: Quaternion)
+{
+  if (mcMagicAttackBehavior)
+  {
+    if (mcMagicAttackBehavior.ManaCost <= Mana)
+    {
+      applyManaChange(-mcMagicAttackBehavior.ManaCost);
+      var newMagicAttack = Instantiate(mcMagicAttack, position, rotation);
+      var attackBehavior = newMagicAttack.GetComponent(ProjectileBehavior);
+      attackBehavior.CharactersWillPower = WillPower;
+    }
+  }
+}
+
 
 /*------------------------------------------  METHODS  ------------------------------------------*/
 function Start()
@@ -317,6 +378,7 @@ function Start()
   WillPower = mcWillPower;
   Health = MaxHealth;
   Mana = MaxMana;
+  MagicAttack = mcMagicAttack;
 }
 
 public function applyDamage(damage: Damage)
