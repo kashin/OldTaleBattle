@@ -171,6 +171,10 @@ private function set Mana(value: int)
   {
     value = 0;
   }
+  if (value > MaxMana)
+  {
+    value = MaxMana;
+  }
   mcMana = value;
 
   // inform listeners that mana is changed.
