@@ -10,7 +10,10 @@ private var mcGameDirector: GameDirector;
 
 function OnDestroy()
 {
-  mcGameDirector.removeGameEventsListener(this);
+  if (mcGameDirector)
+  {
+    mcGameDirector.removeGameEventsListener(this);
+  }
 }
 
 function Awake()

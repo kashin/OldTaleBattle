@@ -72,7 +72,7 @@ private function updateSpawnNewMob()
 protected function spawnNewMob()
 {
   // it is time to spawn a new mob.
-  var maxMobNumber = Mathf.Min(mcMobsListSizeForRandom, mcMobs.Length) - 1; // index is started from 0, so that's why we have -1.
+  var maxMobNumber = Mathf.Min(mcMobsListSizeForRandom, mcMobs.Length); // index is started from 0, so that's why we have -1.
   var index = Random.Range(0, maxMobNumber);
   var position = transform.position;
   var mob = Instantiate(mcMobs[index], position, transform.rotation);
@@ -82,7 +82,7 @@ protected function spawnNewMob()
 
 protected function increaseMobsListSizeForRandom()
 {
-  if (mcMobsListSizeForRandom < mcMobs.Length)
+  if (mcMobsListSizeForRandom <= mcMobs.Length)
   {
     mcMobsListSizeForRandom++;
   }

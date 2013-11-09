@@ -243,6 +243,15 @@ function playDeath()
     animation[mcDeathAnimationName].wrapMode = WrapMode.ClampForever;
     animation.wrapMode = WrapMode.ClampForever;
     mcPlayerBehavior.applyScore(mcMobsStats.getScoreValue());
+
+    gameObject.GetComponent(CharacterMotor).enabled = false;
+    gameObject.GetComponent(CharacterController).enabled = false;
+
+    var colliders = gameObject.GetComponentsInChildren(Collider);
+    for (var collider: Collider in colliders)
+    {
+      collider.enabled = false;
+    }
   }
 }
 
