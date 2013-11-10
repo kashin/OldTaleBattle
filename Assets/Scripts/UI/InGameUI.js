@@ -11,6 +11,10 @@ public var mcOpenSkillsButtonSize : Vector2 = Vector2(50,30);
 public var mcSkillsElementSize: Vector2 = Vector2(200, 50); // TODO: should depend on a screen resolution
 public var mcIncreaseSkillButtonSize: Vector2 = Vector2(40, 40);
 
+public var mcGameOverTextSize: Vector2 = Vector2(200, 50);
+public var mcGameOverStoryTextSize: Vector2 = Vector2(200, 200);
+public var mcGameOverBackButtonSize: Vector2 = Vector2(200, 50);
+
 /*------------------------------------------ TEXTS ------------------------------------------*/
 public var mcOpenSkillsScreenButtonText = "C";
 
@@ -24,10 +28,18 @@ public var mcManaValueText = "Mana:";
 public var mcMeleeAttackValueText = "Melee damage:";
 public var mcMagicAttackValueText = "Magic damage:";
 
+public var mcGameOverMainLabelText = "Game Over";
+public var mcGameScoreText = "Score:";
+public var mcGameOverText = "Our hero is unconscious. Is it over or his friends and allies will help him? Maybe...";
+public var mcGameOverBackButtonText = "Go to Main Menu";
+
 
 /*------------------------------------------ STYLES ------------------------------------------*/
 public var mcOpenSkillsScreenButtonStyle: GUIStyle;
 public var mcSkillsLabelsStyle: GUIStyle;
+
+public var mcGameOverMainLabelStyle: GUIStyle;
+public var mcGameOverTextStyle: GUIStyle;
 
 
 /*------------------------------------------ TEXTURES ------------------------------------------*/
@@ -38,6 +50,10 @@ public var mcFullManaBar : Texture2D;
 // SKILLS SCREEN TEXTURES
 public var mcLeftSkillsSectionTexture: Texture2D;
 public var mcRightSkillsSectionTexture: Texture2D;
+
+
+// GAME OVER TEXTURES
+public var mcGameOverBackgroundTexture: Texture2D;
 
 /*------------------------------------------ GAMEOBJECTS ------------------------------------------*/
 /// @brief holds a ref on a Player's GameObject.
@@ -56,6 +72,9 @@ private var mcLeftSkillsSectionSize: Vector2 = Vector2(0,0);
 
 private var mcRightSkillsSectionSize: Vector2 = Vector2(0,0);
 private var mcRightSkillsSectionPos: Vector2 = Vector2(0,0);
+
+private var mcGameOverPos: Vector2 = Vector2(0, 0);
+private var mcGameOverSize: Vector2 = Vector2(0, 0);
 
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
 function Start()
@@ -95,6 +114,12 @@ function Start()
   mcOpenSkillsScreenButtonPos.x = (Screen.width / 2) - (mcOpenSkillsButtonSize.x / 2);
   mcOpenSkillsScreenButtonPos.y = Screen.height * 0.02;
   mcSkillsElementSize.x = mcLeftSkillsSectionSize.x - 20;
+
+  mcGameOverPos.x = Screen.width / 5;
+  mcGameOverPos.y = Screen.height / 5;
+
+  mcGameOverSize.x = Screen.width - 2*mcGameOverPos.x;
+  mcGameOverSize.y = Screen.height - mcGameOverPos.y;
 }
 
 function Update()
@@ -122,12 +147,16 @@ function OnGUI()
       break;
     case GameState.FullScreenUIOpened:
       drawFullScreenInGameUI();
+    case GameState.GameOver:
+      drawGameOverUI();
     default:
       break;
   }
 }
 
 /*------------------------------------------ DRAW UI PRIVATE METHODS ------------------------------------------*/
+
+/*------------------------------------------ DRAW PLAYING STATE ------------------------------------------*/
 private function drawPlayingStateUI()
 {
   // HEALTH BAR
@@ -161,6 +190,7 @@ private function drawPlayingStateUI()
   }
 }
 
+/*------------------------------------------ DRAW FULL SCREEN UI STATE ------------------------------------------*/
 private function drawFullScreenInGameUI()
 {
   // Let's draw Skills page.
@@ -168,6 +198,36 @@ private function drawFullScreenInGameUI()
   drawRightSkillsScreenSection();
 }
 
+/*------------------------------------------ DRAW GAME OVER STATE ------------------------------------------*/
+private function drawGameOverUI()
+{
+  var spaceBetweenElelments: int = 20;
+  GUI.BeginGroup(Rect(mcGameOverPos.x, mcGameOverPos.y, mcGameOverSize.x, mcGameOverSize.y));
+    var middleOfArea = mcGameOverSize.x / 2;
+    var nextPos = Vector2(spaceBetweenElelments, spaceBetweenElelments);
+    GUI.DrawTexture(Rect(0, 0, mcGameOverSize.x, mcGameOverSize.y), mcGameOverBackgroundTexture, ScaleMode.StretchToFill);
+    // Draw GameOver
+    var mainLabelXPos = middleOfArea - nextPos.x - mcGameOverTextSize.x / 2;
+    GUI.Label(Rect(mainLabelXPos, nextPos.y, mcGameOverTextSize.x, mcGameOverTextSize.y), mcGameOverMainLabelText, mcGameOverMainLabelStyle);
+    nextPos.y += mcGameOverTextSize.y + spaceBetweenElelments;
+
+    // Draw Score.
+    GUI.Label(Rect(mainLabelXPos, nextPos.y, mcGameOverTextSize.x, mcGameOverTextSize.y), mcGameScoreText + " " + mcPlayerStats.Experience.ToString(), mcGameOverMainLabelStyle);
+    nextPos.y += mcGameOverTextSize.y + spaceBetweenElelments;
+
+    // Draw Game over story text.
+    GUI.Label(Rect(middleOfArea - mcGameOverStoryTextSize.x /2 - nextPos.x, nextPos.y, mcGameOverStoryTextSize.x, mcGameOverStoryTextSize.y), mcGameOverText, mcGameOverTextStyle);
+    nextPos.y += mcGameOverStoryTextSize.y + spaceBetweenElelments;
+
+    if (GUI.Button(Rect(middleOfArea - mcGameOverBackButtonSize.x / 2 - nextPos.x, nextPos.y, mcGameOverBackButtonSize.x, mcGameOverBackButtonSize.y), mcGameOverBackButtonText))
+    {
+      Application.LoadLevel(Application.loadedLevelName);
+    }
+  // TODO: safe result in a leader board.
+  GUI.EndGroup();
+}
+
+/*------------------------------------------ DRAW HELPERS METHODS ------------------------------------------*/
 private function drawLeftSkillsScreenSection()
 {
   var spaceBetweenElements = 20;

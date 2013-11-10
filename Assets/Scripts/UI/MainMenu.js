@@ -17,6 +17,7 @@ public class MainMenu extends BasicUIComponent
 /*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
 public function onGameStateChanged(gameState: GameState)
 {
+  super.onGameStateChanged(gameState);
   switch(gameState)
   {
     case GameState.Playing:
@@ -115,7 +116,7 @@ function Start()
 
 function Update()
 {
-  if (Input.GetButtonDown("Main Menu"))
+  if (mcGameState != GameState.GameOver && Input.GetButtonDown("Main Menu"))
   {
     if (mcShowSettingsPage)
     {

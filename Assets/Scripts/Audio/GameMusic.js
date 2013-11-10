@@ -7,10 +7,12 @@ public var mcLooped: boolean = false;
 public var mcAudioSource: AudioSource;
 public var mcInGameAudioClips: AudioClip[];
 public var mcMenuGameAudioClips: AudioClip[];
+public var mcGameOverAudioClips: AudioClip[];
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 private var mcCurrentInGameClip: AudioClip;
 private var mcCurrentMenuClip: AudioClip;
+private var mcCurrentGameOverClip: AudioClip;
 
 private var mcMainMenuComponent: MainMenu;
 private var mcGameDirector: GameDirector;
@@ -86,6 +88,16 @@ private function regenerateRandomMenuClip()
   }
 }
 
+private function regenerateRandomGameOverClip()
+{
+  var clipIndex: int;
+  if (mcGameOverAudioClips.Length > 0)
+  {
+    clipIndex = Random.Range(0, mcGameOverAudioClips.Length);
+    mcCurrentGameOverClip = mcGameOverAudioClips[clipIndex];
+  }
+}
+
 private function playInGameClip()
 {
   if (mcSoundEnabled)
@@ -103,6 +115,17 @@ private function playMenuClip()
   {
     mcAudioSource.Stop();
     mcAudioSource.clip = mcCurrentMenuClip;
+    mcAudioSource.loop = mcLooped;
+    mcAudioSource.Play();
+  }
+}
+
+private function playGameOverClip()
+{
+  if (mcSoundEnabled)
+  {
+    mcAudioSource.Stop();
+    mcAudioSource.clip = mcCurrentGameOverClip;
     mcAudioSource.loop = mcLooped;
     mcAudioSource.Play();
   }
@@ -159,7 +182,13 @@ function onGameStateChanged(gameState: GameState)
       playMenuClip();
       break;
     case GameState.GameOver:
-      // TODO: play game over music?
+      if (mcGameState == GameState.GameOver)
+      {
+        // do nothing if we are already playing a game over music.
+        break;
+      }
+      regenerateRandomGameOverClip();
+      playGameOverClip();
       break;
     default:
       break;

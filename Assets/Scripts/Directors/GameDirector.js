@@ -116,7 +116,7 @@ private function onGameStateChanged(gameState: GameState)
 /*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
 private function handlePlayerDeath()
 {
-  ///TODO: stop game and show 'game over' + points + credits + etc.
+  onGameStateChanged(GameState.GameOver);
 }
 
 } // GameDirector class

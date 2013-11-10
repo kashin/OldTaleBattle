@@ -160,6 +160,16 @@ private function checkApplyDamage()
   }
 }
 
+protected function onGameLogicStopedChanged(stoped: boolean)
+{
+  super.onGameLogicStopedChanged(stoped);
+  var platformInputController = GetComponent(PlatformInputController);
+  if (platformInputController != null)
+  {
+    platformInputController.enabled = !mcGameLogicStoped;
+  }
+}
+
 } // PlayerBehavior
 
 @script RequireComponent (Animation)
