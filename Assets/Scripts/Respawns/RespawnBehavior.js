@@ -107,7 +107,6 @@ protected function spawnNewMob()
   var mobsStats = mob.GetComponent(MobsStats);
   if (mobsStats)
   {
-    Debug.Log("setting a difficulty to a mob: " + mcGameDifficulty);
     mobsStats.Difficulty = mcGameDifficulty;
   }
   mcItIsTimeToSpawnNewMob = true;
