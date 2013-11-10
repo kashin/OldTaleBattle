@@ -147,8 +147,10 @@ function OnGUI()
       break;
     case GameState.FullScreenUIOpened:
       drawFullScreenInGameUI();
+      break;
     case GameState.GameOver:
       drawGameOverUI();
+      break;
     default:
       break;
   }
