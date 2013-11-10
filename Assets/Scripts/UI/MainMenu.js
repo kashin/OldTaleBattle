@@ -1,4 +1,17 @@
 ﻿
+interface ApplicationSettingsListener
+{
+  function onSoundEnabledChanged(enabled: boolean);
+  function onGameDifficultyChanged(gameDifficulty: GameDifficulty);
+}
+
+enum GameDifficulty
+{
+  Easy = 0,
+  Normal,
+  Hard
+}
+
 public class MainMenu extends BasicUIComponent
 {
 /*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
@@ -21,12 +34,16 @@ public function onGameStateChanged(gameState: GameState)
 }
 
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
+public var mcMenuShownOnStart: boolean = false;
 
 /*------------------------------------------ TEXT ------------------------------------------*/
 public var mcAvailableLevels: String[];
 public var mcMainLabelText = "Old Tale Battle";
 public var mcSettingsText = "Settings";
 public var mcExitText = "Exit";
+
+public var mcRandomMusicEnabledText = "Sound Enabled";
+public var mcGameDifficultiesText = ["Easy", "Normal", "Hard"];
 
 
 /*------------------------------------------ TEXTURES ------------------------------------------*/
@@ -38,14 +55,46 @@ public var mcMainMenuButtonsStyle: GUIStyle;
 
 /*------------------------------------------ SIZES ------------------------------------------*/
 // TODO: Sizes as percentage of a screen resolution?
-public var mcButtonSize: Vector2 = Vector2(100, 50);
+public var mcButtonSize: Vector2 = Vector2(100, 60);
 public var mcMainLabelSize: Vector2 = Vector2(400, 100);
-public var mcSpaceBetweenButtons: int = 15;
+public var mcSpaceBetweenButtons: int = 20;
+public var mcSettingsValuesPos: Vector2 = Vector2(mcSpaceBetweenButtons, 100);
 
+/*------------------------------------------ APPLICATION SETTINGS ------------------------------------------*/
+// Contains a value to find out whether in-game music is enabled or not.
+static var mcRandomMusicEnabled: boolean = true;
+public function get RandomMusicEnabled(): boolean
+{
+  return mcRandomMusicEnabled;
+}
+public function set RandomMusicEnabled(value: boolean)
+{
+  if (value != mcRandomMusicEnabled)
+  {
+    mcRandomMusicEnabled = value;
+    onSoundEnabledChanged(mcRandomMusicEnabled);
+  }
+}
+
+static var mcGameDifficulty: GameDifficulty = 1;
+public function get GameDifficulty(): GameDifficulty
+{
+  return mcGameDifficulty;
+}
+public function set GameDifficulty(value: GameDifficulty)
+{
+  if (value != mcGameDifficulty)
+  {
+    mcGameDifficulty = value;
+    onGameDifficultyChanged(mcGameDifficulty);
+  }
+}
 
 
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
+private var mcApplicationSettingsListeners = new List.<ApplicationSettingsListener>();
+
 private var mcMenuShown: boolean = false;
 private var mcShowSettingsPage: boolean = false;
 private var mcScreenWidth: int = 0;
@@ -61,6 +110,7 @@ function Start()
   super.Start();
   mcScreenWidth = Screen.width;
   mcScreenHeight = Screen.height;
+  mcGameDirectorComponent.requestChangeMainMenuState(mcMenuShownOnStart);
 }
 
 function Update()
@@ -145,6 +195,44 @@ private function drawMainMenu()
 
 private function drawSettingsPage()
 {
+  GUI.BeginGroup(Rect(0,0, mcScreenWidth, mcScreenHeight));
+    GUI.DrawTexture(Rect(0,0, mcScreenWidth, mcScreenHeight), mcMainMenuBackground, ScaleMode.StretchToFill);
+    GUI.Label(Rect(mcMainLabelPos.x, mcMainLabelPos.y, mcMainLabelSize.x, mcMainLabelSize.y), mcSettingsText, mcMainLabelStyle);
+    GUI.BeginGroup(Rect(mcSettingsValuesPos.x, mcSettingsValuesPos.y + mcMainLabelPos.y, mcScreenWidth, mcScreenHeight));
+      var elementPos = Vector2(mcSpaceBetweenButtons, mcSpaceBetweenButtons);
+      RandomMusicEnabled = GUI.Toggle(Rect(elementPos.x , elementPos.y, mcButtonSize.x, mcButtonSize.y), RandomMusicEnabled, mcRandomMusicEnabledText);
+      elementPos.y += mcButtonSize.y + mcSpaceBetweenButtons;
+      GameDifficulty = GUI.Toolbar(Rect(elementPos.x, elementPos.y, mcMainLabelSize.x, mcMainLabelSize.y / 2), GameDifficulty, mcGameDifficultiesText);
+    GUI.EndGroup();
+  GUI.EndGroup();
+}
+
+/*------------------------------------------ Handling APPLICATION SETTINGS LISTENERS ------------------------------------------*/
+public function addApplicationSettingsListener(listener: ApplicationSettingsListener)
+{
+  mcApplicationSettingsListeners.Add(listener);
+  // calling onSoundEnabledChanged to make sure that listener is 'initialized' currectly.
+  listener.onSoundEnabledChanged(mcRandomMusicEnabled);
+}
+
+public function removeApplicationSettingsListener(listener: ApplicationSettingsListener)
+{
+  mcApplicationSettingsListeners.Remove(listener);
+}
+
+private function onSoundEnabledChanged(enabled: boolean)
+{
+  for (var i = 0; i < mcApplicationSettingsListeners.Count; i++)
+  {
+    mcApplicationSettingsListeners[i].onSoundEnabledChanged(enabled);
+  }
+}
+private function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
+{
+  for (var i = 0; i < mcApplicationSettingsListeners.Count; i++)
+  {
+    mcApplicationSettingsListeners[i].onGameDifficultyChanged(gameDifficulty);
+  }
 }
 
 } // MainMenu class

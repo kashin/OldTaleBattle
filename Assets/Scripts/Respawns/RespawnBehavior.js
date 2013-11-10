@@ -1,5 +1,5 @@
 ﻿#pragma strict
-class RespawnBehavior extends MonoBehaviour implements GameEventsListener
+class RespawnBehavior extends MonoBehaviour implements GameEventsListener, ApplicationSettingsListener
 {
 /// holds a list of mobs that can be spawned by this spawn point.
 public var mcMobs: GameObject[];
@@ -22,6 +22,17 @@ private var mcItIsTimeToIncreaseListSize = true;
 private var mcItIsTimeToSpawnNewMob = true;
 
 private var mcStopRespawns: boolean = false;
+private var mcGameDifficulty: GameDifficulty = GameDifficulty.Normal;
+
+private var mcMainMenuComponent: MainMenu;
+
+function OnDestroy()
+{
+  if (mcMainMenuComponent)
+  {
+    mcMainMenuComponent.removeApplicationSettingsListener(this);
+  }
+}
 
 function Start()
 {
@@ -29,7 +40,10 @@ function Start()
   if (gameDirectorObject)
   {
     var gameDirector = gameDirectorObject.GetComponent(GameDirector);
-    gameDirector.addGameEventsListener(this);
+    if (gameDirector)
+    {
+      gameDirector.addGameEventsListener(this);
+    }
   }
   else
   {
@@ -39,6 +53,19 @@ function Start()
   {
     updateSpawnNewMob();
     updateNextIncreaseMobsTime();
+  }
+  var mainMenuObject = GameObject.FindGameObjectWithTag("MainMenu");
+  if (mainMenuObject)
+  {
+    mcMainMenuComponent = mainMenuObject.GetComponent(MainMenu);
+    if (mcMainMenuComponent)
+    {
+      mcMainMenuComponent.addApplicationSettingsListener(this);
+    }
+  }
+  else
+  {
+    Debug.LogError("BasicDynamicGameObject.Start(): GameDirector's GameObject not found");
   }
 }
 
@@ -77,6 +104,12 @@ protected function spawnNewMob()
   var position = transform.position;
   var mob = Instantiate(mcMobs[index], position, transform.rotation);
   mob.GetComponent(MobsBehaviorComponent).mcPlayer = mcPlayer;
+  var mobsStats = mob.GetComponent(MobsStats);
+  if (mobsStats)
+  {
+    Debug.Log("setting a difficulty to a mob: " + mcGameDifficulty);
+    mobsStats.Difficulty = mcGameDifficulty;
+  }
   mcItIsTimeToSpawnNewMob = true;
 }
 
@@ -94,6 +127,17 @@ function onGameStateChanged(gameState: GameState)
 {
   mcStopRespawns = gameState != GameState.Playing;
 }
+
+
+/*------------------------------------------ APPLICATION SETTINGS LISTENER INTERFACE ------------------------------------------*/
+function onSoundEnabledChanged(enabled: boolean)
+{}
+
+function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
+{
+  mcGameDifficulty = gameDifficulty;
+}
+
 
 } // Respawn Behavior
 

@@ -23,12 +23,20 @@ public function onGameStateChanged(gameState: GameState)
 
 function Start()
 {
+  updateGameDirector();
+}
+
+function updateGameDirector()
+{
   if (mcGameDirector == null)
   {
     mcGameDirector = GameObject.FindGameObjectWithTag("GameDirector");
   }
-  mcGameDirectorComponent = mcGameDirector.GetComponent(GameDirector);
-  mcGameDirectorComponent.addGameEventsListener(this);
+  if (mcGameDirector)
+  {
+    mcGameDirectorComponent = mcGameDirector.GetComponent(GameDirector);
+    mcGameDirectorComponent.addGameEventsListener(this);
+  }
 }
 
 

@@ -59,7 +59,7 @@ function onAvailableSkillPointsChanged(availablePoints: int)
 
 
 
-/*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
+/*------------------------------------------ MONOBEHAVIOR METHODS ------------------------------------------*/
 function Start()
 {
   if (mcPlayer == null)
@@ -76,6 +76,7 @@ function Start()
   }
 }
 
+/*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
 /// called if someone wants to show Main Menu.
 public function requestChangeMainMenuState(shown: boolean)
 {
