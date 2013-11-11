@@ -44,6 +44,7 @@ public var mcAvailableLevelsNames: String[];
 public var mcMainLabelText = "Old Tale Battle";
 public var mcSettingsText = "Settings";
 public var mcExitText = "Exit";
+public var mcBackButtonText = "Go Back";
 
 public var mcRandomMusicEnabledText = "Sound Enabled";
 public var mcGameDifficultiesText = ["Easy", "Normal", "Hard"];
@@ -62,6 +63,7 @@ public var mcButtonSize: Vector2 = Vector2(100, 60);
 public var mcMainLabelSize: Vector2 = Vector2(400, 100);
 public var mcSpaceBetweenButtons: int = 20;
 public var mcSettingsValuesPos: Vector2 = Vector2(mcSpaceBetweenButtons, 100);
+public var mcBackButtonSize: Vector2 = Vector2(100, 60);
 
 /*------------------------------------------ APPLICATION SETTINGS ------------------------------------------*/
 // Contains a value to find out whether in-game music is enabled or not.
@@ -104,6 +106,7 @@ private var mcScreenWidth: int = 0;
 private var mcScreenHeight: int = 0;
 private var mcButtonsPos: Vector2 = Vector2(0, 0);
 private var mcMainLabelPos: Vector2 = Vector2(0, 0);
+private var mcBackButtonPos: Vector2 = Vector2(0, 0);
 
 
 
@@ -114,6 +117,8 @@ function Start()
   mcScreenWidth = Screen.width;
   mcScreenHeight = Screen.height;
   mcGameDirectorComponent.requestChangeMainMenuState(mcMenuShownOnStart);
+  mcBackButtonPos.x = mcSpaceBetweenButtons;
+  mcBackButtonPos.y = mcScreenHeight - mcBackButtonSize.y - mcSpaceBetweenButtons;
 }
 
 function Update()
@@ -158,16 +163,18 @@ function OnGUI()
 private function drawMainMenu()
 {
   GUI.BeginGroup(Rect(0,0, mcScreenWidth, mcScreenHeight));
+    var currentLevelName = Application.loadedLevelName;
     // Draw MainMenu's background.
     GUI.DrawTexture(Rect(0,0, mcScreenWidth, mcScreenHeight), mcMainMenuBackground, ScaleMode.StretchToFill);
     GUI.Label(Rect(mcMainLabelPos.x, mcMainLabelPos.y, mcMainLabelSize.x, mcMainLabelSize.y), mcMainLabelText, mcMainLabelStyle);
+    // Buttons group
     GUI.BeginGroup(Rect(mcButtonsPos.x, mcButtonsPos.y, mcScreenWidth, mcScreenHeight));
       // Draw MainMenu's buttons.
       var nextButtonPosY = 0;
       for (var i = 0; i < mcAvailableLevels.Length; i++)
       {
         var buttonsText = i < mcAvailableLevelsNames.Length ? mcAvailableLevelsNames[i] : mcAvailableLevels[i];
-        if ( Application.loadedLevelName != mcAvailableLevels[i] )
+        if ( currentLevelName != mcAvailableLevels[i] )
         {
           if (GUI.Button(Rect(0, nextButtonPosY, mcButtonSize.x, mcButtonSize.y), buttonsText, mcMainMenuButtonsStyle) )
           {
@@ -187,7 +194,19 @@ private function drawMainMenu()
       {
         Application.Quit();
       }
-    GUI.EndGroup();
+    GUI.EndGroup(); // buttons group
+
+    // Draw Back button only if we can 'go back' which is mean on all levels except 'MainMenu' level.
+    if ( currentLevelName != "MainMenu")
+    {
+      if (GUI.Button(Rect(mcBackButtonPos.x, mcBackButtonPos.y, mcBackButtonSize.x, mcBackButtonSize.y), mcBackButtonText, mcMainMenuButtonsStyle) )
+      {
+        // Level is already running, let's close Main Menu then.
+        // Asking GameDirector to close a Main Menu.
+        mcGameDirectorComponent.requestChangeMainMenuState(!mcMenuShown);
+      }
+    }
+
   GUI.EndGroup();
 }
 
@@ -196,12 +215,22 @@ private function drawSettingsPage()
   GUI.BeginGroup(Rect(0,0, mcScreenWidth, mcScreenHeight));
     GUI.DrawTexture(Rect(0,0, mcScreenWidth, mcScreenHeight), mcMainMenuBackground, ScaleMode.StretchToFill);
     GUI.Label(Rect(mcMainLabelPos.x, mcMainLabelPos.y, mcMainLabelSize.x, mcMainLabelSize.y), mcSettingsText, mcMainLabelStyle);
+
+    // Draw settings
     GUI.BeginGroup(Rect(mcSettingsValuesPos.x, mcSettingsValuesPos.y + mcMainLabelPos.y, mcScreenWidth, mcScreenHeight));
       var elementPos = Vector2(mcSpaceBetweenButtons, mcSpaceBetweenButtons);
+
       RandomMusicEnabled = GUI.Toggle(Rect(elementPos.x , elementPos.y, mcButtonSize.x, mcButtonSize.y), RandomMusicEnabled, mcRandomMusicEnabledText);
       elementPos.y += mcButtonSize.y + mcSpaceBetweenButtons;
+
       GameDifficulty = GUI.Toolbar(Rect(elementPos.x, elementPos.y, mcMainLabelSize.x, mcMainLabelSize.y / 2), GameDifficulty, mcGameDifficultiesText);
     GUI.EndGroup();
+
+    // Draw Back button.
+    if (GUI.Button(Rect(mcBackButtonPos.x, mcBackButtonPos.y, mcBackButtonSize.x, mcBackButtonSize.y), mcBackButtonText, mcMainMenuButtonsStyle) )
+    {
+      mcShowSettingsPage = !mcShowSettingsPage;
+    }
   GUI.EndGroup();
 }
 
