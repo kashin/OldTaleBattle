@@ -18,6 +18,7 @@ public var mcMinRespawnInTime: float = 4.0f;
 /// Decrease spawn time to currentSpawnTime * mcDecreaseSpawnTime seconds.
 public var mcDecreaseSpawnTime: float = 0.9;
 
+/*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 private var mcMobsListSizeForRandom: int = 1;
 private var mcItIsTimeToIncreaseListSize = true;
 private var mcItIsTimeToSpawnNewMob = true;
@@ -27,6 +28,15 @@ private var mcGameDifficulty: GameDifficulty = GameDifficulty.Normal;
 
 private var mcMainMenuComponent: MainMenu;
 
+private var mcSpawnInvokeCalled: float = 0.0f;
+private var mcSpawnMobInSeconds: float = 0.0f; // if 0, then we should generate a random number.
+
+private var mcIncreaseListSizeCalled: float = 0.0f;
+private var mcIncreaseListSizeInSeconds: float = 0.0f; // if 0, then we should generate a random number.
+
+
+
+/*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
 function OnDestroy()
 {
   if (mcMainMenuComponent)
@@ -79,12 +89,19 @@ function Update()
   }
 }
 
+/*------------------------------------------ SPAWN METHODS ------------------------------------------*/
 private function updateNextIncreaseMobsTime()
 {
   if (mcItIsTimeToIncreaseListSize)
   {
     mcItIsTimeToIncreaseListSize = false;
-    Invoke("increaseMobsListSizeForRandom", mcIncreaseMobsTime);
+    var increaseMobsListSize = mcIncreaseMobsTime;
+    if (mcIncreaseListSizeInSeconds != 0.0f)
+    {
+      increaseMobsListSize = mcIncreaseListSizeInSeconds;
+    }
+    Invoke("increaseMobsListSizeForRandom", increaseMobsListSize);
+    mcIncreaseListSizeCalled = Time.time;
   }
 }
 
@@ -93,7 +110,14 @@ private function updateSpawnNewMob()
   if (mcItIsTimeToSpawnNewMob)
   {
     mcItIsTimeToSpawnNewMob = false;
-    Invoke("spawnNewMob", Random.Range(mcMinRespawnInTime, mcMaxRespawnInTime) );
+    // if 0, then we should generate a new random number, otherwise it means that
+    // we are resuming our game (for example MainMenu is closed).
+    if (mcSpawnMobInSeconds == 0.0f)
+    {
+      mcSpawnMobInSeconds = Random.Range(mcMinRespawnInTime, mcMaxRespawnInTime);
+    }
+    Invoke("spawnNewMob", mcSpawnMobInSeconds );
+    mcSpawnInvokeCalled = Time.time;
   }
 }
 
@@ -111,6 +135,7 @@ protected function spawnNewMob()
     mobsStats.Difficulty = mcGameDifficulty;
   }
   mcItIsTimeToSpawnNewMob = true;
+  mcSpawnMobInSeconds = 0.0f;
 }
 
 protected function increaseMobsListSizeForRandom()
@@ -125,11 +150,28 @@ protected function increaseMobsListSizeForRandom()
     mcMaxRespawnInTime = mcMinRespawnInTime;
   }
   mcItIsTimeToIncreaseListSize = true;
+  mcIncreaseListSizeInSeconds = 0.0f;
 }
 
+/*------------------------------------------ GAME STATE LISTENER ------------------------------------------*/
 function onGameStateChanged(gameState: GameState)
 {
   mcStopRespawns = gameState != GameState.Playing;
+  if (gameState == GameState.GameOver)
+  {
+    // just stop all current respawns.
+    CancelInvoke();
+  }
+  else if (mcStopRespawns && !mcItIsTimeToSpawnNewMob)
+  {
+    // ok, 'safe' current respawn/increase list's size state and resume it later.
+    mcSpawnMobInSeconds = (mcSpawnInvokeCalled + mcSpawnMobInSeconds) - Time.time;
+    mcIncreaseListSizeInSeconds = (mcIncreaseListSizeCalled + mcIncreaseMobsTime) - Time.time;
+    // and cancel current invoke.
+    CancelInvoke();
+    mcItIsTimeToSpawnNewMob = true;
+    mcItIsTimeToIncreaseListSize = true;
+  }
 }
 
 

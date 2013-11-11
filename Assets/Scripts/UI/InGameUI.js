@@ -227,7 +227,7 @@ private function drawGameOverUI()
 
     if (GUI.Button(Rect(middleOfArea - mcGameOverBackButtonSize.x / 2 - nextPos.x, nextPos.y, mcGameOverBackButtonSize.x, mcGameOverBackButtonSize.y), mcGameOverBackButtonText))
     {
-      Application.LoadLevel(Application.loadedLevelName);
+      Application.LoadLevel("MainMenu");
     }
   // TODO: safe result in a leader board.
   GUI.EndGroup();

@@ -40,6 +40,7 @@ public var mcMenuShownOnStart: boolean = false;
 
 /*------------------------------------------ TEXT ------------------------------------------*/
 public var mcAvailableLevels: String[];
+public var mcAvailableLevelsNames: String[];
 public var mcMainLabelText = "Old Tale Battle";
 public var mcSettingsText = "Settings";
 public var mcExitText = "Exit";
@@ -162,23 +163,18 @@ private function drawMainMenu()
     GUI.Label(Rect(mcMainLabelPos.x, mcMainLabelPos.y, mcMainLabelSize.x, mcMainLabelSize.y), mcMainLabelText, mcMainLabelStyle);
     GUI.BeginGroup(Rect(mcButtonsPos.x, mcButtonsPos.y, mcScreenWidth, mcScreenHeight));
       // Draw MainMenu's buttons.
-      var nextButtonPosY = mcButtonsPos.y;
+      var nextButtonPosY = 0;
       for (var i = 0; i < mcAvailableLevels.Length; i++)
       {
-        if ( GUI.Button(Rect(0, nextButtonPosY, mcButtonSize.x, mcButtonSize.y), mcAvailableLevels[i], mcMainMenuButtonsStyle) )
+        var buttonsText = i < mcAvailableLevelsNames.Length ? mcAvailableLevelsNames[i] : mcAvailableLevels[i];
+        if ( Application.loadedLevelName != mcAvailableLevels[i] )
         {
-          if (Application.loadedLevelName != mcAvailableLevels[i])
+          if (GUI.Button(Rect(0, nextButtonPosY, mcButtonSize.x, mcButtonSize.y), buttonsText, mcMainMenuButtonsStyle) )
           {
             Application.LoadLevel(mcAvailableLevels[i]);
           }
-          else
-          {
-            // Level is already running, let's close Main Menu then.
-            // Asking to close a Main Menu.
-            mcGameDirectorComponent.requestChangeMainMenuState(!mcMenuShown);
-          }
+          nextButtonPosY += mcButtonSize.y + mcSpaceBetweenButtons;
         }
-        nextButtonPosY += mcButtonSize.y + mcSpaceBetweenButtons;
       }
       // Settings button.
       if ( GUI.Button(Rect(0, nextButtonPosY, mcButtonSize.x, mcButtonSize.y), mcSettingsText, mcMainMenuButtonsStyle) )
