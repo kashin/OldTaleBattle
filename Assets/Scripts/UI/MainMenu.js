@@ -9,7 +9,8 @@ enum GameDifficulty
 {
   Easy = 0,
   Normal,
-  Hard
+  Hard,
+  MaximumValue
 }
 
 public class MainMenu extends BasicUIComponent

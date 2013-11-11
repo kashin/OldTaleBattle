@@ -36,6 +36,7 @@ public var mcGameOverBackButtonText = "Go to Main Menu";
 
 /*------------------------------------------ STYLES ------------------------------------------*/
 public var mcOpenSkillsScreenButtonStyle: GUIStyle;
+public var mcOpenSkillsScreenButtonHasAvailablePointsStyle: GUIStyle;
 public var mcSkillsLabelsStyle: GUIStyle;
 
 public var mcGameOverMainLabelStyle: GUIStyle;
@@ -185,8 +186,11 @@ private function drawPlayingStateUI()
     GUI.EndGroup();
   }
 
+  var hasAvailableSkillPoints = mcPlayerStats.AvailableSkillPoints > 0;
+  var openSkillsScreenText = hasAvailableSkillPoints ? mcOpenSkillsScreenButtonText : "";
+  var openSkillsScreenStyle = hasAvailableSkillPoints ? mcOpenSkillsScreenButtonHasAvailablePointsStyle : mcOpenSkillsScreenButtonStyle;
   // Draw 'open Player's skills screen' button.
-  if (GUI.Button(Rect(mcOpenSkillsScreenButtonPos.x, mcOpenSkillsScreenButtonPos.y, mcOpenSkillsButtonSize.x, mcOpenSkillsButtonSize.y), mcOpenSkillsScreenButtonText, mcOpenSkillsScreenButtonStyle))
+  if (GUI.Button(Rect(mcOpenSkillsScreenButtonPos.x, mcOpenSkillsScreenButtonPos.y, mcOpenSkillsButtonSize.x, mcOpenSkillsButtonSize.y), openSkillsScreenText, openSkillsScreenStyle))
   {
     openSkillsScreen();
   }

@@ -47,8 +47,9 @@ public function set Difficulty(value: GameDifficulty)
   {
     mcDifficulty = value;
     var difficulty: int = mcDifficulty;
+    var maxValue: int = GameDifficulty.MaximumValue;
     Health = mcBaseHealth * (difficulty + 1) / 2;
-    Score = mcBaseScore * (difficulty + 1) / 2;
+    Score = mcBaseScore * (maxValue - difficulty) / 2;
     MobsDamage = mcBaseDamage * (difficulty + 1) / 2;
   }
 }
