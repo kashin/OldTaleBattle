@@ -1,3 +1,4 @@
 *.js text eol=lf
 .gitattributes text eol=lf
+.gitignore text eol=lf
 TODO text eol=lf
