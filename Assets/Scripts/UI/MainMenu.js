@@ -50,6 +50,7 @@ public var mcRandomMusicEnabledText = "Sound Enabled";
 public var mcGameDifficultiesText = ["Easy", "Normal", "Hard"];
 
 
+
 /*------------------------------------------ TEXTURES ------------------------------------------*/
 public var mcMainMenuBackground: Texture2D;
 
@@ -160,6 +161,7 @@ function OnGUI()
 
 /*------------------------------------------ DRAW METHODS ------------------------------------------*/
 
+/*------------------------------------------ DRAW MAINMENU ------------------------------------------*/
 private function drawMainMenu()
 {
   GUI.BeginGroup(Rect(0,0, mcScreenWidth, mcScreenHeight));
@@ -210,6 +212,7 @@ private function drawMainMenu()
   GUI.EndGroup();
 }
 
+/*------------------------------------------ DRAW SETTINGS ------------------------------------------*/
 private function drawSettingsPage()
 {
   GUI.BeginGroup(Rect(0,0, mcScreenWidth, mcScreenHeight));
@@ -218,9 +221,22 @@ private function drawSettingsPage()
 
     // Draw settings
     GUI.BeginGroup(Rect(mcSettingsValuesPos.x, mcSettingsValuesPos.y + mcMainLabelPos.y, mcScreenWidth, mcScreenHeight));
-      var elementPos = Vector2(mcSpaceBetweenButtons, mcSpaceBetweenButtons);
+      var elementPos = Vector2(mcSpaceBetweenButtons, 0);
 
-      RandomMusicEnabled = GUI.Toggle(Rect(elementPos.x , elementPos.y, mcButtonSize.x, mcButtonSize.y), RandomMusicEnabled, mcRandomMusicEnabledText);
+/* too lazy to make my own assets for toggle button, so had to use few ugly tricks to increase size of a default toggle button*/
+/// Start of ugly hack
+      var style = GUIStyle(GUI.skin.toggle);
+      style.fontSize = 18;
+      style.border = RectOffset(0,0,0,0);
+      style.onNormal.textColor = Color.white;
+      style.imagePosition = ImagePosition.ImageLeft;
+      var toggleButtonSize = mcButtonSize.x / 2;
+      style.overflow = RectOffset(-toggleButtonSize * 1.3,-toggleButtonSize * 2.3, -mcButtonSize.y / 2 + toggleButtonSize / 3.0 , -mcButtonSize.y / 2 + toggleButtonSize / 25.0);
+      style.padding.left = mcButtonSize.x;
+      style.padding.top = 10;
+/// End of ugly hack
+
+      RandomMusicEnabled = GUI.Toggle(Rect(elementPos.x , elementPos.y, mcButtonSize.x * 2, mcButtonSize.y), RandomMusicEnabled, mcRandomMusicEnabledText, style);
       elementPos.y += mcButtonSize.y + mcSpaceBetweenButtons;
 
       GameDifficulty = GUI.Toolbar(Rect(elementPos.x, elementPos.y, mcMainLabelSize.x, mcMainLabelSize.y / 2), GameDifficulty, mcGameDifficultiesText);
