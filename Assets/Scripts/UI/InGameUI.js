@@ -116,11 +116,11 @@ function Start()
   mcOpenSkillsScreenButtonPos.y = Screen.height * 0.02;
   mcSkillsElementSize.x = mcLeftSkillsSectionSize.x - 20;
 
-  mcGameOverPos.x = Screen.width / 5;
-  mcGameOverPos.y = Screen.height / 5;
+  mcGameOverPos.x = 0.0f;//Screen.width / 5;
+  mcGameOverPos.y = 0.0f;//Screen.height / 5;
 
-  mcGameOverSize.x = Screen.width - 2*mcGameOverPos.x;
-  mcGameOverSize.y = Screen.height - mcGameOverPos.y;
+  mcGameOverSize.x = Screen.width;// - 2*mcGameOverPos.x;
+  mcGameOverSize.y = Screen.height;// - mcGameOverPos.y;
 }
 
 function Update()
@@ -240,7 +240,7 @@ private function drawLeftSkillsScreenSection()
   var rightButtonsMargin = 50;
   // Stats group.
   GUI.BeginGroup(Rect(0, 0, mcLeftSkillsSectionSize.x, mcLeftSkillsSectionSize.y));
-    GUI.DrawTexture(Rect(0, 0, mcLeftSkillsSectionSize.x, mcLeftSkillsSectionSize.y), mcLeftSkillsSectionTexture, ScaleMode.StretchToFill);
+    GUI.DrawTexture(Rect(0, 0, Screen.width, Screen.height), mcLeftSkillsSectionTexture, ScaleMode.StretchToFill);
     var nextLeftSectionPosition = Vector2(spaceBetweenElements, spaceBetweenElements); // TODO: remove hardcoded values...
 
     // Available skill points
@@ -297,7 +297,7 @@ private function drawRightSkillsScreenSection()
   var spaceBetweenElements = 20;
   // Stats group.
   GUI.BeginGroup(Rect(mcRightSkillsSectionPos.x, mcRightSkillsSectionPos.y, mcRightSkillsSectionSize.x, mcRightSkillsSectionSize.y));
-    GUI.DrawTexture(Rect(0, 0, mcRightSkillsSectionSize.x, mcRightSkillsSectionSize.y), mcRightSkillsSectionTexture, ScaleMode.StretchToFill);
+    GUI.DrawTexture(Rect(-mcRightSkillsSectionPos.x, -mcRightSkillsSectionPos.y, Screen.width, Screen.height), mcRightSkillsSectionTexture, ScaleMode.StretchToFill);
     var nextRightSectionPosition = Vector2(spaceBetweenElements, spaceBetweenElements); // TODO: remove hardcoded values...
 
     // Current Player's Health

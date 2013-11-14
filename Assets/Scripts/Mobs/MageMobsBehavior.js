@@ -34,6 +34,7 @@ class MageMobsBehavior extends MobsBehaviorComponent
       var projectileBehavior = projectile.GetComponent(ProjectileBehavior);
       projectileBehavior.mcCollideWithPlayer = true;
       projectileBehavior.mcCollideWithEnemy = false;
+      projectileBehavior.mcSpeed = 0.5f;
       CancelInvoke();
     }
   }

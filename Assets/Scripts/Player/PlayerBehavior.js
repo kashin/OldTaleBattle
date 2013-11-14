@@ -9,6 +9,7 @@ public var mcProjectileFiresUpper: float = 3.0f;
 /*------------------------------------------ MELEE ATTACK ------------------------------------------*/
 public var mcMeleeAttackRange: float = 10.0f;
 public var mcMeleeAttackArcAngle: float = 0.3f;
+public var mcMeleeAttackSpeed: float = 2.0f;
 private var mcIsMeleeAttackInProgress: boolean = false;
 
 
@@ -49,6 +50,7 @@ function Awake()
 function Start()
 {
   super.Start();
+  animation[mcAttackAnimation].speed *= mcMeleeAttackSpeed;
 }
 
 function Update()
@@ -64,8 +66,8 @@ function Update()
   if (!mcIsMeleeAttackInProgress && Input.GetButtonDown("Melee Attack"))
   {
     mcIsMeleeAttackInProgress = true;
-    Invoke("checkApplyDamage", animation[mcAttackAnimation].length / 2.0f);
-    Invoke("updateMeleeAttackState", animation[mcAttackAnimation].length);
+    Invoke("checkApplyDamage", animation[mcAttackAnimation].length / (mcMeleeAttackSpeed * 2.0f));
+    Invoke("updateMeleeAttackState", animation[mcAttackAnimation].length / mcMeleeAttackSpeed);
   }
   updateManaRegenerationCycle();
   updateAnimation();
