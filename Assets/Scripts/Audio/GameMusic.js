@@ -39,10 +39,6 @@ function Start()
   {
     mcAudioSource = audio;
   }
-
-  regenerateRandomInGameClip();
-  regenerateRandomMenuClip();
-  playMenuClip();
   var mainMenuObject = GameObject.FindGameObjectWithTag("MainMenu");
   if (mainMenuObject)
   {
@@ -65,6 +61,9 @@ function Start()
       mcGameDirector.addGameEventsListener(this);
     }
   }
+  regenerateRandomInGameClip();
+  regenerateRandomMenuClip();
+  playMenuClip();
 }
 
 /*------------------------------------------ CUSTOM METHODS ------------------------------------------*/

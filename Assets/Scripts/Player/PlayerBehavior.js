@@ -3,6 +3,8 @@ public class PlayerBehavior extends BasicDynamicGameObject
 {
 /*------------------------------------------ MAGIC ATTACK ------------------------------------------*/
 public var mcProjectileFiresUpper: float = 3.0f;
+public var mcHandleAttacksInput: boolean = true;
+public var mcIgnorePlatformInputController: boolean = false; // true if do not want to change PlatformInputController's enabled state.
 
 
 
@@ -59,11 +61,11 @@ function Update()
   {
     return;
   }
-  if (Input.GetButtonDown("Magic Attack"))
+  if (mcHandleAttacksInput && Input.GetButtonDown("Magic Attack"))
   {
     mcPlayerStats.useMagicAttack(transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
   }
-  if (!mcIsMeleeAttackInProgress && Input.GetButtonDown("Melee Attack"))
+  if (mcHandleAttacksInput && !mcIsMeleeAttackInProgress && Input.GetButtonDown("Melee Attack"))
   {
     mcIsMeleeAttackInProgress = true;
     Invoke("checkApplyDamage", animation[mcAttackAnimation].length / (mcMeleeAttackSpeed * 2.0f));
@@ -166,7 +168,7 @@ protected function onGameLogicStopedChanged(stoped: boolean)
 {
   super.onGameLogicStopedChanged(stoped);
   var platformInputController = GetComponent(PlatformInputController);
-  if (platformInputController != null)
+  if (!mcIgnorePlatformInputController && platformInputController != null)
   {
     platformInputController.enabled = !mcGameLogicStoped;
   }
