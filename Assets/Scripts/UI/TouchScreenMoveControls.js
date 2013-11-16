@@ -230,4 +230,4 @@ private function ConstantSlerp (from : Vector3, to : Vector3, angle : float)
 
 }
 
-@script AddComponentMenu ("UI/Touch Screen UI")
+@script AddComponentMenu ("UI/Touch Screen Move UI")
