@@ -63,21 +63,29 @@ function Update()
   }
   if (mcHandleAttacksInput && Input.GetButtonDown("Magic Attack"))
   {
-    mcPlayerStats.useMagicAttack(transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
+    performMagicAttack();
   }
   if (mcHandleAttacksInput && !mcIsMeleeAttackInProgress && Input.GetButtonDown("Melee Attack"))
   {
-    mcIsMeleeAttackInProgress = true;
-    Invoke("checkApplyDamage", animation[mcAttackAnimation].length / (mcMeleeAttackSpeed * 2.0f));
-    Invoke("updateMeleeAttackState", animation[mcAttackAnimation].length / mcMeleeAttackSpeed);
+    performMeleeAttack();
   }
   updateManaRegenerationCycle();
   updateAnimation();
 }
 
-
-
 /*------------------------------------------ COMPONENT METHODS ------------------------------------------*/
+public function performMeleeAttack()
+{
+  mcIsMeleeAttackInProgress = true;
+  Invoke("checkApplyDamage", animation[mcAttackAnimation].length / (mcMeleeAttackSpeed * 2.0f));
+  Invoke("updateMeleeAttackState", animation[mcAttackAnimation].length / mcMeleeAttackSpeed);
+}
+
+public function performMagicAttack()
+{
+  mcPlayerStats.useMagicAttack(transform.position + transform.up * mcProjectileFiresUpper, transform.rotation);
+}
+
 private function updateAnimation()
 {
   if (mcPlayerStats.Health == 0)

@@ -15,6 +15,8 @@ public var mcGameOverTextSize: Vector2 = Vector2(200, 50);
 public var mcGameOverStoryTextSize: Vector2 = Vector2(200, 200);
 public var mcGameOverBackButtonSize: Vector2 = Vector2(200, 50);
 
+public var mcBarLabelFontSize = 20;
+
 /*------------------------------------------ TEXTS ------------------------------------------*/
 public var mcOpenSkillsScreenButtonText = "C";
 
@@ -76,6 +78,8 @@ private var mcRightSkillsSectionPos: Vector2 = Vector2(0,0);
 
 private var mcGameOverPos: Vector2 = Vector2(0, 0);
 private var mcGameOverSize: Vector2 = Vector2(0, 0);
+
+private var mcBarLabelStyle: GUIStyle;
 
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
 function Start()
@@ -141,6 +145,12 @@ function Update()
 
 function OnGUI()
 {
+  if (mcBarLabelStyle == null)
+  {
+    mcBarLabelStyle = GUIStyle(GUI.skin.label);
+    mcBarLabelStyle.fontSize = mcBarLabelFontSize;
+  }
+
   switch(mcGameState)
   {
     case GameState.Playing:
@@ -170,7 +180,7 @@ private function drawPlayingStateUI()
       GUI.BeginGroup(Rect(2, 2, mcBarSize.x * mcHealthSize - 4, mcBarSize.y - 4));
         GUI.DrawTexture(Rect(0, 0, mcBarSize.x, mcBarSize.y), mcFullHealthBar, ScaleMode.StretchToFill);
       GUI.EndGroup();
-      GUI.Label(Rect( mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Health.ToString());
+      GUI.Label(Rect( mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Health.ToString(), mcBarLabelStyle);
     GUI.EndGroup();
   }
 
@@ -182,7 +192,7 @@ private function drawPlayingStateUI()
       GUI.BeginGroup(Rect(2, 2, mcBarSize.x * mcManaSize - 4, mcBarSize.y - 4));
         GUI.DrawTexture(Rect(0, 0, mcBarSize.x, mcBarSize.y), mcFullManaBar, ScaleMode.StretchToFill);
       GUI.EndGroup();
-      GUI.Label(Rect(mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Mana.ToString());
+      GUI.Label(Rect(mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Mana.ToString(), mcBarLabelStyle);
     GUI.EndGroup();
   }
 

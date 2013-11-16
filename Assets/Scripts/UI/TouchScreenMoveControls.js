@@ -1,6 +1,6 @@
 ﻿#pragma strict
 
-public class TouchScreenControls extends BasicUIComponent
+public class TouchScreenMoveControls extends BasicUIComponent
 {
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mcPlayersMotor: CharacterMotor;
@@ -11,41 +11,27 @@ public var mcMaxRotationSpeed: float = 540;
 
 /*------------------------------------------ TEXTURES ------------------------------------------*/
 
-// Arrows
-public var mcLeftArrowStyle: GUIStyle;
-public var mcRightArrowStyle: GUIStyle;
-public var mcUpArrowStyle: GUIStyle;
-public var mcDownArrowStyle: GUIStyle;
-
-//Attacks
-public var mcMeleeAttackStyle: GUIStyle;
-public var mcMagicAttackStyle: GUIStyle;
+public var mcMoveControlTexture: Texture2D;
 
 /*------------------------------------------ SIZES ------------------------------------------*/
 
-public var mcArrowControlSize: Vector2 = Vector2(50, 50);
-public var mcButtonControlSize: Vector2 = Vector2(60, 60);
+public var mcMoveControlSize: Vector2 = Vector2(50, 50);
 
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 
-// position of an arrows group
-private var mcArrowsPosition: Vector2 = Vector2(0, 0);
-private var mcArrowsGroupSize: Vector2 = Vector2(0, 0);
+// position of a move control
+private var mcMoveControlPosition: Vector2 = Vector2(0, 0);
+private var mcMoveControlsCenterGlobalPosition: Vector2 = Vector2(0, 0);
 
-// Arrows positions
-private var mcLeftArrowPos: Vector2 = Vector2(0, 0);
-private var mcUpArrowPos: Vector2 = Vector2(0, 0);
-private var mcRightArrowPos: Vector2 = Vector2(0, 0);
-private var mcDownArrowPos: Vector2 = Vector2(0, 0);
-
-private var mcSpaceSize: int = 10;
+private var mcSpaceSize: int = 30;
 
 private var mcCurrentVerticalSpeed: float = 0.0f;
 private var mcCurrentHorizontalSpeed: float = 0.0f;
 
 private var mcDecreaseVerticalSpeed = true; // if true we should 'slow down' our input
 private var mcDecreaseHorizontalSpeed = true; // if true we should 'slow down' our input
+
 
 
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
@@ -67,22 +53,15 @@ function Start()
       }
     }
   }
-  mcArrowsPosition.x = mcSpaceSize;
-  mcArrowsPosition.y = Screen.height - 3 * mcArrowControlSize.y - 3 * mcSpaceSize;
-  mcArrowsGroupSize.x = 3 * mcArrowControlSize.x + 2 * mcSpaceSize;
-  mcArrowsGroupSize.y = 3 * mcArrowControlSize.y + 2 * mcSpaceSize;
-
-  mcLeftArrowPos.x = 0;
-  mcLeftArrowPos.y = mcArrowControlSize.y + mcSpaceSize;
-  mcUpArrowPos.x = mcArrowControlSize.x + mcSpaceSize;
-  mcUpArrowPos.y = 0;
-  mcRightArrowPos.x = 2 * mcArrowControlSize.x + 2 * mcSpaceSize;
-  mcRightArrowPos.y = mcLeftArrowPos.y;
-  mcDownArrowPos.x = mcUpArrowPos.x;
-  mcDownArrowPos.y = 2 * mcArrowControlSize.y + 2 * mcSpaceSize;
+  mcMoveControlPosition.x = -(Screen.width / 2) + mcSpaceSize;
+  mcMoveControlPosition.y = - (Screen.height / 2) + mcSpaceSize;
+  guiTexture.pixelInset = Rect(mcMoveControlPosition.x, mcMoveControlPosition.y, mcMoveControlSize.x, mcMoveControlSize.y);
+  guiTexture.texture = mcMoveControlTexture;
+  mcMoveControlsCenterGlobalPosition.x = mcSpaceSize + mcMoveControlSize.x / 2;
+  mcMoveControlsCenterGlobalPosition.y = mcSpaceSize + mcMoveControlSize.y / 2;
 }
 
-function OnGUI()
+function Update()
 {
   if (!mcScreenControlsEnabled || mcGameState != GameState.Playing || !mcPlayersMotor)
   {
@@ -91,49 +70,29 @@ function OnGUI()
     return;
   }
 
-  // Arrows control.
-  GUI.BeginGroup(Rect(mcArrowsPosition.x, mcArrowsPosition.y, mcArrowsGroupSize.x, mcArrowsGroupSize.y));
-    if (GUI.RepeatButton(Rect(mcLeftArrowPos.x, mcLeftArrowPos.y, mcArrowControlSize.x, mcArrowControlSize.y), "", mcLeftArrowStyle))
+  // Check whether user is pressing on a 'move control' or not.
+  for (var i = 0; i < Input.touchCount; i++)
+  {
+    var touch = Input.GetTouch(i);
+    var touchPosition = touch.position;
+    if (guiTexture.HitTest(touchPosition))
     {
-      if (mcCurrentHorizontalSpeed > -1.0f) // -1.0 is a minimum speed.
+      if (touch.phase != TouchPhase.Canceled && touch.phase != TouchPhase.Ended)
       {
-        mcCurrentHorizontalSpeed -= 0.1f;
+        // ok, we have a pressed state on a control, that's good.
+        mcDecreaseVerticalSpeed = false;
+        mcDecreaseHorizontalSpeed = false;
+        mcCurrentHorizontalSpeed = (touchPosition.x - mcMoveControlsCenterGlobalPosition.x) / (mcMoveControlSize.x / 2);
+        mcCurrentVerticalSpeed = (touchPosition.y - mcMoveControlsCenterGlobalPosition.y) / (mcMoveControlSize.y / 2);
       }
-      mcDecreaseHorizontalSpeed = false;
     }
-    if (GUI.RepeatButton(Rect(mcRightArrowPos.x, mcRightArrowPos.y, mcArrowControlSize.x, mcArrowControlSize.y), "", mcRightArrowStyle))
-    {
-      if (mcCurrentHorizontalSpeed < 1.0f) // 1.0 is a maximum speed.
-      {
-        mcCurrentHorizontalSpeed += 0.1f;
-      }
-      mcDecreaseHorizontalSpeed = false;
-    }
-    if (GUI.RepeatButton(Rect(mcUpArrowPos.x, mcUpArrowPos.y, mcArrowControlSize.x, mcArrowControlSize.y), "", mcUpArrowStyle))
-    {
-      if (mcCurrentVerticalSpeed < 1.0f) // 1.0 is a maximum speed.
-      {
-        mcCurrentVerticalSpeed += 0.1f;
-      }
-      mcDecreaseVerticalSpeed = false;
-    }
-    if (GUI.RepeatButton(Rect(mcDownArrowPos.x, mcDownArrowPos.y, mcArrowControlSize.x, mcArrowControlSize.y), "", mcDownArrowStyle))
-    {
-      if (mcCurrentVerticalSpeed > -1.0f) // -1.0 is a minimum speed.
-      {
-        mcCurrentVerticalSpeed -= 0.1f;
-      }
-      mcDecreaseVerticalSpeed = false;
-    }
-  GUI.EndGroup();
-}
+  }
 
-function Update()
-{
+
+  // it is time to update move direction.
   var directionVector = Vector3(mcCurrentHorizontalSpeed, mcCurrentVerticalSpeed, 0.0f);
   updateCurrentSpeedValues();
   var speedyDirectionVector = getSpeedyDirectionVector(directionVector);
-  Debug.Log("input value=" + speedyDirectionVector);
   mcPlayersMotor.inputMoveDirection = speedyDirectionVector;
   updateRotationFromDirectionVector(directionVector);
 
@@ -151,7 +110,12 @@ private function updateCurrentSpeedValues()
 
   if (mcDecreaseVerticalSpeed && mcCurrentVerticalSpeed != 0.0f)
   {
-    if (mcCurrentVerticalSpeed < 0.0f)
+    if ( (mcCurrentVerticalSpeed > -0.11f && mcCurrentVerticalSpeed < 0.01f) ||
+         (mcCurrentVerticalSpeed > 0.01f && mcCurrentVerticalSpeed < 0.11f) )
+    {
+      mcCurrentVerticalSpeed = 0.0f;
+    }
+    else if (mcCurrentVerticalSpeed < 0.0f)
     {
       mcCurrentVerticalSpeed += 0.1f;
     }
@@ -163,7 +127,12 @@ private function updateCurrentSpeedValues()
 
   if (mcDecreaseHorizontalSpeed && mcCurrentHorizontalSpeed != 0.0f)
   {
-    if (mcCurrentHorizontalSpeed < 0.0f)
+    if ( (mcCurrentHorizontalSpeed > -0.11f && mcCurrentHorizontalSpeed < 0.01f) ||
+         (mcCurrentHorizontalSpeed > 0.01f && mcCurrentHorizontalSpeed < 0.11f) )
+    {
+      mcCurrentHorizontalSpeed = 0.0f;
+    }
+    else if (mcCurrentHorizontalSpeed < 0.0f)
     {
       mcCurrentHorizontalSpeed += 0.1f;
     }
@@ -174,6 +143,12 @@ private function updateCurrentSpeedValues()
   }
 }
 
+/*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
+public function onGameStateChanged(gameState: GameState)
+{
+  super.onGameStateChanged(gameState);
+  guiTexture.enabled = gameState == GameState.Playing;
+}
 
 
 
