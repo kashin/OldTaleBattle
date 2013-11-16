@@ -52,6 +52,8 @@ function Start()
   {
     Debug.LogError("BasicDynamicGameObject.Start(): GameDirector's GameObject not found");
   }
+  regenerateRandomInGameClip();
+  regenerateRandomMenuClip();
   var gameDirectorObject = GameObject.FindGameObjectWithTag("GameDirector");
   if (gameDirectorObject)
   {
@@ -61,9 +63,6 @@ function Start()
       mcGameDirector.addGameEventsListener(this);
     }
   }
-  regenerateRandomInGameClip();
-  regenerateRandomMenuClip();
-  playMenuClip();
 }
 
 /*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
@@ -172,11 +171,6 @@ function onGameStateChanged(gameState: GameState)
       playInGameClip();
       break;
     case GameState.MainMenuShown:
-      if (mcGameState == GameState.MainMenuShown)
-      {
-        // do nothing if we are already playing a Menu music.
-        break;
-      }
       regenerateRandomMenuClip();
       playMenuClip();
       break;

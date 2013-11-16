@@ -1,16 +1,14 @@
-﻿public class MeleeAttackTouchControl extends BasicUIComponent
+﻿public class MainMenuTouchControl extends BasicUIComponent
 {
 
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
-public var mcPlayer: PlayerBehavior;
-
 public var mcScreenControlEnabled: boolean = false;
 
 /*------------------------------------------ TEXTURES ------------------------------------------*/
 public var mcControlTexture: Texture2D;
 
 /*------------------------------------------ SIZES ------------------------------------------*/
-public var mcControlSize: Vector2 = Vector2(50, 50);
+public var mcControlSize: Vector2 = Vector2(100, 100);
 
 
 
@@ -29,16 +27,9 @@ private var mcSpaceSize: int = 30;
 function Start ()
 {
   super.Start();
-  if (!mcPlayer)
-  {
-    var playerObject = GameObject.FindGameObjectWithTag("Player");
-    if (playerObject)
-    {
-      mcPlayer = playerObject.GetComponent(PlayerBehavior);
-    }
-  }
-  mcControlPosition.x = Screen.width - mcSpaceSize - mcControlSize.x;
-  mcControlPosition.y = mcSpaceSize;
+
+  mcControlPosition.x = Screen.width / 2 - mcSpaceSize;
+  mcControlPosition.y = Screen.height - mcSpaceSize - mcControlSize.y;
   guiTexture.pixelInset = Rect(mcControlPosition.x, mcControlPosition.y, mcControlSize.x, mcControlSize.y);
   guiTexture.texture = mcControlTexture;
   mcControlsCenterGlobalPosition.x = mcControlPosition.x;
@@ -53,7 +44,7 @@ function Update ()
     return;
   }
 
-    // Check whether user is pressed on this control or not.
+  // Check whether user is pressed on this control or not.
   for (var i = 0; i < Input.touchCount; i++)
   {
     var touch = Input.GetTouch(i);
@@ -63,9 +54,10 @@ function Update ()
       if (touch.phase == TouchPhase.Began)
       {
         // ok, user pressed on a control, handling press now.
-        if (mcPlayer)
+        if (mcGameDirectorComponent)
         {
-          mcPlayer.performMeleeAttack();
+          // requesting to show a main menu.
+          mcGameDirectorComponent.requestChangeMainMenuState(true);
         }
       }
     }
@@ -82,4 +74,4 @@ public function onGameStateChanged(gameState: GameState)
 
 }
 
-@script AddComponentMenu ("UI/Touch Screen Melee Attack UI")
+@script AddComponentMenu ("UI/Touch Screen Main Menu UI")

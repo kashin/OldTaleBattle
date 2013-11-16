@@ -127,7 +127,7 @@ function Start()
   mcRightSkillsSectionPos.x = mcRightSkillsSectionSize.x * 2;
 
   mcOpenSkillsScreenButtonPos.x = (Screen.width / 2) - (mcOpenSkillsButtonSize.x / 2);
-  mcOpenSkillsScreenButtonPos.y = Screen.height * 0.9 - mcOpenSkillsButtonSize.y;
+  mcOpenSkillsScreenButtonPos.y = Screen.height * 0.92 - mcOpenSkillsButtonSize.y;
   mcSkillsElementSize.x = mcLeftSkillsSectionSize.x - 20;
 
   mcGameOverPos.x = 0.0f;

@@ -47,6 +47,12 @@ function Start ()
 
 function Update ()
 {
+  if (!mcScreenControlEnabled || mcGameState != GameState.Playing)
+  {
+    //do nothing if screen controls are disabled or if we are not in a Playing game state
+    return;
+  }
+
   // Check whether user is pressed on this control or not.
   for (var i = 0; i < Input.touchCount; i++)
   {
