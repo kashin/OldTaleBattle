@@ -17,6 +17,8 @@ public var mcGameOverBackButtonSize: Vector2 = Vector2(200, 50);
 
 public var mcBarLabelFontSize = 20;
 
+public var mcBackButtonSize: Vector2 = Vector2(100, 60);
+
 /*------------------------------------------ TEXTS ------------------------------------------*/
 public var mcOpenSkillsScreenButtonText = "C";
 
@@ -35,11 +37,14 @@ public var mcGameScoreText = "Score:";
 public var mcGameOverText = "Our hero is unconscious. Is it over or his friends and allies will help him? Maybe...";
 public var mcGameOverBackButtonText = "Go to Main Menu";
 
+public var mcBackButtonText = "Back";
+
 
 /*------------------------------------------ STYLES ------------------------------------------*/
 public var mcOpenSkillsScreenButtonStyle: GUIStyle;
 public var mcOpenSkillsScreenButtonHasAvailablePointsStyle: GUIStyle;
 public var mcSkillsLabelsStyle: GUIStyle;
+public var mcBackButtonStyle: GUIStyle;
 
 public var mcGameOverMainLabelStyle: GUIStyle;
 public var mcGameOverTextStyle: GUIStyle;
@@ -81,6 +86,11 @@ private var mcGameOverSize: Vector2 = Vector2(0, 0);
 
 private var mcBarLabelStyle: GUIStyle;
 
+private var mcBackButtonPos: Vector2 = Vector2(0, 0);
+private var mcSpaceBetweenElements = 30.0f;
+
+
+
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
 function Start()
 {
@@ -117,7 +127,7 @@ function Start()
   mcRightSkillsSectionPos.x = mcRightSkillsSectionSize.x * 2;
 
   mcOpenSkillsScreenButtonPos.x = (Screen.width / 2) - (mcOpenSkillsButtonSize.x / 2);
-  mcOpenSkillsScreenButtonPos.y = Screen.height * 0.02;
+  mcOpenSkillsScreenButtonPos.y = Screen.height * 0.9 - mcOpenSkillsButtonSize.y;
   mcSkillsElementSize.x = mcLeftSkillsSectionSize.x - 20;
 
   mcGameOverPos.x = 0.0f;
@@ -125,6 +135,9 @@ function Start()
 
   mcGameOverSize.x = Screen.width;
   mcGameOverSize.y = Screen.height;
+
+  mcBackButtonPos.x = mcSpaceBetweenElements;
+  mcBackButtonPos.y = Screen.height - mcBackButtonSize.y - 2 * mcSpaceBetweenElements;
 }
 
 function Update()
@@ -132,14 +145,7 @@ function Update()
   if (Input.GetButtonDown("Open Skills"))
   {
     // Open skills screen if we are in a 'Playing' state and close it otherwise.
-    if (mcGameState == GameState.Playing)
-    {
-      openSkillsScreen();
-    }
-    else if (mcGameState == GameState.FullScreenUIOpened)
-    {
-      closeSkillsScreen();
-    }
+    changeSkillsScreenState();
   }
 }
 
@@ -299,6 +305,13 @@ private function drawLeftSkillsScreenSection()
     GUI.EndGroup();
     nextLeftSectionPosition.y += mcSkillsElementSize.y + 10; // TODO: remove hardcoded value...
 */
+
+  // Back Button
+  if (GUI.Button(Rect(mcBackButtonPos.x, mcBackButtonPos.y, mcBackButtonSize.x, mcBackButtonSize.y), mcBackButtonText, mcBackButtonStyle) )
+  {
+    // update Game's State.
+    changeSkillsScreenState();
+  }
   GUI.EndGroup();
 }
 
@@ -337,6 +350,18 @@ private function openSkillsScreen()
 private function closeSkillsScreen()
 {
   mcGameDirectorComponent.requestChangeFullScreenUIState(false);
+}
+
+private function changeSkillsScreenState()
+{
+  if (mcGameState == GameState.Playing)
+  {
+    openSkillsScreen();
+  }
+  else if (mcGameState == GameState.FullScreenUIOpened)
+  {
+    closeSkillsScreen();
+  }
 }
 
 ///------------------------------------------ GAME EVENTS LISTENER INTERFACE ------------------------------------------///
