@@ -202,12 +202,13 @@ private function getSpeedyDirectionVector(directionVector: Vector3): Vector3
 
 function updateRotationFromDirectionVector(directionVector: Vector3)
 {
+  var directionForRotation = Vector3(directionVector.x, directionVector.z, directionVector.y);
   // Set rotation to the move direction
-  if (directionVector.sqrMagnitude > 0.01)
+  if (directionForRotation.sqrMagnitude > 0.01)
   {
     var newForward : Vector3 = ConstantSlerp(
       mcPlayersTransform.forward,
-      directionVector,
+      directionForRotation,
       mcMaxRotationSpeed * Time.deltaTime
     );
     var transformUpVector = mcPlayersTransform.up;
