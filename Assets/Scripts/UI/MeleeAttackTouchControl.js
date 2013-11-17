@@ -8,7 +8,7 @@ public var mcPlayer: PlayerBehavior;
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 
-// position of a move control
+// position of a control
 private var mcControlPosition: Vector2 = Vector2(0, 0);
 
 private var mcSpaceSize: int = 30;
@@ -51,14 +51,6 @@ protected function handleTouchBegan(touch: Touch)
   {
     mcPlayer.performMeleeAttack();
   }
-}
-
-
-/*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
-public function onGameStateChanged(gameState: GameState)
-{
-  super.onGameStateChanged(gameState);
-  guiTexture.enabled = gameState == GameState.Playing;
 }
 
 }

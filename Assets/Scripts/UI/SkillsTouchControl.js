@@ -1,14 +1,17 @@
-﻿public class MagicAttackTouchControl extends BaseTouchScreenControl
+﻿public class SkillsTouchControl extends BaseTouchScreenControl
 {
 
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
-public var mcPlayer: PlayerBehavior;
+public var mcInGameUI: InGameUI;
+public var mcPlayerStats: PlayerStats;
 
+/*------------------------------------------ TEXTURES ------------------------------------------*/
+public var mcSkillPointsAvailableControlTexture: Texture2D;
 
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 
-// position of a control
+// position of a move control
 private var mcControlPosition: Vector2 = Vector2(0, 0);
 
 private var mcSpaceSize: int = 30;
@@ -20,15 +23,23 @@ private var mcSpaceSize: int = 30;
 function Start ()
 {
   super.Start();
-  if (!mcPlayer)
+  if (!mcInGameUI)
+  {
+    var inGameUIObject = GameObject.FindGameObjectWithTag("InGameUI");
+    if (inGameUIObject)
+    {
+      mcInGameUI = inGameUIObject.GetComponent(InGameUI);
+    }
+  }
+  if (!mcPlayerStats)
   {
     var playerObject = GameObject.FindGameObjectWithTag("Player");
     if (playerObject)
     {
-      mcPlayer = playerObject.GetComponent(PlayerBehavior);
+      mcPlayerStats = playerObject.GetComponent(PlayerStats);
     }
   }
-  mcControlPosition.x = Screen.width - 3 * mcSpaceSize - 2 * mcControlSize.x;
+  mcControlPosition.x = Screen.width / 2 - mcSpaceSize - mcControlSize.x / 2;
   mcControlPosition.y = mcSpaceSize;
   guiTexture.pixelInset = Rect(mcControlPosition.x, mcControlPosition.y, mcControlSize.x, mcControlSize.y);
 }
@@ -40,20 +51,29 @@ function Update ()
     //do nothing if screen controls are disabled or if we are not in a Playing game state
     return;
   }
+
   super.Update();
+  var hasAvailableSkillPoints = mcPlayerStats.AvailableSkillPoints > 0;
+
+  if (hasAvailableSkillPoints)
+  {
+    guiTexture.texture = mcSkillPointsAvailableControlTexture;
+  }
+  else
+  {
+    guiTexture.texture = mcControlTexture;
+  }
 }
-
-
 
 /*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
 protected function handleTouchBegan(touch: Touch)
 {
-  if (mcPlayer)
+  if (mcInGameUI)
   {
-    mcPlayer.performMagicAttack();
+    mcInGameUI.changeSkillsScreenState();
   }
 }
 
 }
 
-@script AddComponentMenu ("UI/Touch Screen Magic Attack UI")
+@script AddComponentMenu ("UI/Touch Screen Open Skills UI")

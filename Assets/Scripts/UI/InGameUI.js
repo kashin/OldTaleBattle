@@ -7,7 +7,6 @@ public class InGameUI extends BasicUIComponent implements PlayerStatsListener
 public var mcHealthBarPos: Vector2 = Vector2(10,20);
 public var mcManaBarPos: Vector2 = Vector2(10,20);
 public var mcBarSize : Vector2 = Vector2(50,20);
-public var mcOpenSkillsButtonSize : Vector2 = Vector2(50,30);
 public var mcSkillsElementSize: Vector2 = Vector2(200, 50); // TODO: should depend on a screen resolution
 public var mcIncreaseSkillButtonSize: Vector2 = Vector2(40, 40);
 
@@ -20,8 +19,6 @@ public var mcBarLabelFontSize = 20;
 public var mcBackButtonSize: Vector2 = Vector2(100, 60);
 
 /*------------------------------------------ TEXTS ------------------------------------------*/
-public var mcOpenSkillsScreenButtonText = "C";
-
 public var mcAvailableSkillPointsText = "Skill Points:";
 public var mcStrengthSkillText = "Strength:";
 public var mcIntelligentSkillText = "Intelligent:";
@@ -41,8 +38,6 @@ public var mcBackButtonText = "Back";
 
 
 /*------------------------------------------ STYLES ------------------------------------------*/
-public var mcOpenSkillsScreenButtonStyle: GUIStyle;
-public var mcOpenSkillsScreenButtonHasAvailablePointsStyle: GUIStyle;
 public var mcSkillsLabelsStyle: GUIStyle;
 public var mcBackButtonStyle: GUIStyle;
 
@@ -72,7 +67,6 @@ public var mcSkillsCamera: Camera;
 private var mcPlayerStats: PlayerStats;
 private var mcHealthSize: float = 0.0f;
 private var mcManaSize: float = 0.0f;
-private var mcOpenSkillsScreenButtonPos: Vector2 = Vector2(0, 0);
 
 private var mcAvailableSkillPointsChanged: boolean = false;
 
@@ -126,9 +120,10 @@ function Start()
   mcRightSkillsSectionSize.y = Screen.height;
   mcRightSkillsSectionPos.x = mcRightSkillsSectionSize.x * 2;
 
-  mcOpenSkillsScreenButtonPos.x = (Screen.width / 2) - (mcOpenSkillsButtonSize.x / 2);
-  mcOpenSkillsScreenButtonPos.y = Screen.height * 0.92 - mcOpenSkillsButtonSize.y;
-  mcSkillsElementSize.x = mcLeftSkillsSectionSize.x - 20;
+  if (mcSkillsElementSize.x > mcLeftSkillsSectionSize.x)
+  {
+    mcSkillsElementSize.x = mcLeftSkillsSectionSize.x;
+  }
 
   mcGameOverPos.x = 0.0f;
   mcGameOverPos.y = 0.0f;
@@ -201,15 +196,6 @@ private function drawPlayingStateUI()
       GUI.Label(Rect(mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Mana.ToString(), mcBarLabelStyle);
     GUI.EndGroup();
   }
-
-  var hasAvailableSkillPoints = mcPlayerStats.AvailableSkillPoints > 0;
-  var openSkillsScreenText = hasAvailableSkillPoints ? mcOpenSkillsScreenButtonText : "";
-  var openSkillsScreenStyle = hasAvailableSkillPoints ? mcOpenSkillsScreenButtonHasAvailablePointsStyle : mcOpenSkillsScreenButtonStyle;
-  // Draw 'open Player's skills screen' button.
-  if (GUI.Button(Rect(mcOpenSkillsScreenButtonPos.x, mcOpenSkillsScreenButtonPos.y, mcOpenSkillsButtonSize.x, mcOpenSkillsButtonSize.y), openSkillsScreenText, openSkillsScreenStyle))
-  {
-    openSkillsScreen();
-  }
 }
 
 /*------------------------------------------ DRAW FULL SCREEN UI STATE ------------------------------------------*/
@@ -253,7 +239,7 @@ private function drawGameOverUI()
 private function drawLeftSkillsScreenSection()
 {
   var spaceBetweenElements = 20;
-  var rightButtonsMargin = 50;
+  var rightButtonsMargin = mcIncreaseSkillButtonSize.x + 20;
   // Stats group.
   GUI.BeginGroup(Rect(0, 0, mcLeftSkillsSectionSize.x, mcLeftSkillsSectionSize.y));
     GUI.DrawTexture(Rect(0, 0, Screen.width, Screen.height), mcLeftSkillsSectionTexture, ScaleMode.StretchToFill);
@@ -352,7 +338,7 @@ private function closeSkillsScreen()
   mcGameDirectorComponent.requestChangeFullScreenUIState(false);
 }
 
-private function changeSkillsScreenState()
+public function changeSkillsScreenState()
 {
   if (mcGameState == GameState.Playing)
   {

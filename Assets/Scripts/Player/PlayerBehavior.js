@@ -62,7 +62,7 @@ function Update()
     return;
   }
   if ( Input.GetButtonDown("Magic Attack") &&
-       (mcHandleMouseAttacksInput || (!mcHandleMouseAttacksInput && !Input.GetMouseButtonDown(0)) ) )
+       (mcHandleMouseAttacksInput || (!mcHandleMouseAttacksInput && !Input.GetMouseButtonDown(1)) ) )
   {
     performMagicAttack();
   }
