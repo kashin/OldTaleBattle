@@ -3,7 +3,7 @@ public class PlayerBehavior extends BasicDynamicGameObject
 {
 /*------------------------------------------ MAGIC ATTACK ------------------------------------------*/
 public var mcProjectileFiresUpper: float = 3.0f;
-public var mcHandleAttacksInput: boolean = true;
+public var mcHandleMouseAttacksInput: boolean = true;
 public var mcIgnorePlatformInputController: boolean = false; // true if do not want to change PlatformInputController's enabled state.
 
 
@@ -61,17 +61,20 @@ function Update()
   {
     return;
   }
-  if (mcHandleAttacksInput && Input.GetButtonDown("Magic Attack"))
+  if ( Input.GetButtonDown("Magic Attack") &&
+       (mcHandleMouseAttacksInput || (!mcHandleMouseAttacksInput && !Input.GetMouseButtonDown(0)) ) )
   {
     performMagicAttack();
   }
-  if (mcHandleAttacksInput && !mcIsMeleeAttackInProgress && Input.GetButtonDown("Melee Attack"))
+  if ( !mcIsMeleeAttackInProgress && Input.GetButtonDown("Melee Attack") &&
+      (mcHandleMouseAttacksInput || (!mcHandleMouseAttacksInput && !Input.GetMouseButtonDown(0)) ) )
   {
     performMeleeAttack();
   }
   updateManaRegenerationCycle();
   updateAnimation();
 }
+
 
 /*------------------------------------------ COMPONENT METHODS ------------------------------------------*/
 public function performMeleeAttack()

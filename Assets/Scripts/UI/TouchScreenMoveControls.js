@@ -1,6 +1,6 @@
 ﻿#pragma strict
 
-public class TouchScreenMoveControls extends BasicUIComponent
+public class TouchScreenMoveControls extends BaseTouchScreenControl
 {
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mcPlayersMotor: CharacterMotor;
@@ -8,14 +8,6 @@ public var mcPlayersTransform: Transform;
 public var mcScreenControlsEnabled: boolean = false;
 public var mcCharacterSpeed: float = 3.0;
 public var mcMaxRotationSpeed: float = 540;
-
-/*------------------------------------------ TEXTURES ------------------------------------------*/
-
-public var mcMoveControlTexture: Texture2D;
-
-/*------------------------------------------ SIZES ------------------------------------------*/
-
-public var mcMoveControlSize: Vector2 = Vector2(50, 50);
 
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
@@ -55,10 +47,9 @@ function Start()
   }
   mcMoveControlPosition.x = -(Screen.width / 2) + mcSpaceSize;
   mcMoveControlPosition.y = - (Screen.height / 2) + mcSpaceSize;
-  guiTexture.pixelInset = Rect(mcMoveControlPosition.x, mcMoveControlPosition.y, mcMoveControlSize.x, mcMoveControlSize.y);
-  guiTexture.texture = mcMoveControlTexture;
-  mcMoveControlsCenterGlobalPosition.x = mcSpaceSize + mcMoveControlSize.x / 2;
-  mcMoveControlsCenterGlobalPosition.y = mcSpaceSize + mcMoveControlSize.y / 2;
+  guiTexture.pixelInset = Rect(mcMoveControlPosition.x, mcMoveControlPosition.y, mcControlSize.x, mcControlSize.y);
+  mcMoveControlsCenterGlobalPosition.x = mcSpaceSize + mcControlSize.x / 2;
+  mcMoveControlsCenterGlobalPosition.y = mcSpaceSize + mcControlSize.y / 2;
 }
 
 function Update()
@@ -70,24 +61,7 @@ function Update()
     return;
   }
 
-  // Check whether user is pressing on a 'move control' or not.
-  for (var i = 0; i < Input.touchCount; i++)
-  {
-    var touch = Input.GetTouch(i);
-    var touchPosition = touch.position;
-    if (guiTexture.HitTest(touchPosition))
-    {
-      if (touch.phase != TouchPhase.Canceled && touch.phase != TouchPhase.Ended)
-      {
-        // ok, we have a pressed state on a control, that's good.
-        mcDecreaseVerticalSpeed = false;
-        mcDecreaseHorizontalSpeed = false;
-        mcCurrentHorizontalSpeed = (touchPosition.x - mcMoveControlsCenterGlobalPosition.x) / (mcMoveControlSize.x / 2);
-        mcCurrentVerticalSpeed = (touchPosition.y - mcMoveControlsCenterGlobalPosition.y) / (mcMoveControlSize.y / 2);
-      }
-    }
-  }
-
+  super.Update();
 
   // it is time to update move direction.
   var directionVector = Vector3(mcCurrentHorizontalSpeed, mcCurrentVerticalSpeed, 0.0f);
@@ -105,6 +79,35 @@ function Update()
 
 
 /*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
+
+/*------------------------------------------ BaseTouchScreenControl's PROTECTED METHODS ------------------------------------------*/
+protected function handleTouchBegan(touch: Touch)
+{
+  handleTouchInput(touch);
+}
+
+protected function handleTouchMoved(touch: Touch)
+{
+  handleTouchInput(touch);
+}
+
+protected function handleTouchStationary(touch: Touch)
+{
+  handleTouchInput(touch);
+}
+
+
+
+/*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
+private function handleTouchInput(touch: Touch)
+{
+  var touchPosition = touch.position;
+  mcDecreaseVerticalSpeed = false;
+  mcDecreaseHorizontalSpeed = false;
+  mcCurrentHorizontalSpeed = (touchPosition.x - mcMoveControlsCenterGlobalPosition.x) / (mcControlSize.x / 2);
+  mcCurrentVerticalSpeed = (touchPosition.y - mcMoveControlsCenterGlobalPosition.y) / (mcControlSize.y / 2);
+}
+
 private function updateCurrentSpeedValues()
 {
 

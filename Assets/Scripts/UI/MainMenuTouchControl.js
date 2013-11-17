@@ -1,25 +1,12 @@
-﻿public class MainMenuTouchControl extends BasicUIComponent
+﻿public class MainMenuTouchControl extends BaseTouchScreenControl
 {
-
-/*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
-public var mcScreenControlEnabled: boolean = false;
-
-/*------------------------------------------ TEXTURES ------------------------------------------*/
-public var mcControlTexture: Texture2D;
-
-/*------------------------------------------ SIZES ------------------------------------------*/
-public var mcControlSize: Vector2 = Vector2(100, 100);
-
-
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 
 // position of a move control
 private var mcControlPosition: Vector2 = Vector2(0, 0);
-private var mcControlsCenterGlobalPosition: Vector2 = Vector2(0, 0);
 
 private var mcSpaceSize: int = 30;
-
 
 
 
@@ -31,9 +18,6 @@ function Start ()
   mcControlPosition.x = Screen.width / 2 - mcSpaceSize;
   mcControlPosition.y = Screen.height - mcSpaceSize - mcControlSize.y;
   guiTexture.pixelInset = Rect(mcControlPosition.x, mcControlPosition.y, mcControlSize.x, mcControlSize.y);
-  guiTexture.texture = mcControlTexture;
-  mcControlsCenterGlobalPosition.x = mcControlPosition.x;
-  mcControlsCenterGlobalPosition.y = mcControlPosition.y;
 }
 
 function Update ()
@@ -44,26 +28,19 @@ function Update ()
     return;
   }
 
-  // Check whether user is pressed on this control or not.
-  for (var i = 0; i < Input.touchCount; i++)
-  {
-    var touch = Input.GetTouch(i);
-    var touchPosition = touch.position;
-    if (guiTexture.HitTest(touchPosition))
-    {
-      if (touch.phase == TouchPhase.Began)
-      {
-        // ok, user pressed on a control, handling press now.
-        if (mcGameDirectorComponent)
-        {
-          // requesting to show a main menu.
-          mcGameDirectorComponent.requestChangeMainMenuState(true);
-        }
-      }
-    }
-  }
+  super.Update();
 }
 
+
+/*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
+protected function handleTouchBegan(touch: Touch)
+{
+  if (mcGameDirectorComponent)
+  {
+    // requesting to show a main menu.
+    mcGameDirectorComponent.requestChangeMainMenuState(true);
+  }
+}
 
 /*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
 public function onGameStateChanged(gameState: GameState)

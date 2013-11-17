@@ -1,16 +1,8 @@
-﻿public class MagicAttackTouchControl extends BasicUIComponent
+﻿public class MagicAttackTouchControl extends BaseTouchScreenControl
 {
 
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mcPlayer: PlayerBehavior;
-
-public var mcScreenControlEnabled: boolean = false;
-
-/*------------------------------------------ TEXTURES ------------------------------------------*/
-public var mcControlTexture: Texture2D;
-
-/*------------------------------------------ SIZES ------------------------------------------*/
-public var mcControlSize: Vector2 = Vector2(50, 50);
 
 
 
@@ -18,7 +10,6 @@ public var mcControlSize: Vector2 = Vector2(50, 50);
 
 // position of a move control
 private var mcControlPosition: Vector2 = Vector2(0, 0);
-private var mcControlsCenterGlobalPosition: Vector2 = Vector2(0, 0);
 
 private var mcSpaceSize: int = 30;
 
@@ -37,12 +28,9 @@ function Start ()
       mcPlayer = playerObject.GetComponent(PlayerBehavior);
     }
   }
-  mcControlPosition.x = Screen.width - 2 * mcSpaceSize - 2 * mcControlSize.x;
+  mcControlPosition.x = Screen.width - 3 * mcSpaceSize - 2 * mcControlSize.x;
   mcControlPosition.y = mcSpaceSize;
   guiTexture.pixelInset = Rect(mcControlPosition.x, mcControlPosition.y, mcControlSize.x, mcControlSize.y);
-  guiTexture.texture = mcControlTexture;
-  mcControlsCenterGlobalPosition.x = mcControlPosition.x;
-  mcControlsCenterGlobalPosition.y = mcControlPosition.y;
 }
 
 function Update ()
@@ -52,23 +40,15 @@ function Update ()
     //do nothing if screen controls are disabled or if we are not in a Playing game state
     return;
   }
+  super.Update();
+}
 
-  // Check whether user is pressed on this control or not.
-  for (var i = 0; i < Input.touchCount; i++)
+/*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
+protected function handleTouchBegan(touch: Touch)
+{
+  if (mcPlayer)
   {
-    var touch = Input.GetTouch(i);
-    var touchPosition = touch.position;
-    if (guiTexture.HitTest(touchPosition))
-    {
-      if (touch.phase == TouchPhase.Began)
-      {
-        // ok, user pressed on a control, handling press now.
-        if (mcPlayer)
-        {
-          mcPlayer.performMagicAttack();
-        }
-      }
-    }
+    mcPlayer.performMagicAttack();
   }
 }
 
