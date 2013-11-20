@@ -50,7 +50,6 @@ public var mcRandomMusicEnabledText = "Sound Enabled";
 public var mcGameDifficultiesText = ["Easy", "Normal", "Hard"];
 
 
-
 /*------------------------------------------ TEXTURES ------------------------------------------*/
 public var mcMainMenuBackground: Texture2D;
 
@@ -67,13 +66,9 @@ public var mcBackButtonAutoSize: Vector2 = Vector2(0.1f, 0.08f);
 // Auto space between buttons is a percentage of a Button's height.
 public var mcSpaceBetweenButtonsAuto: float = 0.1f;
 
-// TODO: Sizes as percentage of a screen resolution?
-private var mcButtonSize: Vector2 = Vector2(100, 60);
-private var mcMainLabelSize: Vector2 = Vector2(400, 100);
-private var mcSpaceBetweenButtons: int = 20;
+public var mcSettingsValuesPos: Vector2 = Vector2(0, 100);
 
-public var mcSettingsValuesPos: Vector2 = Vector2(mcSpaceBetweenButtons, 100);
-private var mcBackButtonSize: Vector2 = Vector2(100, 60);
+
 
 /*------------------------------------------ APPLICATION SETTINGS ------------------------------------------*/
 // Contains a value to find out whether in-game music is enabled or not.
@@ -118,6 +113,10 @@ private var mcButtonsPos: Vector2 = Vector2(0, 0);
 private var mcMainLabelPos: Vector2 = Vector2(0, 0);
 private var mcBackButtonPos: Vector2 = Vector2(0, 0);
 
+private var mcButtonSize: Vector2 = Vector2(100, 60);
+private var mcBackButtonSize: Vector2 = Vector2(100, 60);
+private var mcMainLabelSize: Vector2 = Vector2(400, 100);
+private var mcSpaceBetweenButtons: int = 20;
 
 
 /*------------------------------------------ MONOBEHAVIOUR ------------------------------------------*/
@@ -134,6 +133,7 @@ function Start()
   mcButtonSize.y = mcScreenHeight * mcButtonAutoSize.y;
 
   mcSpaceBetweenButtons = mcButtonSize.y * mcSpaceBetweenButtonsAuto;
+  mcSettingsValuesPos.x = mcSpaceBetweenButtons;
 
   var maxButtonHeight = mcScreenHeight / (mcAvailableLevels.Length + 3); // magic number 3 is 'exit + settins + back' buttons.
   if (mcButtonSize.y > maxButtonHeight)
@@ -200,7 +200,7 @@ private function drawMainMenu()
   GUI.BeginGroup(Rect(0,0, mcScreenWidth, mcScreenHeight));
     var currentLevelName = Application.loadedLevelName;
     // Draw MainMenu's background.
-    GUI.DrawTexture(Rect(0,0, mcScreenWidth, mcScreenHeight), mcMainMenuBackground, ScaleMode.StretchToFill);
+    GUI.DrawTexture(Rect(0,0, mcScreenWidth, mcScreenHeight), mcMainMenuBackground, ScaleMode.ScaleAndCrop);
     GUI.Label(Rect(mcMainLabelPos.x, mcMainLabelPos.y, mcMainLabelSize.x, mcMainLabelSize.y), mcMainLabelText, mcMainLabelStyle);
     // Buttons group
     GUI.BeginGroup(Rect(mcButtonsPos.x, mcButtonsPos.y, mcScreenWidth, mcScreenHeight));
@@ -263,8 +263,8 @@ private function drawSettingsPage()
       style.border = RectOffset(0,0,0,0);
       style.onNormal.textColor = Color.white;
       style.imagePosition = ImagePosition.ImageLeft;
-      var toggleButtonSize = mcButtonSize.x / 2;
-      style.overflow = RectOffset(-toggleButtonSize * 1.3,-toggleButtonSize * 2.3, -mcButtonSize.y / 2 + toggleButtonSize / 3.0 , -mcButtonSize.y / 2 + toggleButtonSize / 25.0);
+      var toggleButtonSize = mcButtonSize.x / 3;
+      style.overflow = RectOffset(-toggleButtonSize * 2.3,-toggleButtonSize * 3.3, -mcButtonSize.y / 2 + toggleButtonSize / 3.0 , -mcButtonSize.y / 2 + toggleButtonSize / 25.0);
       style.padding.left = mcButtonSize.x;
       style.padding.top = 10;
 /// End of ugly hack

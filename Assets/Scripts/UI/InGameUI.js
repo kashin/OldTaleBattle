@@ -7,8 +7,12 @@ public class InGameUI extends BasicUIComponent implements PlayerStatsListener
 public var mcHealthBarPos: Vector2 = Vector2(10,20);
 public var mcManaBarPos: Vector2 = Vector2(10,20);
 public var mcBarSize : Vector2 = Vector2(50,20);
-public var mcSkillsElementSize: Vector2 = Vector2(200, 50); // TODO: should depend on a screen resolution
-public var mcIncreaseSkillButtonSize: Vector2 = Vector2(40, 40);
+
+public var mcSkillsElementAutoSize: Vector2 = Vector2(0.25f, 0.15f);
+public var mcIncreaseSkillButtonAutoSize: Vector2 = Vector2(0.05f, 0.05f);
+
+// percentage of an element's height.
+public var mcAutoSpaceBetweenElements: float = 0.15f;
 
 public var mcGameOverTextSize: Vector2 = Vector2(200, 50);
 public var mcGameOverStoryTextSize: Vector2 = Vector2(200, 200);
@@ -16,7 +20,7 @@ public var mcGameOverBackButtonSize: Vector2 = Vector2(200, 50);
 
 public var mcBarLabelFontSize = 20;
 
-public var mcBackButtonSize: Vector2 = Vector2(100, 60);
+public var mcBackButtonAutoSize: Vector2 = Vector2(0.1f, 0.08f);
 
 /*------------------------------------------ TEXTS ------------------------------------------*/
 public var mcAvailableSkillPointsText = "Skill Points:";
@@ -81,8 +85,12 @@ private var mcGameOverSize: Vector2 = Vector2(0, 0);
 private var mcBarLabelStyle: GUIStyle;
 
 private var mcBackButtonPos: Vector2 = Vector2(0, 0);
-private var mcSpaceBetweenElements = 30.0f;
+private var mcBackButtonSize: Vector2 = Vector2(100, 60);
 
+private var mcSpaceBetweenElements: float = 30.0f;
+
+private var mcSkillsElementSize: Vector2 = Vector2(200, 50);
+private var mcIncreaseSkillButtonSize: Vector2 = Vector2(40, 40);
 
 
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
@@ -120,16 +128,29 @@ function Start()
   mcRightSkillsSectionSize.y = Screen.height;
   mcRightSkillsSectionPos.x = mcRightSkillsSectionSize.x * 2;
 
-  if (mcSkillsElementSize.x > mcLeftSkillsSectionSize.x)
+  // skills element size
+  mcSkillsElementSize.x = Screen.width * mcSkillsElementAutoSize.x;
+  if (mcSkillsElementSize.x > (mcLeftSkillsSectionSize.x - mcIncreaseSkillButtonSize.x) )
   {
     mcSkillsElementSize.x = mcLeftSkillsSectionSize.x;
   }
+  mcSkillsElementSize.y = Screen.height * mcSkillsElementAutoSize.y;
+  
+  // increase skill button size
+  mcIncreaseSkillButtonSize.x = Screen.width * mcIncreaseSkillButtonAutoSize.x;
+  mcIncreaseSkillButtonSize.y = Screen.height * mcIncreaseSkillButtonAutoSize.y;
 
   mcGameOverPos.x = 0.0f;
   mcGameOverPos.y = 0.0f;
 
   mcGameOverSize.x = Screen.width;
   mcGameOverSize.y = Screen.height;
+  
+  mcSpaceBetweenElements = mcSkillsElementSize.y * mcAutoSpaceBetweenElements;
+  
+  // back button
+  mcBackButtonSize.x = Screen.width * mcBackButtonAutoSize.x;
+  mcBackButtonSize.y = Screen.height * mcBackButtonAutoSize.y;
 
   mcBackButtonPos.x = mcSpaceBetweenElements;
   mcBackButtonPos.y = Screen.height - mcBackButtonSize.y - 2 * mcSpaceBetweenElements;
@@ -251,7 +272,7 @@ private function drawLeftSkillsScreenSection()
 
     // Strength
     GUI.BeginGroup(Rect(nextLeftSectionPosition.x, nextLeftSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y));
-      GUI.Label(Rect(0, 0, mcSkillsElementSize.x, mcSkillsElementSize.y), mcStrengthSkillText + " " + mcPlayerStats.Strength.ToString(), mcSkillsLabelsStyle);
+      GUI.Label(Rect(0, 0, mcSkillsElementSize.x - rightButtonsMargin, mcSkillsElementSize.y), mcStrengthSkillText + " " + mcPlayerStats.Strength.ToString(), mcSkillsLabelsStyle);
       if (mcPlayerStats.AvailableSkillPoints > 0 && GUI.Button(Rect(mcSkillsElementSize.x - rightButtonsMargin, 0, mcIncreaseSkillButtonSize.x, mcIncreaseSkillButtonSize.y), "+"))
       {
         mcPlayerStats.increaseStrength(1);
