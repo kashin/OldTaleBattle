@@ -31,9 +31,19 @@ function Update ()
   super.Update();
 }
 
-
 /*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
+protected function handleOnMouseDown()
+{
+  openMainMenu();
+}
+
 protected function handleTouchBegan(touch: Touch)
+{
+  openMainMenu();
+}
+
+/*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
+private function openMainMenu()
 {
   if (mcGameDirectorComponent)
   {

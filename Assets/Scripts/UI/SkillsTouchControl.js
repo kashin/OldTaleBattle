@@ -39,7 +39,7 @@ function Start ()
       mcPlayerStats = playerObject.GetComponent(PlayerStats);
     }
   }
-  mcControlPosition.x = Screen.width / 2 - mcSpaceSize - mcControlSize.x / 2;
+  mcControlPosition.x = Screen.width / 2 - mcSpaceSize;
   mcControlPosition.y = mcSpaceSize;
   guiTexture.pixelInset = Rect(mcControlPosition.x, mcControlPosition.y, mcControlSize.x, mcControlSize.y);
 }
@@ -67,6 +67,17 @@ function Update ()
 
 /*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
 protected function handleTouchBegan(touch: Touch)
+{
+  openSkillsScreen();
+}
+
+protected function handleOnMouseDown()
+{
+  openSkillsScreen();
+}
+
+/*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
+private function openSkillsScreen()
 {
   if (mcInGameUI)
   {

@@ -4,6 +4,9 @@
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mcScreenControlEnabled: boolean = false;
 
+// @c true if we want to handle OnMouseDown() callbacks and @c false otherwise.
+public var mcHandleMouseButtonPressed: boolean = false;
+
 /*------------------------------------------ TEXTURES ------------------------------------------*/
 public var mcControlTexture: Texture2D;
 
@@ -61,6 +64,13 @@ function Update ()
   }
 }
 
+function OnMouseDown()
+{
+  if (mcHandleMouseButtonPressed)
+  {
+    handleOnMouseDown();
+  }
+}
 
 
 /*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
@@ -78,6 +88,9 @@ protected function handleTouchEnded(touch: Touch)
 {}
 
 protected function handleTouchCanceled(touch: Touch)
+{}
+
+protected function handleOnMouseDown()
 {}
 
 /*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
