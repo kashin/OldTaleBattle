@@ -59,12 +59,21 @@ public var mcMainLabelStyle: GUIStyle;
 public var mcMainMenuButtonsStyle: GUIStyle;
 
 /*------------------------------------------ SIZES ------------------------------------------*/
+// Auto sizes ==  percentage of a screen size.
+public var mcButtonAutoSize: Vector2 = Vector2(0.2f, 0.15f);
+public var mcMainLabelAutoSize: Vector2 = Vector2(0.4f, 0.1f);
+public var mcBackButtonAutoSize: Vector2 = Vector2(0.1f, 0.08f);
+
+// Auto space between buttons is a percentage of a Button's height.
+public var mcSpaceBetweenButtonsAuto: float = 0.1f;
+
 // TODO: Sizes as percentage of a screen resolution?
-public var mcButtonSize: Vector2 = Vector2(100, 60);
-public var mcMainLabelSize: Vector2 = Vector2(400, 100);
-public var mcSpaceBetweenButtons: int = 20;
+private var mcButtonSize: Vector2 = Vector2(100, 60);
+private var mcMainLabelSize: Vector2 = Vector2(400, 100);
+private var mcSpaceBetweenButtons: int = 20;
+
 public var mcSettingsValuesPos: Vector2 = Vector2(mcSpaceBetweenButtons, 100);
-public var mcBackButtonSize: Vector2 = Vector2(100, 60);
+private var mcBackButtonSize: Vector2 = Vector2(100, 60);
 
 /*------------------------------------------ APPLICATION SETTINGS ------------------------------------------*/
 // Contains a value to find out whether in-game music is enabled or not.
@@ -117,9 +126,38 @@ function Start()
   super.Start();
   mcScreenWidth = Screen.width;
   mcScreenHeight = Screen.height;
+
   mcGameDirectorComponent.requestChangeMainMenuState(mcMenuShownOnStart);
+
+  // Buttons
+  mcButtonSize.x = mcScreenWidth * mcButtonAutoSize.x;
+  mcButtonSize.y = mcScreenHeight * mcButtonAutoSize.y;
+
+  mcSpaceBetweenButtons = mcButtonSize.y * mcSpaceBetweenButtonsAuto;
+
+  var maxButtonHeight = mcScreenHeight / (mcAvailableLevels.Length + 3); // magic number 3 is 'exit + settins + back' buttons.
+  if (mcButtonSize.y > maxButtonHeight)
+  {
+    mcButtonSize.y = maxButtonHeight;
+  }
+
+  // Back button
+  mcBackButtonSize.x = mcScreenWidth * mcBackButtonAutoSize.x;
+  mcBackButtonSize.y = mcScreenHeight * mcBackButtonAutoSize.y;
+
   mcBackButtonPos.x = mcSpaceBetweenButtons;
   mcBackButtonPos.y = mcScreenHeight - mcBackButtonSize.y - mcSpaceBetweenButtons;
+
+  // Main label
+  mcMainLabelSize.x = mcScreenWidth * mcMainLabelAutoSize.x;
+  mcMainLabelSize.y = mcScreenWidth * mcMainLabelAutoSize.y;
+
+  mcMainLabelPos.x = (mcScreenWidth / 2) - (mcMainLabelSize.x /2);
+  mcMainLabelPos.y = 0;
+
+  // Button's pos
+  mcButtonsPos.x = (mcScreenWidth / 2) - (mcButtonSize.x /2);
+  mcButtonsPos.y = mcMainLabelPos.y + mcMainLabelSize.y;
 }
 
 function Update()
@@ -143,11 +181,6 @@ function OnGUI()
 {
   if (mcMenuShown)
   {
-    mcMainLabelPos.x = (mcScreenWidth / 2) - (mcMainLabelSize.x /2);
-    mcMainLabelPos.y = 0;
-
-    mcButtonsPos.x = (mcScreenWidth / 2) - (mcButtonSize.x /2);
-    mcButtonsPos.y = mcMainLabelPos.y + mcMainLabelSize.y;
     if (mcShowSettingsPage)
     {
       drawSettingsPage();
