@@ -82,6 +82,7 @@ public function set RandomMusicEnabled(value: boolean)
   if (value != mcRandomMusicEnabled)
   {
     mcRandomMusicEnabled = value;
+    PrefsStorage.storeIntKey(mcRandomMusicKey, value ? 1 : 0);
     onSoundEnabledChanged(mcRandomMusicEnabled);
   }
 }
@@ -96,6 +97,7 @@ public function set GameDifficulty(value: GameDifficulty)
   if (value != mcGameDifficulty)
   {
     mcGameDifficulty = value;
+    PrefsStorage.storeIntKey(mcGameDifficultyKey, mcGameDifficulty);
     onGameDifficultyChanged(mcGameDifficulty);
   }
 }
@@ -117,6 +119,9 @@ private var mcButtonSize: Vector2 = Vector2(100, 60);
 private var mcBackButtonSize: Vector2 = Vector2(100, 60);
 private var mcMainLabelSize: Vector2 = Vector2(400, 100);
 private var mcSpaceBetweenButtons: int = 20;
+
+private var mcGameDifficultyKey = "GameDifficulty";
+private var mcRandomMusicKey = "SoundEnabled";
 
 
 /*------------------------------------------ MONOBEHAVIOUR ------------------------------------------*/
@@ -158,6 +163,9 @@ function Start()
   // Button's pos
   mcButtonsPos.x = (mcScreenWidth / 2) - (mcButtonSize.x /2);
   mcButtonsPos.y = mcMainLabelPos.y + mcMainLabelSize.y;
+
+  GameDifficulty = PrefsStorage.getIntKey(mcGameDifficultyKey, 1);
+  RandomMusicEnabled = PrefsStorage.getIntKey(mcRandomMusicKey, 1) == 1;
 }
 
 function Update()
