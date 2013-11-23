@@ -10,6 +10,7 @@ public var mcTutorialText = "Press K to perform a Melee Attack \n"
                           + "Press 'backspace' to open the main menu. \n";
 
 public var mcTutorialTextAutoSize: Vector2 = Vector2(0.8f, 0.6f);
+public var mcTutorialFontSize: int  = 20;
 
 private var mcTutorialTextSize: Vector2 = Vector2(0, 0);
 private var mcTutorialTextPos: Vector2 = Vector2(0, 0);
@@ -44,7 +45,9 @@ function OnGUI()
 {
   if (mcGameState == GameState.Tutorial)
   {
-    GUI.Box(Rect(mcTutorialTextPos.x, mcTutorialTextPos.y, mcTutorialTextSize.x, mcTutorialTextSize.y), mcTutorialText);
+    var style = GUIStyle(GUI.skin.box);
+    style.fontSize = mcTutorialFontSize;
+    GUI.Box(Rect(mcTutorialTextPos.x, mcTutorialTextPos.y, mcTutorialTextSize.x, mcTutorialTextSize.y), mcTutorialText, style);
   }
 }
 
