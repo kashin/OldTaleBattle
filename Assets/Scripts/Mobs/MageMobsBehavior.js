@@ -15,7 +15,7 @@ class MageMobsBehavior extends MobsBehaviorComponent
     {
       if ( (mcNextAttackTime == 0.0f || mcNextAttackTime <= Time.time) && !mcIsRechargingAttack)
       {
-        mcIsRechargingAttack = false;
+        mcIsRechargingAttack = true;
         Invoke("shootProjectile", animation[mcAttackAnimationName].length / 2.0f);
         mcNextAttackTime = Time.time + animation[mcAttackAnimationName].length;
       }
@@ -36,6 +36,7 @@ class MageMobsBehavior extends MobsBehaviorComponent
       projectileBehavior.mcCollideWithEnemy = false;
       projectileBehavior.mcSpeed = 0.5f;
       CancelInvoke();
+      mcIsRechargingAttack = false;
     }
   }
 }

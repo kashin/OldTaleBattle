@@ -155,6 +155,7 @@ function onGameStateChanged(gameState: GameState)
 {
   switch(gameState)
   {
+    case GameState.Tutorial:
     case GameState.Playing:
       if (mcGameState == GameState.FullScreenUIOpened)
       {

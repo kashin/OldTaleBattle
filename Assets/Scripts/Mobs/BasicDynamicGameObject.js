@@ -58,7 +58,7 @@ protected function onGameLogicStopedChanged(stoped: boolean)
 /// GameEventsListener interface
 public function onGameStateChanged(gameState: GameState)
 {
-  onGameLogicStopedChanged(gameState != GameState.Playing);
+  onGameLogicStopedChanged(gameState != GameState.Playing && gameState != GameState.Tutorial);
 }
 
 } // BasicDynamicGameObject

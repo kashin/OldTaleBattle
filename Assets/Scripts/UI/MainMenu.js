@@ -21,6 +21,7 @@ public function onGameStateChanged(gameState: GameState)
   super.onGameStateChanged(gameState);
   switch(gameState)
   {
+    case GameState.Tutorial:
     case GameState.Playing:
     case GameState.FullScreenUIOpened:
     case GameState.GameOver:

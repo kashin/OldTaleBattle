@@ -46,7 +46,7 @@ function Start ()
 
 function Update ()
 {
-  if (!mcScreenControlEnabled || mcGameState != GameState.Playing)
+  if ( !mcScreenControlEnabled || (mcGameState != GameState.Playing && mcGameState != GameState.Tutorial) )
   {
     //do nothing if screen controls are disabled or if we are not in a Playing game state
     return;

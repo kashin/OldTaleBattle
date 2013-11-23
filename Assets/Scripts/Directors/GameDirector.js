@@ -6,7 +6,8 @@ enum GameState
   MainMenuShown,
   Playing,
   FullScreenUIOpened,
-  GameOver
+  GameOver,
+  Tutorial
 }
 
 /// Interface that is used to inform other components that game's state is changed.
@@ -88,6 +89,11 @@ public function requestChangeFullScreenUIState(open: boolean)
 {
   // TODO: can we 'show full screen UI' and show Main Menu at the same time?
   onGameStateChanged(open ? GameState.FullScreenUIOpened : GameState.Playing);
+}
+
+public function requestChangeTutorialState(enable: boolean)
+{
+  onGameStateChanged(enable ? GameState.Tutorial : GameState.Playing);
 }
 
 /*------------------------------------------ Handling GAME EVENTS LISTENERS ------------------------------------------*/

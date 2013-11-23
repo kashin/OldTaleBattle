@@ -23,7 +23,7 @@ function Start ()
 
 function Update ()
 {
-  if (!mcScreenControlEnabled || mcGameState != GameState.Playing)
+  if ( !mcScreenControlEnabled || (mcGameState != GameState.Playing && mcGameState != GameState.Tutorial) )
   {
     //do nothing if screen controls are disabled or if we are not in a Playing game state
     return;
@@ -55,10 +55,6 @@ function Update ()
           break;
         default:
           break;
-      }
-      if (touch.phase == TouchPhase.Began)
-      {
-        // ok, user pressed on a control, handling press now.
       }
     }
   }
@@ -97,7 +93,7 @@ protected function handleOnMouseDown()
 public function onGameStateChanged(gameState: GameState)
 {
   super.onGameStateChanged(gameState);
-  guiTexture.enabled = gameState == GameState.Playing;
+  guiTexture.enabled = gameState == GameState.Playing || gameState == GameState.Tutorial;
 }
 
 }

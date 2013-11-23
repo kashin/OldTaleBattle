@@ -54,7 +54,7 @@ function Start()
 
 function Update()
 {
-  if (!mcScreenControlsEnabled || mcGameState != GameState.Playing || !mcPlayersMotor)
+  if (!mcScreenControlsEnabled || (mcGameState != GameState.Playing && mcGameState != GameState.Tutorial) || !mcPlayersMotor)
   {
     //do nothing if screen controls are disabled or if we are not in a Playing game state
     // or we do not have a CharacterMotor.
@@ -150,7 +150,7 @@ private function updateCurrentSpeedValues()
 public function onGameStateChanged(gameState: GameState)
 {
   super.onGameStateChanged(gameState);
-  guiTexture.enabled = gameState == GameState.Playing;
+  guiTexture.enabled = gameState == GameState.Playing || gameState == GameState.Tutorial;
 }
 
 

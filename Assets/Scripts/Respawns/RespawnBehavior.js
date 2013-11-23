@@ -156,7 +156,7 @@ protected function increaseMobsListSizeForRandom()
 /*------------------------------------------ GAME STATE LISTENER ------------------------------------------*/
 function onGameStateChanged(gameState: GameState)
 {
-  mcStopRespawns = gameState != GameState.Playing;
+  mcStopRespawns = gameState != GameState.Playing && gameState != GameState.Tutorial;
   if (gameState == GameState.GameOver)
   {
     // just stop all current respawns.

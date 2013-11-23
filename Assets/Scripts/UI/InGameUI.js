@@ -212,6 +212,7 @@ function OnGUI()
 
   switch(mcGameState)
   {
+    case GameState.Tutorial:
     case GameState.Playing:
       drawPlayingStateUI();
       break;
@@ -441,7 +442,7 @@ private function closeSkillsScreen()
 
 public function changeSkillsScreenState()
 {
-  if (mcGameState == GameState.Playing)
+  if (mcGameState == GameState.Playing || mcGameState == GameState.Tutorial)
   {
     openSkillsScreen();
   }
