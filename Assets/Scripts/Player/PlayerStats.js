@@ -143,11 +143,11 @@ public function get MaxHealth(): int
 }
 private function set MaxHealth(value: int)
 {
+  mcMaxHealth = value;
   if (value > mcMaxHealth)
   {
     Health = value; // restore health if max health is changed to a bigger value.
   }
-  mcMaxHealth = value;
   if (mcMaxHealth < Health) // something decreased our max Health level, let's 'fix' current health level.
   {
     Health = mcMaxHealth;
@@ -192,11 +192,11 @@ public function get MaxMana(): int
 }
 private function set MaxMana(value: int)
 {
+  mcMaxMana = value;
   if (value > mcMaxMana)
   {
     Mana = value; // restore mana if max mana is changed to a bigger value.
   }
-  mcMaxMana = value;
   if (mcMaxMana < mcMana) // something decreased our max Mana level, let's 'fix' current mana level.
   {
     Mana = mcMaxMana;
