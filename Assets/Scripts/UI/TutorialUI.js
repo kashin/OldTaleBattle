@@ -9,6 +9,12 @@ public var mcTutorialText = "Press K to perform a Melee Attack \n"
                           + "Press C to open skills screen \n"
                           + "Press 'backspace' to open the main menu. \n";
 
+public var mcTouchTutorialText = "Use circle control for movement\n"
+                               + "Use 'Sword' button to perform a melee attack\n"
+                               + "Use 'magic' button to perform a magic attack\n"
+                               + "use other on screen buttons to open skills screen or main menu.";
+
+public var mcShowTouchScreenTutorial: boolean = false;
 public var mcTutorialTextAutoSize: Vector2 = Vector2(0.8f, 0.6f);
 public var mcTutorialFontSize: int  = 20;
 
@@ -47,7 +53,7 @@ function OnGUI()
   {
     var style = GUIStyle(GUI.skin.box);
     style.fontSize = mcTutorialFontSize;
-    GUI.Box(Rect(mcTutorialTextPos.x, mcTutorialTextPos.y, mcTutorialTextSize.x, mcTutorialTextSize.y), mcTutorialText, style);
+    GUI.Box(Rect(mcTutorialTextPos.x, mcTutorialTextPos.y, mcTutorialTextSize.x, mcTutorialTextSize.y), mcShowTouchScreenTutorial ? mcTouchTutorialText: mcTutorialText, style);
   }
 }
 

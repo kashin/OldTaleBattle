@@ -106,6 +106,14 @@ private function handleTouchInput(touch: Touch)
   mcDecreaseHorizontalSpeed = false;
   mcCurrentHorizontalSpeed = (touchPosition.x - mcMoveControlsCenterGlobalPosition.x) / (mcControlSize.x / 2);
   mcCurrentVerticalSpeed = (touchPosition.y - mcMoveControlsCenterGlobalPosition.y) / (mcControlSize.y / 2);
+  if (Mathf.Abs(mcCurrentHorizontalSpeed) < 0.2f)
+  {
+    mcCurrentHorizontalSpeed *= 2.0f;
+  }
+  if (Mathf.Abs(mcCurrentVerticalSpeed) < 0.2f)
+  {
+    mcCurrentHorizontalSpeed *= 2.0f;
+  }
 }
 
 private function updateCurrentSpeedValues()
