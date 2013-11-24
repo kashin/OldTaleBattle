@@ -28,8 +28,8 @@ public function get Strength(): int
 private function set Strength(value: int)
 {
   mcStrength = value;
-  MaxHealth = mcBaseHealth + (mcBaseHealth * (mcStrength - mcBaseStrength) / mcBaseStrength);
-  MeleeDamage = mcBaseMeleeDamage + (mcStrength - mcBaseStrength);
+  MaxHealth = mcBaseHealth + (mcBaseHealth * 2 *(mcStrength - mcBaseStrength) / mcBaseStrength);
+  MeleeDamage = mcBaseMeleeDamage + (mcStrength - mcBaseStrength) * 2;
 }
 var mcBaseStrength: int = 10;
 
@@ -55,7 +55,7 @@ public function get Intelligent(): int
 private function set Intelligent(value: int)
 {
   mcIntelligent = value;
-  MaxMana = mcBaseMana + (mcBaseMana * (mcIntelligent - mcBaseIntelligent) / mcBaseIntelligent);
+  MaxMana = mcBaseMana + (mcBaseMana * 2 * (mcIntelligent - mcBaseIntelligent) / mcBaseIntelligent);
 }
 var mcBaseIntelligent: int = 10;
 
@@ -85,7 +85,7 @@ public function set WillPower(value: int)
     value = 0;
   }
   mcWillPower = value;
-  ManaRegeneration = mcBaseWillPower + (mcBaseWillPower * (mcWillPower - mcBaseWillPower) / mcBaseWillPower);
+  ManaRegeneration = mcBaseWillPower + (mcWillPower - mcBaseWillPower) * 2; // + 2 points per each 1 will power point.
   if (mcMagicAttackBehavior)
   {
     mcMagicAttackBehavior.CharactersWillPower = WillPower;
@@ -143,15 +143,12 @@ public function get MaxHealth(): int
 }
 private function set MaxHealth(value: int)
 {
+  if (value < 0)
+  {
+    value = 0;
+  }
   mcMaxHealth = value;
-  if (value > mcMaxHealth)
-  {
-    Health = value; // restore health if max health is changed to a bigger value.
-  }
-  if (mcMaxHealth < Health) // something decreased our max Health level, let's 'fix' current health level.
-  {
-    Health = mcMaxHealth;
-  }
+  Health = mcMaxHealth;
 }
 var mcBaseHealth: int = 100;
 
@@ -192,15 +189,12 @@ public function get MaxMana(): int
 }
 private function set MaxMana(value: int)
 {
+  if (value < 0)
+  {
+    value = 0;
+  }
   mcMaxMana = value;
-  if (value > mcMaxMana)
-  {
-    Mana = value; // restore mana if max mana is changed to a bigger value.
-  }
-  if (mcMaxMana < mcMana) // something decreased our max Mana level, let's 'fix' current mana level.
-  {
-    Mana = mcMaxMana;
-  }
+  Mana = mcMaxMana;
 }
 var mcBaseMana: int = 100;
 

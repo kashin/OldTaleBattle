@@ -46,18 +46,40 @@ public function set Difficulty(value: GameDifficulty)
   if (value != mcDifficulty)
   {
     mcDifficulty = value;
-    var difficulty: int = mcDifficulty;
-    var maxValue: int = GameDifficulty.MaximumValue;
-    Health = mcBaseHealth * (difficulty + 1) / 2;
-    Score = mcBaseScore * (maxValue - difficulty) / 2;
-    MobsDamage = mcBaseDamage * (difficulty + 1) / 2;
+    updateMobsStats();
   }
 }
+
+/*------------------------------------------ MOBS STRENGTH ------------------------------------------*/
+var mcStrength: int = 10;
+public function set Strength(value: int)
+{
+  if (value < 1)
+  {
+    value = 1;
+  }
+  mcStrength = value;
+  updateMobsStats();
+}
+public function get Strength(): int
+{
+  return mcStrength;
+}
+
+public var mcBaseStrength: int = 10;
 
 
 
 /*------------------------------------------ STATS ------------------------------------------*/
-
+private function updateMobsStats()
+{
+  var difficulty: int = mcDifficulty;
+  var maxValue: int = GameDifficulty.MaximumValue;
+  var strengthInfluence = (Strength - mcBaseStrength) / mcBaseStrength;
+  Health = (mcBaseHealth * (difficulty + 1) / 2) + mcBaseHealth * strengthInfluence;
+  Score = mcBaseScore * (maxValue - difficulty) / 2 + mcBaseScore * strengthInfluence * 1.5; // bigger score == more fun? :)
+  MobsDamage = mcBaseDamage * (difficulty + 1) / 2 + mcBaseDamage * strengthInfluence;
+}
 
 /*------------------------------------------ MOBS DAMAGE ------------------------------------------*/
 /// Contains mob's damage.

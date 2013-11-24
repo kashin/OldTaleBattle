@@ -7,6 +7,11 @@ import System.Collections.Generic;
 public var mcMobs: GameObject[];
 public var mcSpawnPoint: GameObject;
 
+public var mcMaxSpawnTime: float = 45.0f;
+public var mcMinSpawnTime: float = 5.0f;
+public var mcDecreaseSpawnTimePercentage: float = 0.95f;
+public var mcIncreaseMobsStrengthTime: float = 60.0f;
+
 public var mcUseHardcodedSpawnPointsPositions: boolean = false;
 
 /// Difference in X of where we can place spawn point compare to a controller's position
@@ -56,8 +61,17 @@ function Start()
   for (var i = 0; i < mcNumberOfSpawnPoints; i++)
   {
     var point = Instantiate(mcSpawnPoint, spawnPosition, Random.rotation);
+    var pointBehavior = point.GetComponent(RespawnBehavior);
+    if (pointBehavior)
+    {
+      pointBehavior.mcMaxRespawnInTime = mcMaxSpawnTime;
+      pointBehavior.mcMinRespawnInTime = mcMinSpawnTime;
+      pointBehavior.mcDecreaseSpawnTime = mcDecreaseSpawnTimePercentage;
+      pointBehavior.mcIncreaseMobsTime = mcIncreaseMobsStrengthTime;
+      pointBehavior.mcMobs = mcMobs;
+    }
+
     mcSpawnPoints.Add( point );
-    point.GetComponent(RespawnBehavior).mcMobs = mcMobs;
     // TODO: fix this dump spawn points logic.
     switch(stepState)
     {

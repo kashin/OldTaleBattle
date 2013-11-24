@@ -344,7 +344,6 @@ private function drawLeftSkillsScreenSection()
   var rightButtonsMargin = mcIncreaseSkillButtonSize.x + 20;
   // Stats group.
   GUI.BeginGroup(Rect(0, 0, mcLeftSkillsSectionSize.x, mcLeftSkillsSectionSize.y));
-    GUI.DrawTexture(Rect(0, 0, Screen.width, Screen.height), mcLeftSkillsSectionTexture, ScaleMode.StretchToFill);
     var nextLeftSectionPosition = Vector2(spaceBetweenElements, spaceBetweenElements); // TODO: remove hardcoded values...
 
     // Available skill points
@@ -408,7 +407,6 @@ private function drawRightSkillsScreenSection()
   var spaceBetweenElements = 20;
   // Stats group.
   GUI.BeginGroup(Rect(mcRightSkillsSectionPos.x, mcRightSkillsSectionPos.y, mcRightSkillsSectionSize.x, mcRightSkillsSectionSize.y));
-    GUI.DrawTexture(Rect(-mcRightSkillsSectionPos.x, -mcRightSkillsSectionPos.y, Screen.width, Screen.height), mcRightSkillsSectionTexture, ScaleMode.StretchToFill);
     var nextRightSectionPosition = Vector2(spaceBetweenElements, spaceBetweenElements); // TODO: remove hardcoded values...
 
     // Current Player's Health

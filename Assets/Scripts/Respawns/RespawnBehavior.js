@@ -20,6 +20,8 @@ public var mcDecreaseSpawnTime: float = 0.9;
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 private var mcMobsListSizeForRandom: int = 1;
+private var mcIncreaseMobsStrength: int = 0; // mobs strength == base strength + mcIncreaseMobsStrength
+
 private var mcItIsTimeToIncreaseListSize = true;
 private var mcItIsTimeToSpawnNewMob = true;
 
@@ -128,11 +130,21 @@ protected function spawnNewMob()
   var index = Random.Range(0, maxMobNumber);
   var position = transform.position;
   var mob = Instantiate(mcMobs[index], position, transform.rotation);
-  mob.GetComponent(MobsBehaviorComponent).mcPlayer = mcPlayer;
   var mobsStats = mob.GetComponent(MobsStats);
   if (mobsStats)
   {
+    mobsStats.Strength += mcIncreaseMobsStrength;
     mobsStats.Difficulty = mcGameDifficulty;
+  }
+  var mobBehavior = mob.GetComponent(MobsBehaviorComponent);
+  if (mobBehavior)
+  {
+    mobBehavior.mcPlayer = mcPlayer;
+    if (mobsStats)
+    {
+      var strengthInfluence = (mobsStats.Strength - mobsStats.mcBaseStrength) / mobsStats.mcBaseStrength;
+      mobBehavior.mcMobsSpeed *=  1.0f + strengthInfluence;
+    }
   }
   mcItIsTimeToSpawnNewMob = true;
   mcSpawnMobInSeconds = 0.0f;
@@ -143,6 +155,11 @@ protected function increaseMobsListSizeForRandom()
   if (mcMobsListSizeForRandom <= mcMobs.Length)
   {
     mcMobsListSizeForRandom++;
+  }
+  else
+  {
+    // ok, no new mobs available in the list, then it is time to increase our mobs strength.
+    mcIncreaseMobsStrength++;
   }
   mcMaxRespawnInTime *= mcDecreaseSpawnTime; // decrease spawn time every mcIncreaseMobsTime seconds.
   if (mcMaxRespawnInTime < mcMinRespawnInTime)

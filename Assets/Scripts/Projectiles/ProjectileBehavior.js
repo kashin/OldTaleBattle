@@ -26,7 +26,7 @@ public function set CharactersWillPower(value: int)
   }
   mcCharactersWillPower = value;
   // Change damage according to an assigned Character's Will Power.
-  mcDamage = mcBaseCharactersWillPower + (mcBaseCharactersWillPower * (mcCharactersWillPower - mcBaseCharactersWillPower) / mcBaseCharactersWillPower);
+  mcDamage = mcBaseCharactersWillPower + (mcCharactersWillPower - mcBaseCharactersWillPower) * 2;
 }
 public function get CharactersWillPower(): int
 {
