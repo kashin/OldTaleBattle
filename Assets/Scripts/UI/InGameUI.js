@@ -25,6 +25,7 @@ public var mcBarLabelFontSize = 20;
 public var mcBackButtonAutoSize: Vector2 = Vector2(0.1f, 0.08f);
 
 public var mcHighScoreAutoSize: Vector2 = Vector2(0.8f, 0.08f);
+public var mcInGameScoreAutoSize: Vector2 = Vector2(0.2f, 0.08f);
 
 public var mcGameOverTextAutoSize: Vector2 = Vector2(0.8f, 0.07f);
 
@@ -50,6 +51,8 @@ public var mcBackButtonText = "Back";
 
 
 /*------------------------------------------ STYLES ------------------------------------------*/
+public var mcInGameScoreTextStyle: GUIStyle;
+
 public var mcSkillsLabelsStyle: GUIStyle;
 public var mcBackButtonStyle: GUIStyle;
 
@@ -107,6 +110,8 @@ private var mcGameOverSpaceBetweenElelements = 20;
 
 private var mcHighScorePosX: int = 20;
 private var mcHighScoreElementSize: Vector2 = Vector2(600, 60);
+
+private var mcInGameScoreSize: Vector2 = Vector2(0, 0);
 
 
 private var mcNewScorePosition: int = -1;
@@ -186,6 +191,9 @@ function Start()
   mcGameOverButtonSize.y = Screen.height * mcGameOverButtonAutoSize.y;
 
   mcHighScorePosX = (Screen.width - mcHighScoreElementSize.x) / 2;
+
+  mcInGameScoreSize.x = Screen.width * mcInGameScoreAutoSize.x;
+  mcInGameScoreSize.y = Screen.height * mcInGameScoreAutoSize.y;
 }
 
 function Update()
@@ -243,6 +251,8 @@ private function drawPlayingStateUI()
       GUI.Label(Rect( mcBarSize.x / 4, 0, mcBarSize.x, mcBarSize.y), mcPlayerStats.Health.ToString(), mcBarLabelStyle);
     GUI.EndGroup();
   }
+  // SCORE
+  GUI.Label(Rect(mcHealthBarPos.x + mcBarSize.x + mcSpaceBetweenElements, mcHealthBarPos.y, mcInGameScoreSize.x, mcInGameScoreSize.y), mcGameScoreText + " " + mcPlayerStats.Experience.ToString(), mcInGameScoreTextStyle);
 
   // MANA BAR
   if (mcFullManaBar && mcEmptyBar)
