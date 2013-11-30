@@ -53,6 +53,7 @@ public var mcGameDifficultiesText = ["Easy", "Normal", "Hard"];
 
 /*------------------------------------------ TEXTURES ------------------------------------------*/
 public var mcMainMenuBackground: Texture2D;
+public var mcLoadingScreenTexture: GameObject;
 
 /*------------------------------------------ STYLES ------------------------------------------*/
 public var mcMainLabelStyle: GUIStyle;
@@ -124,6 +125,9 @@ private var mcSpaceBetweenButtons: int = 20;
 private var mcGameDifficultyKey = "GameDifficulty";
 private var mcRandomMusicKey = "SoundEnabled";
 
+private var mcLoadLevelName = "";
+private var mcNeedInvokeLevel: boolean = false;
+
 
 /*------------------------------------------ MONOBEHAVIOUR ------------------------------------------*/
 function Start()
@@ -167,10 +171,18 @@ function Start()
 
   GameDifficulty = PrefsStorage.getIntKey(mcGameDifficultyKey, 1);
   RandomMusicEnabled = PrefsStorage.getIntKey(mcRandomMusicKey, 1) == 1;
+
+  mcLoadingScreenTexture.guiTexture.pixelInset.width = Screen.width;
+  mcLoadingScreenTexture.guiTexture.pixelInset.height = Screen.height;
 }
 
 function Update()
 {
+  if (mcNeedInvokeLevel)
+  {
+    Invoke("onLoadGameLevel", 0.5f);
+    mcNeedInvokeLevel = false;
+  }
   if (mcGameState != GameState.GameOver && Input.GetButtonDown("Main Menu"))
   {
     if (mcShowSettingsPage)
@@ -222,7 +234,10 @@ private function drawMainMenu()
         {
           if (GUI.Button(Rect(0, nextButtonPosY, mcButtonSize.x, mcButtonSize.y), buttonsText, mcMainMenuButtonsStyle) )
           {
-            Application.LoadLevel(mcAvailableLevels[i]);
+            mcLoadingScreenTexture.active = true;
+            mcLoadLevelName = mcAvailableLevels[i];
+            mcMenuShown = false;
+            mcNeedInvokeLevel = true;
           }
           nextButtonPosY += mcButtonSize.y + mcSpaceBetweenButtons;
         }
@@ -291,6 +306,19 @@ private function drawSettingsPage()
     }
   GUI.EndGroup();
 }
+
+
+
+
+/*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
+private function onLoadGameLevel()
+{
+    Application.LoadLevel(mcLoadLevelName);
+    mcLoadLevelName = "";
+    mcNeedInvokeLevel = false;
+}
+
+
 
 /*------------------------------------------ Handling APPLICATION SETTINGS LISTENERS ------------------------------------------*/
 public function addApplicationSettingsListener(listener: ApplicationSettingsListener)
