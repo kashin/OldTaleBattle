@@ -21,6 +21,10 @@ public class PrefsStorage
   }
   static function getIntKey(key: String, defaultValue: int): int
   {
+    if (!PlayerPrefs.HasKey(key))
+    {
+      storeIntKey(key, defaultValue);
+    }
     return PlayerPrefs.GetInt(key, defaultValue);
   }
 

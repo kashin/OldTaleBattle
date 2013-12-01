@@ -52,6 +52,10 @@ private function openMainMenu()
   }
 }
 
+/*------------------------------------------ APPLICATION SETTINGS LISTENER ------------------------------------------*/
+function onTouchControlsEnabledChanged(enabled: boolean)
+{}
+
 }
 
 @script AddComponentMenu ("UI/Touch Screen Main Menu UI")

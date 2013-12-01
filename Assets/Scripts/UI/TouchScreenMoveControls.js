@@ -5,9 +5,11 @@ public class TouchScreenMoveControls extends BaseTouchScreenControl
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mcPlayersMotor: CharacterMotor;
 public var mcPlayersTransform: Transform;
-public var mcScreenControlsEnabled: boolean = false;
 public var mcCharacterSpeed: float = 3.0;
 public var mcMaxRotationSpeed: float = 540;
+
+public var mcControlTouchAutoPadding: Vector2 = Vector2(0.15f, 0.15f);
+public var mcControlTouchPadding: Vector2 = Vector2(30.0f, 30.0f);
 
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
@@ -50,17 +52,19 @@ function Start()
   guiTexture.pixelInset = Rect(mcMoveControlPosition.x, mcMoveControlPosition.y, mcControlSize.x, mcControlSize.y);
   mcMoveControlsCenterGlobalPosition.x = mcSpaceSize + mcControlSize.x / 2;
   mcMoveControlsCenterGlobalPosition.y = mcSpaceSize + mcControlSize.y / 2;
+
+  mcControlTouchPadding.x = mcControlSize.x * mcControlTouchAutoPadding.x;
+  mcControlTouchPadding.y = mcControlSize.y * mcControlTouchAutoPadding.y;
 }
 
 function Update()
 {
-  if (!mcScreenControlsEnabled || (mcGameState != GameState.Playing && mcGameState != GameState.Tutorial) || !mcPlayersMotor)
+  if (!mcScreenControlEnabled || (mcGameState != GameState.Playing && mcGameState != GameState.Tutorial) || !mcPlayersMotor)
   {
     //do nothing if screen controls are disabled or if we are not in a Playing game state
     // or we do not have a CharacterMotor.
     return;
   }
-
   super.Update();
 
   // it is time to update move direction.
@@ -104,12 +108,14 @@ private function handleTouchInput(touch: Touch)
   var touchPosition = touch.position;
   mcDecreaseVerticalSpeed = false;
   mcDecreaseHorizontalSpeed = false;
-  mcCurrentHorizontalSpeed = (touchPosition.x - mcMoveControlsCenterGlobalPosition.x) / (mcControlSize.x / 2);
-  mcCurrentVerticalSpeed = (touchPosition.y - mcMoveControlsCenterGlobalPosition.y) / (mcControlSize.y / 2);
+  mcCurrentHorizontalSpeed = (touchPosition.x - mcMoveControlsCenterGlobalPosition.x) / ( (mcControlSize.x - mcControlTouchPadding.x) / 2);
+  mcCurrentVerticalSpeed = (touchPosition.y - mcMoveControlsCenterGlobalPosition.y) / ( (mcControlSize.y - mcControlTouchPadding.y) / 2);
+
   if (Mathf.Abs(mcCurrentHorizontalSpeed) < 0.2f)
   {
     mcCurrentHorizontalSpeed *= 2.0f;
   }
+
   if (Mathf.Abs(mcCurrentVerticalSpeed) < 0.2f)
   {
     mcCurrentHorizontalSpeed *= 2.0f;
@@ -153,14 +159,6 @@ private function updateCurrentSpeedValues()
     }
   }
 }
-
-/*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
-public function onGameStateChanged(gameState: GameState)
-{
-  super.onGameStateChanged(gameState);
-  guiTexture.enabled = gameState == GameState.Playing || gameState == GameState.Tutorial;
-}
-
 
 
 /*------------------------------------------ TOOK FROM PLATFORM INPUT CONTROLLER ------------------------------------------*/

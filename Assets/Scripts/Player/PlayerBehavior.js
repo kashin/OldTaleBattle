@@ -1,6 +1,8 @@
 ﻿
-public class PlayerBehavior extends BasicDynamicGameObject
+public class PlayerBehavior extends BasicDynamicGameObject implements ApplicationSettingsListener
 {
+public var mcMainMenuComponent: MainMenu;
+
 /*------------------------------------------ MAGIC ATTACK ------------------------------------------*/
 public var mcProjectileFiresUpper: float = 3.0f;
 public var mcHandleMouseAttacksInput: boolean = true;
@@ -35,6 +37,8 @@ public var mcDeathAnimation = "Death";
 /*------------------------------------------ PRIVATE SECTION ------------------------------------------*/
 private var mcPlayerStats: PlayerStats;
 
+private var mcPlatformInputControllerComponent: PlatformInputController;
+
 private var mcRegenerateMana = true;
 
 
@@ -43,6 +47,15 @@ private var mcRegenerateMana = true;
 /*------------------------------------------ METHODS SECTION ------------------------------------------*/
 
 /*------------------------------------------ MONOBEHAVIOR IMPLEMENTATION ------------------------------------------*/
+function OnDestroy()
+{
+  super.OnDestroy();
+  if (mcMainMenuComponent)
+  {
+    mcMainMenuComponent.removeApplicationSettingsListener(this);
+  }
+}
+
 function Awake()
 {
   super.Awake();
@@ -53,6 +66,21 @@ function Start()
 {
   super.Start();
   animation[mcAttackAnimation].speed *= mcMeleeAttackSpeed;
+
+  mcPlatformInputControllerComponent = GetComponent(PlatformInputController);
+  
+  if (mcMainMenuComponent == null)
+  {
+    var mainMenuObject = GameObject.FindGameObjectWithTag("MainMenu");
+    if (mainMenuObject)
+    {
+      mcMainMenuComponent = mainMenuObject.GetComponent(MainMenu);
+    }
+  }
+  if (mcMainMenuComponent)
+  {
+    mcMainMenuComponent.addApplicationSettingsListener(this);
+  }
 }
 
 function Update()
@@ -178,10 +206,27 @@ private function checkApplyDamage()
 protected function onGameLogicStopedChanged(stoped: boolean)
 {
   super.onGameLogicStopedChanged(stoped);
-  var platformInputController = GetComponent(PlatformInputController);
-  if (!mcIgnorePlatformInputController && platformInputController != null)
+  if (!mcIgnorePlatformInputController && mcPlatformInputControllerComponent != null)
   {
-    platformInputController.enabled = !mcGameLogicStoped;
+    mcPlatformInputControllerComponent.enabled = !mcGameLogicStoped;
+  }
+}
+
+
+/*------------------------------------------ APPLICATION SETTINGS LISTENER ------------------------------------------*/
+function onSoundEnabledChanged(enabled: boolean)
+{}
+
+function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
+{}
+
+function onTouchControlsEnabledChanged(enabled: boolean)
+{
+  mcIgnorePlatformInputController = enabled;
+  mcHandleMouseAttacksInput = !enabled;
+  if (mcPlatformInputControllerComponent)
+  {
+    mcPlatformInputControllerComponent.enabled = !enabled;
   }
 }
 

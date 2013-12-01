@@ -1,8 +1,10 @@
-﻿public class BaseTouchScreenControl extends BasicUIComponent
+﻿public class BaseTouchScreenControl extends BasicUIComponent implements ApplicationSettingsListener
 {
 
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mcScreenControlEnabled: boolean = false;
+
+public var mcMainMenuComponent: MainMenu;
 
 // @c true if we want to handle OnMouseDown() callbacks and @c false otherwise.
 public var mcHandleMouseButtonPressed: boolean = false;
@@ -11,14 +13,43 @@ public var mcHandleMouseButtonPressed: boolean = false;
 public var mcControlTexture: Texture2D;
 
 /*------------------------------------------ SIZES ------------------------------------------*/
+public var mcControlAutoSize: Vector2 = Vector2(0.15f, 0.15f); // percentage of a screen size.
+
 public var mcControlSize: Vector2 = Vector2(100, 100);
 
 
 /*------------------------------------------ MONOBEHAVIOR IMPLEMENTATION ------------------------------------------*/
+function OnDestroy()
+{
+  super.OnDestroy();
+  if (mcMainMenuComponent)
+  {
+    mcMainMenuComponent.removeApplicationSettingsListener(this);
+  }
+}
 function Start ()
 {
   super.Start();
   guiTexture.texture = mcControlTexture;
+  if (mcMainMenuComponent == null)
+  {
+    var mainMenuObject = GameObject.FindGameObjectWithTag("MainMenu");
+    mcMainMenuComponent = mainMenuObject.GetComponent(MainMenu);
+  }
+  if (mcMainMenuComponent)
+  {
+    mcMainMenuComponent.addApplicationSettingsListener(this);
+  }
+  else
+  {
+    Debug.LogError("Main Menu compoennt is not found");
+  }
+
+  mcControlSize.y = Screen.height * mcControlAutoSize.y;
+  if (Screen.height != Screen.width)
+  {
+    mcControlSize.x = mcControlSize.y;
+  }
 }
 
 function Update ()
@@ -93,7 +124,22 @@ protected function handleOnMouseDown()
 public function onGameStateChanged(gameState: GameState)
 {
   super.onGameStateChanged(gameState);
-  guiTexture.enabled = gameState == GameState.Playing || gameState == GameState.Tutorial;
+  guiTexture.enabled = (gameState == GameState.Playing || gameState == GameState.Tutorial) && mcScreenControlEnabled;
 }
+
+
+
+/*------------------------------------------ APPLICATION SETTINGS LISTENER ------------------------------------------*/
+function onTouchControlsEnabledChanged(enabled: boolean)
+{
+  mcScreenControlEnabled = enabled;
+  guiTexture.enabled = enabled;
+}
+
+function onSoundEnabledChanged(enabled: boolean)
+{}
+
+function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
+{}
 
 }

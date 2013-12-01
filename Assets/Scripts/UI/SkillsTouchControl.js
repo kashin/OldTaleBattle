@@ -85,6 +85,10 @@ private function openSkillsScreen()
   }
 }
 
+/*------------------------------------------ APPLICATION SETTINGS LISTENER ------------------------------------------*/
+function onTouchControlsEnabledChanged(enabled: boolean)
+{}
+
 }
 
 @script AddComponentMenu ("UI/Touch Screen Open Skills UI")

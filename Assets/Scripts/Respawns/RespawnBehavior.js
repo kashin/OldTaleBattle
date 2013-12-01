@@ -155,10 +155,6 @@ protected function increaseMobsListSizeForRandom()
   if (mcMobsListSizeForRandom <= mcMobs.Length)
   {
     mcMobsListSizeForRandom++;
-  }
-  else
-  {
-    // ok, no new mobs available in the list, then it is time to increase our mobs strength.
     mcIncreaseMobsStrength++;
   }
   mcMaxRespawnInTime *= mcDecreaseSpawnTime; // decrease spawn time every mcIncreaseMobsTime seconds.
@@ -200,6 +196,9 @@ function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
 {
   mcGameDifficulty = gameDifficulty;
 }
+
+function onTouchControlsEnabledChanged(enabled: boolean)
+{}
 
 
 } // Respawn Behavior

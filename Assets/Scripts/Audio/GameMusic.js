@@ -149,6 +149,9 @@ function onSoundEnabledChanged(enabled: boolean)
 function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
 {}
 
+function onTouchControlsEnabledChanged(enabled: boolean)
+{}
+
 
 /*------------------------------------------ APPLICATION SETTINGS LISTENER INTERFACE ------------------------------------------*/
 function onGameStateChanged(gameState: GameState)

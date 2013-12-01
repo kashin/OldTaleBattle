@@ -3,6 +3,7 @@ interface ApplicationSettingsListener
 {
   function onSoundEnabledChanged(enabled: boolean);
   function onGameDifficultyChanged(gameDifficulty: GameDifficulty);
+  function onTouchControlsEnabledChanged(enabled: boolean);
 }
 
 enum GameDifficulty
@@ -39,6 +40,8 @@ public function onGameStateChanged(gameState: GameState)
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mcMenuShownOnStart: boolean = false;
 
+public var mcTouchControlsEnabledByDefault: boolean = false;
+
 /*------------------------------------------ TEXT ------------------------------------------*/
 public var mcAvailableLevels: String[];
 public var mcAvailableLevelsNames: String[];
@@ -47,8 +50,10 @@ public var mcSettingsText = "Settings";
 public var mcExitText = "Exit";
 public var mcBackButtonText = "Go Back";
 
+/// Settings texts
 public var mcRandomMusicEnabledText = "Sound Enabled";
 public var mcGameDifficultiesText = ["Easy", "Normal", "Hard"];
+public var mcTouchControlsEnabledText = "Touch Controls Enbaled";
 
 
 /*------------------------------------------ TEXTURES ------------------------------------------*/
@@ -104,6 +109,20 @@ public function set GameDifficulty(value: GameDifficulty)
   }
 }
 
+static var mcTouchControlsEnabled: boolean = false;
+public function get TouchControlsEnabled(): boolean
+{
+  return mcTouchControlsEnabled;
+}
+public function set TouchControlsEnabled(value: boolean)
+{
+  if (value != mcTouchControlsEnabled)
+  {
+    mcTouchControlsEnabled = value;
+    PrefsStorage.storeIntKey(mcTouchControlsEnabledKey, value ? 1 : 0);
+    onTouchControlsEnabledChanged(mcTouchControlsEnabled);
+  }
+}
 
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
@@ -124,6 +143,7 @@ private var mcSpaceBetweenButtons: int = 20;
 
 private var mcGameDifficultyKey = "GameDifficulty";
 private var mcRandomMusicKey = "SoundEnabled";
+private var mcTouchControlsEnabledKey = "TouchControlsEnabled";
 
 private var mcLoadLevelName = "";
 private var mcNeedInvokeLevel: boolean = false;
@@ -133,6 +153,9 @@ private var mcNeedInvokeLevel: boolean = false;
 function Start()
 {
   super.Start();
+
+  Input.gyro.enabled = false; // good for power consumption since we don't gyroscope atm.
+
   mcScreenWidth = Screen.width;
   mcScreenHeight = Screen.height;
 
@@ -171,6 +194,7 @@ function Start()
 
   GameDifficulty = PrefsStorage.getIntKey(mcGameDifficultyKey, 1);
   RandomMusicEnabled = PrefsStorage.getIntKey(mcRandomMusicKey, 1) == 1;
+  TouchControlsEnabled = PrefsStorage.getIntKey(mcTouchControlsEnabledKey, mcTouchControlsEnabledByDefault ? 1 : 0) == 1;
 
   mcLoadingScreenTexture.guiTexture.pixelInset.width = Screen.width;
   mcLoadingScreenTexture.guiTexture.pixelInset.height = Screen.height;
@@ -296,7 +320,11 @@ private function drawSettingsPage()
       RandomMusicEnabled = GUI.Toggle(Rect(elementPos.x , elementPos.y, mcButtonSize.x * 2, mcButtonSize.y), RandomMusicEnabled, mcRandomMusicEnabledText, style);
       elementPos.y += mcButtonSize.y + mcSpaceBetweenButtons;
 
-      GameDifficulty = GUI.Toolbar(Rect(elementPos.x, elementPos.y, mcMainLabelSize.x, mcMainLabelSize.y / 2), GameDifficulty, mcGameDifficultiesText);
+      var gameDifficultyYSize = mcMainLabelSize.y / 2;
+      GameDifficulty = GUI.Toolbar(Rect(elementPos.x, elementPos.y, mcMainLabelSize.x, gameDifficultyYSize), GameDifficulty, mcGameDifficultiesText);
+      elementPos.y += gameDifficultyYSize + mcSpaceBetweenButtons;
+      
+      TouchControlsEnabled = GUI.Toggle(Rect(elementPos.x , elementPos.y, mcButtonSize.x * 2, mcButtonSize.y), TouchControlsEnabled, mcTouchControlsEnabledText, style);
     GUI.EndGroup();
 
     // Draw Back button.
@@ -324,8 +352,10 @@ private function onLoadGameLevel()
 public function addApplicationSettingsListener(listener: ApplicationSettingsListener)
 {
   mcApplicationSettingsListeners.Add(listener);
-  // calling onSoundEnabledChanged to make sure that listener is 'initialized' currectly.
-  listener.onSoundEnabledChanged(mcRandomMusicEnabled);
+  // calling onXXXXChanged to make sure that listener is 'initialized' currectly.
+  listener.onSoundEnabledChanged(RandomMusicEnabled);
+  listener.onGameDifficultyChanged(GameDifficulty);
+  listener.onTouchControlsEnabledChanged(TouchControlsEnabled);
 }
 
 public function removeApplicationSettingsListener(listener: ApplicationSettingsListener)
@@ -345,6 +375,14 @@ private function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
   for (var i = 0; i < mcApplicationSettingsListeners.Count; i++)
   {
     mcApplicationSettingsListeners[i].onGameDifficultyChanged(gameDifficulty);
+  }
+}
+
+private function onTouchControlsEnabledChanged(touchControlsEnabled: boolean)
+{
+  for (var i = 0; i < mcApplicationSettingsListeners.Count; i++)
+  {
+    mcApplicationSettingsListeners[i].onTouchControlsEnabledChanged(touchControlsEnabled);
   }
 }
 

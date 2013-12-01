@@ -11,7 +11,7 @@ public var mcPlayer: PlayerBehavior;
 // position of a control
 private var mcControlPosition: Vector2 = Vector2(0, 0);
 
-private var mcSpaceSize: int = 30;
+private var mcSpaceSize: int = 40;
 
 
 

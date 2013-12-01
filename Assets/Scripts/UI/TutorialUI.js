@@ -1,7 +1,9 @@
-﻿public class TutorialUI extends BasicUIComponent
+﻿public class TutorialUI extends BasicUIComponent implements ApplicationSettingsListener
 {
 
 public var mcShowTutorialOnStart: boolean = true;
+
+public var mcMainMenuComponent: MainMenu;
 
 public var mcTutorialText = "Press K to perform a Melee Attack \n"
                           + "Press M to perform a Magic Attack \n"
@@ -30,6 +32,20 @@ function Start()
   if (mcShowTutorialOnStart)
   {
     mcRequestShowTutorial = mcShowTutorialOnStart;
+  }
+
+  if (mcMainMenuComponent == null)
+  {
+    var mainMenuObject = GameObject.FindGameObjectWithTag("MainMenu");
+    mcMainMenuComponent = mainMenuObject.GetComponent(MainMenu);
+  }
+  if (mcMainMenuComponent)
+  {
+    mcMainMenuComponent.addApplicationSettingsListener(this);
+  }
+  else
+  {
+    Debug.LogError("Main Menu compoennt is not found");
   }
 
   mcTutorialTextSize.x = Screen.width * mcTutorialTextAutoSize.x;
@@ -72,6 +88,18 @@ private function changeShowTutorial()
   mcGameDirectorComponent.requestChangeTutorialState(true);
   mcRequestShowTutorial = false;
 }
+
+/*------------------------------------------ APPLICATION SETTINGS LISTENER ------------------------------------------*/
+function onTouchControlsEnabledChanged(enabled: boolean)
+{
+  mcShowTouchScreenTutorial = enabled;
+}
+
+function onSoundEnabledChanged(enabled: boolean)
+{}
+
+function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
+{}
 
 }
 @script AddComponentMenu ("UI/Tutorial UI")
