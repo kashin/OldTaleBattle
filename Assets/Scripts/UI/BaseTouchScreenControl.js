@@ -46,10 +46,7 @@ function Start ()
   }
 
   mcControlSize.y = Screen.height * mcControlAutoSize.y;
-  if (Screen.height != Screen.width)
-  {
-    mcControlSize.x = mcControlSize.y;
-  }
+  mcControlSize.x = mcControlSize.y; // TODO: fix this
 }
 
 function Update ()
