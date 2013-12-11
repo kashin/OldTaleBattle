@@ -28,11 +28,14 @@ function Start()
   if (gameDirectorObject)
   {
     mcGameDirector = gameDirectorObject.GetComponent(GameDirector);
-    mcGameDirector.addGameEventsListener(this);
   }
   else
   {
     Debug.LogError("BasicDynamicGameObject.Start(): GameDirector's GameObject not found");
+  }
+  if (mcGameDirector)
+  {
+    mcGameDirector.addGameEventsListener(this);
   }
 }
 

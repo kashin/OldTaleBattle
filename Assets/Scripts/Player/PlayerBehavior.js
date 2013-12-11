@@ -144,6 +144,11 @@ public function applyDamage(damage: Damage)
   mcPlayerStats.applyDamage(damage);
 }
 
+public function applyHealing(heal: int)
+{
+  mcPlayerStats.applyHealing(heal);
+}
+
 public function applyScore(score: int)
 {
   mcPlayerStats.applyScore(score);

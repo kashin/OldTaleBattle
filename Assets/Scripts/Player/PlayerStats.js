@@ -126,6 +126,10 @@ private function set Health(value: int)
   {
     value = 0;
   }
+  if (value > mcMaxHealth)
+  {
+    value = mcMaxHealth;
+  }
   mcHealth = value;
 
   // inform listeners that health is changed.
@@ -147,8 +151,9 @@ private function set MaxHealth(value: int)
   {
     value = 0;
   }
+  var percentageOfMaxHealth: float = 1.0f * mcHealth / mcMaxHealth; // 1.0f is hack to convert int to float. TODO: is there any 'nice' way to do this in JavaScript?
   mcMaxHealth = value;
-  Health = mcMaxHealth;
+  Health = Mathf.FloorToInt(percentageOfMaxHealth * mcMaxHealth);
 }
 var mcBaseHealth: int = 100;
 
@@ -384,6 +389,11 @@ public function applyDamage(damage: Damage)
   // TODO: check type's resistant to calculate the real damage.
   var healthDrain = damage.DamageValue;
   Health -= healthDrain;
+}
+
+public function applyHealing(heal: int)
+{
+  Health += heal;
 }
 
 public function applyScore(score: int)
