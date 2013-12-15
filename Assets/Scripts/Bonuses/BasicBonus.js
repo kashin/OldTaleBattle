@@ -69,7 +69,6 @@ function Update ()
 
 function OnTriggerEnter(other : Collider)
 {
-  Debug.Log("Basic bonus. OnTrigger enter");
   Destroy(gameObject);
 }
 /*------------------------------------------ GameEventsListener INTERFACE ------------------------------------------*/

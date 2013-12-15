@@ -36,6 +36,8 @@ private var mcSpawnMobInSeconds: float = 0.0f; // if 0, then we should generate 
 private var mcIncreaseListSizeCalled: float = 0.0f;
 private var mcIncreaseListSizeInSeconds: float = 0.0f; // if 0, then we should generate a random number.
 
+private var mcGameDirector: GameDirector;
+
 
 
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
@@ -45,6 +47,10 @@ function OnDestroy()
   {
     mcMainMenuComponent.removeApplicationSettingsListener(this);
   }
+  if (mcGameDirector)
+  {
+    mcGameDirector.removeGameEventsListener(this);
+  }
 }
 
 function Start()
@@ -52,10 +58,10 @@ function Start()
   var gameDirectorObject = GameObject.FindGameObjectWithTag("GameDirector");
   if (gameDirectorObject)
   {
-    var gameDirector = gameDirectorObject.GetComponent(GameDirector);
-    if (gameDirector)
+    var mcGameDirector = gameDirectorObject.GetComponent(GameDirector);
+    if (mcGameDirector)
     {
-      gameDirector.addGameEventsListener(this);
+      mcGameDirector.addGameEventsListener(this);
     }
   }
   else

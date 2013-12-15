@@ -148,6 +148,10 @@ public function applyHealing(heal: int)
 {
   mcPlayerStats.applyHealing(heal);
 }
+public function applyManaChange(mana: int)
+{
+  mcPlayerStats.applyManaChange(mana);
+}
 
 public function applyScore(score: int)
 {

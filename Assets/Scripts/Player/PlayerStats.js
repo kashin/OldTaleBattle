@@ -198,8 +198,9 @@ private function set MaxMana(value: int)
   {
     value = 0;
   }
+  var percentageOfMaxMana: float = 1.0f * mcMana / mcMaxMana; // 1.0f is hack to convert int to float. TODO: is there any 'nice' way to do this in JavaScript?
   mcMaxMana = value;
-  Mana = mcMaxMana;
+  Mana = Mathf.FloorToInt(percentageOfMaxMana * mcMaxMana);
 }
 var mcBaseMana: int = 100;
 

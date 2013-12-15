@@ -34,7 +34,6 @@ function Update()
 
 function OnTriggerEnter(other : Collider)
 {
-  super.OnTriggerEnter(other);
   if (other.CompareTag("Player") || (other.transform.parent && other.transform.parent.CompareTag("Player")) ) // parent is a hack for Character Controller workaround.
   {
     // ok, let's heal Player now.
@@ -42,6 +41,7 @@ function OnTriggerEnter(other : Collider)
     {
       mcPlayer.applyHealing(mcHealPoints);
     }
+    super.OnTriggerEnter(other);
   }
 }
 
