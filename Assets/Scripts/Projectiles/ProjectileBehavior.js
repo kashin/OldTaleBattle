@@ -46,7 +46,6 @@ function Update()
 function OnTriggerEnter(other : Collider)
 {
   var collisionHandled = false;
-  var foundInParent = false;
   if (other.CompareTag("Player") || (other.transform.parent && other.transform.parent.CompareTag("Player")) ) // parent is a hack for Character Controller workaround.
   {
     if (mcCollideWithPlayer)
@@ -78,6 +77,10 @@ function OnTriggerEnter(other : Collider)
       }
       collisionHandled = true;
     }
+  }
+  else if (other.CompareTag("Bonus"))
+  {
+    collisionHandled = false;
   }
   else if (!other.CompareTag("MagicAttack") || (other.transform.parent && !other.transform.parent.CompareTag("MagicAttack"))) // parent is a hack for Character Controller workaround.
   {

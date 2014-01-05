@@ -32,13 +32,6 @@ function OnDestroy()
   }
 }
 
-function Awake()
-{
-  var cam = Camera.main;
-  mcFieldSize.y = cam.orthographicSize;
-  mcFieldSize.x = mcFieldSize.y * cam.aspect;
-}
-
 function Start()
 {
   var gameDirectorObject = GameObject.FindGameObjectWithTag("GameDirector");
@@ -67,6 +60,14 @@ function Start()
   {
     Debug.LogError("BonusSpawner.Start(): GameDirector's GameObject not found");
   }
+
+  var cam = Camera.main;
+  mcFieldSize.y = cam.orthographicSize;
+  mcFieldSize.x = mcFieldSize.y * cam.aspect;
+  var newPosition = cam.transform.position;
+  newPosition.y = transform.position.y;
+  transform.position = newPosition;
+
   updateNextSpawnTime();
 }
 

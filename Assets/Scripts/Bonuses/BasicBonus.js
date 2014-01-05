@@ -63,7 +63,7 @@ function Update ()
 {
   if ( (mcGameState == GameState.Playing || mcGameState == GameState.Tutorial) && mcDeathTime <= Time.time)
   {
-    //Destroy(gameObject);
+    Destroy(gameObject);
   }
 }
 
