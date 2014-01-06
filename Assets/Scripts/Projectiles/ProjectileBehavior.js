@@ -30,7 +30,7 @@ function Update()
 function OnTriggerEnter(other : Collider)
 {
   var collisionHandled = false;
-  if (other.CompareTag("Player") || (other.transform.parent && other.transform.parent.CompareTag("Player")) ) // parent is a hack for Character Controller workaround.
+  if (colliderIsPlayer(other))
   {
     if (mcCollideWithPlayer)
     {
@@ -46,7 +46,7 @@ function OnTriggerEnter(other : Collider)
       collisionHandled = true;
     }
   }
-  else if (other.CompareTag("Enemy") || (other.transform.parent && other.transform.parent.CompareTag("Enemy")) ) // parent is a hack for Character Controller workaround.
+  else if ( colliderIsEnemy(other) )
   {
     if (mcCollideWithEnemy)
     {
@@ -62,11 +62,11 @@ function OnTriggerEnter(other : Collider)
       collisionHandled = true;
     }
   }
-  else if (other.CompareTag("Bonus")) // do not destroy object if collided with bonus.
+  else if (colliderIsBonus(other)) // do not destroy object if collided with bonus.
   {
     collisionHandled = false;
   }
-  else if (!other.CompareTag("MagicAttack") || (other.transform.parent && !other.transform.parent.CompareTag("MagicAttack"))) // parent is a hack for Character Controller workaround.
+  else if (!colliderIsMagicAttack(other))
   {
     collisionHandled = true;
   }
@@ -75,6 +75,46 @@ function OnTriggerEnter(other : Collider)
     Destroy(gameObject, mcLifeTime);
   }
 }
+/*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
+  protected function colliderIsPlayer(other : Collider): boolean
+  {
+    var result = false;
+    if ( other.CompareTag("Player") || (other.transform.parent && other.transform.parent.CompareTag("Player")) ) // parent is a hack for Character Controller workaround.
+    {
+      result = true;
+    }
+    return result;
+  }
 
+  protected function colliderIsEnemy(other : Collider): boolean
+  {
+    var result = false;
+    if ( other.CompareTag("Enemy") || (other.transform.parent && other.transform.parent.CompareTag("Enemy")) ) // parent is a hack for Character Controller workaround.
+    {
+      result = true;
+    }
+    return result;
+  }
+
+  protected function colliderIsBonus(other : Collider): boolean
+  {
+    var result = false;
+    if ( other.CompareTag("Bonus") )
+    {
+      result = true;
+    }
+    return result;
+  }
+
+
+  protected function colliderIsMagicAttack(other : Collider): boolean
+  {
+    var result = false;
+    if ( other.CompareTag("MagicAttack") || (other.transform.parent && other.transform.parent.CompareTag("MagicAttack")) ) // parent is a hack for Character Controller workaround.
+    {
+      result = true;
+    }
+    return result;
+  }
 
 } // ProjectileBehavior

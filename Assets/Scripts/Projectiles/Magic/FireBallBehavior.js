@@ -1,10 +1,6 @@
 ﻿public class FireBallBehavior extends BasicMagicAttackBehavior
 {
-  function Awake()
-  {
-    super.Awake();
-    AttackStats.DamageType = DamageType.Fire;
-  }
+  /// TODO: add some area damage code when fireball is 'upgraded'
 }
 
 @script AddComponentMenu ("Attacks/Fire Ball Attack")
