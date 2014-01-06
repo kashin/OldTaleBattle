@@ -6,33 +6,17 @@ public var mcSpeed: float = 0.5f;
 public var mcLifeTime: float = 0.2f;
 public var mcCollideWithPlayer: boolean = false;
 public var mcCollideWithEnemy: boolean = true;
-var mcManaCost: float = 10.0f;
-public function get ManaCost(): int
-{
-  return mcManaCost;
-}
 
-/*------------------------------------------ PROJECTILE'S DAMAGE STATS ------------------------------------------*/
-var mcDamage: int = 10;
-var mcBaseDamage: int = 10;
-var mcDamageType: DamageType = DamageType.Fire;
-
-var mcCharactersWillPower: int = 10;
-public function set CharactersWillPower(value: int)
+/*------------------------------------------ PROJECTILE'S STATS ------------------------------------------*/
+var mcBasicAttackStats: BasicAttackStats;
+public function get AttackStats(): BasicAttackStats
 {
-  if (value < 0)
-  {
-    value = 0;
-  }
-  mcCharactersWillPower = value;
-  // Change damage according to an assigned Character's Will Power.
-  mcDamage = mcBaseCharactersWillPower + (mcCharactersWillPower - mcBaseCharactersWillPower) * 2;
+  return mcBasicAttackStats;
 }
-public function get CharactersWillPower(): int
+protected function set AttackStats(value: BasicAttackStats)
 {
-  return mcCharactersWillPower;
+  mcBasicAttackStats = value;
 }
-private var mcBaseCharactersWillPower: int = 10;
 
 /*------------------------------------------ MONOBEHAVIOR ------------------------------------------*/
 function Update()
@@ -55,9 +39,9 @@ function OnTriggerEnter(other : Collider)
       {
         playersComponent = other.transform.parent.GetComponent(PlayerBehavior);
       }
-      if (playersComponent != null)
+      if (playersComponent != null && mcBasicAttackStats != null)
       {
-        playersComponent.applyDamage(new Damage(mcDamageType, mcDamage));
+        playersComponent.applyDamage(new Damage(mcBasicAttackStats.DamageType, mcBasicAttackStats.Damage));
       }
       collisionHandled = true;
     }
@@ -73,12 +57,12 @@ function OnTriggerEnter(other : Collider)
       }
       if (mobsComponent != null)
       {
-        mobsComponent.applyDamage(new Damage(mcDamageType, mcDamage));
+        mobsComponent.applyDamage(new Damage(mcBasicAttackStats.DamageType, mcBasicAttackStats.Damage));
       }
       collisionHandled = true;
     }
   }
-  else if (other.CompareTag("Bonus"))
+  else if (other.CompareTag("Bonus")) // do not destroy object if collided with bonus.
   {
     collisionHandled = false;
   }

@@ -86,9 +86,9 @@ public function set WillPower(value: int)
   }
   mcWillPower = value;
   ManaRegeneration = mcBaseWillPower + (mcWillPower - mcBaseWillPower) * 2; // + 2 points per each 1 will power point.
-  if (mcMagicAttackBehavior)
+  if (mcMagicAttackBehavior && mcMagicAttackBehavior.AttackStats)
   {
-    mcMagicAttackBehavior.CharactersWillPower = WillPower;
+    mcMagicAttackBehavior.AttackStats.PlayerStats = this;
   }
 }
 var mcBaseWillPower: int = 10;
@@ -330,7 +330,10 @@ public function set MagicAttack(value: GameObject)
   if (mcMagicAttack)
   {
     mcMagicAttackBehavior = mcMagicAttack.GetComponent(ProjectileBehavior);
-    mcMagicAttackBehavior.CharactersWillPower = WillPower;
+    if (mcMagicAttackBehavior && mcMagicAttackBehavior.AttackStats)
+    {
+      mcMagicAttackBehavior.AttackStats.PlayerStats = this;
+    }
   }
 }
 public function get MagicAttack(): GameObject
@@ -342,9 +345,9 @@ private var mcMagicAttackBehavior: ProjectileBehavior; // TODO: replace by a Mag
 public function get MagicDamage(): int
 {
   var damage = 0;
-  if (mcMagicAttackBehavior)
+  if (mcMagicAttackBehavior && mcMagicAttackBehavior.AttackStats)
   {
-    damage = mcMagicAttackBehavior.mcDamage;
+    damage = mcMagicAttackBehavior.AttackStats.Damage;
   }
   return damage;
 }
@@ -352,23 +355,26 @@ public function get MagicDamage(): int
 public function get MagicAttackType(): DamageType
 {
   var type: DamageType;
-  if (mcMagicAttackBehavior)
+  if (mcMagicAttackBehavior && mcMagicAttackBehavior.AttackStats)
   {
-    type = mcMagicAttackBehavior.mcDamageType;
+    type = mcMagicAttackBehavior.AttackStats.DamageType;
   }
   return type;
 }
 
 public function useMagicAttack(position: Vector3, rotation: Quaternion)
 {
-  if (mcMagicAttackBehavior)
+  if (mcMagicAttackBehavior && mcMagicAttackBehavior.AttackStats)
   {
-    if (mcMagicAttackBehavior.ManaCost <= Mana)
+    if (mcMagicAttackBehavior.AttackStats.ManaCost <= Mana)
     {
-      applyManaChange(-mcMagicAttackBehavior.ManaCost);
+      applyManaChange(-mcMagicAttackBehavior.AttackStats.ManaCost);
       var newMagicAttack = Instantiate(mcMagicAttack, position, rotation);
       var attackBehavior = newMagicAttack.GetComponent(ProjectileBehavior);
-      attackBehavior.CharactersWillPower = WillPower;
+      if (attackBehavior && attackBehavior.AttackStats)
+      {
+        attackBehavior.AttackStats.PlayerStats = this;
+      }
     }
   }
 }

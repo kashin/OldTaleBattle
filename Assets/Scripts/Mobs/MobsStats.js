@@ -7,7 +7,8 @@ enum DamageType
 {
   Physical,
   Fire,
-  Mental
+  Mental,
+  Poison
 }
 
 /*------------------------------------------ DAMAGE CLASS ------------------------------------------*/
