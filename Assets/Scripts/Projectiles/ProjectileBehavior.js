@@ -7,6 +7,21 @@ public var mcLifeTime: float = 0.2f;
 public var mcCollideWithPlayer: boolean = false;
 public var mcCollideWithEnemy: boolean = true;
 
+// projectile's name
+var mcName = "";
+public function get Name(): String
+{
+  return mcName;
+}
+
+// projectile's description
+var mcDescription = "";
+public function get Description(): String
+{
+  return mcDescription;
+}
+
+
 /*------------------------------------------ PROJECTILE'S STATS ------------------------------------------*/
 var mcBasicAttackStats: BasicAttackStats;
 public function get AttackStats(): BasicAttackStats

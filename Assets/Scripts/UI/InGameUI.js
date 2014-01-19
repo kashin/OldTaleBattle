@@ -49,6 +49,8 @@ public var mcGameOverBackButtonText = "Go to Main Menu";
 
 public var mcBackButtonText = "Back";
 
+public var mcSelectSpellText = "Selected Spell: ";
+
 
 /*------------------------------------------ STYLES ------------------------------------------*/
 public var mcInGameScoreTextStyle: GUIStyle;
@@ -76,7 +78,10 @@ public var mcGameOverBackgroundTexture: Texture2D;
 /*------------------------------------------ GAMEOBJECTS ------------------------------------------*/
 /// @brief holds a ref on a Player's GameObject.
 public var mcPlayer: GameObject;
+public var mcPlayerInSkillsObject: GameObject;
 public var mcSkillsCamera: Camera;
+public var mcSpellsScreen: InGameSpellsScreen;
+
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 private var mcPlayerStats: PlayerStats;
@@ -115,6 +120,8 @@ private var mcInGameScoreSize: Vector2 = Vector2(0, 0);
 
 
 private var mcNewScorePosition: int = -1;
+
+private var mcShowSpellsScreen: boolean  = false; // TODO: replace by an enum when needed.
 
 
 
@@ -194,6 +201,11 @@ function Start()
 
   mcInGameScoreSize.x = Screen.width * mcInGameScoreAutoSize.x;
   mcInGameScoreSize.y = Screen.height * mcInGameScoreAutoSize.y;
+
+  if (mcSpellsScreen)
+  {
+    mcSpellsScreen.initializeSizesAndPositions();
+  }
 }
 
 function Update()
@@ -270,9 +282,23 @@ private function drawPlayingStateUI()
 /*------------------------------------------ DRAW FULL SCREEN UI STATE ------------------------------------------*/
 private function drawFullScreenInGameUI()
 {
-  // Let's draw Skills page.
-  drawLeftSkillsScreenSection();
-  drawRightSkillsScreenSection();
+  if (mcShowSpellsScreen)
+  {
+    if (mcSpellsScreen)
+    {
+      mcShowSpellsScreen = !mcSpellsScreen.drawScreen();
+      if (mcPlayerInSkillsObject)
+      {
+        mcPlayerInSkillsObject.active = !mcShowSpellsScreen;
+      }
+    }
+  }
+  else
+  {
+    // Let's draw Skills page.
+    drawLeftSkillsScreenSection();
+    drawRightSkillsScreenSection();
+  }
 }
 
 /*------------------------------------------ DRAW GAME OVER STATE ------------------------------------------*/
@@ -434,6 +460,18 @@ private function drawRightSkillsScreenSection()
     // Current Player's Melee Attack
     GUI.Label(Rect(nextRightSectionPosition.x, nextRightSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y), mcMagicAttackValueText + " " + mcPlayerStats.MagicDamage.ToString(), mcSkillsLabelsStyle);
     nextRightSectionPosition.y += mcSkillsElementSize.y + spaceBetweenElements; // TODO: remove hardcoded value...
+
+    // Selected spell button
+    var currentSpellName = "";
+    if (mcPlayerStats.MagicAttack)
+    {
+      var magicBehavior = mcPlayerStats.MagicAttack.GetComponent(BasicMagicAttackBehavior);
+      currentSpellName = magicBehavior.Name;
+    }
+    if (GUI.Button(Rect(nextRightSectionPosition.x, nextRightSectionPosition.y, mcSkillsElementSize.x, mcSkillsElementSize.y), mcSelectSpellText + currentSpellName, mcBackButtonStyle) )
+    {
+      mcShowSpellsScreen = true;
+    }
   GUI.EndGroup();
 }
 
