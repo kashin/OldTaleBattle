@@ -10,6 +10,7 @@ public class InGameSpellsScreen
 
   /*------------------------------------------ TEXT ------------------------------------------*/
   public var mDescriptionLabelText = "Description:";
+  public var mBackButtonText = "Back";
   
   /*------------------------------------------ STYLES ------------------------------------------*/
   public var mBackgroundStyle: GUIStyle;
@@ -21,13 +22,15 @@ public class InGameSpellsScreen
   /// sizes are in percentage compare to a screen's sizes.
   public var mSpellsScrollViewAreaSize: Vector2 =  Vector2(0.3, 0.9);
   public var mSpaceBetweenElements = 15;
-  public var mSpellButtonSize: Vector2 = Vector2(0.2, 0.15);
+  public var mSpellButtonSize: Vector2 = Vector2(0.2, 0.1);
+  public var mBackButtonSize: Vector2 = Vector2(0.1, 0.1);
 
   /*------------------------------------------ PRIVATE ------------------------------------------*/
   private var mSpellsAreaSize: Vector2 = Vector2(0, 0);
   private var mDescriptionAreaSize: Vector2 = Vector2(0, 0);
   private var mScrollPosition: Vector2 = Vector2(0.0f, 0.0f);
   private var mButtonSize: Vector2 = Vector2(0, 0);
+  private var mBackButtonRealSize: Vector2 = Vector2(0, 0);
   private var mPreSelectedSpell: GameObject;
   private var mPreSelectedSpellBehavior: BasicMagicAttackBehavior;
 
@@ -42,7 +45,7 @@ public class InGameSpellsScreen
     var result = false;
     // Draw Scroll Area
     GUI.BeginGroup(Rect(0, 0, mSpellsAreaSize.x, mSpellsAreaSize.y));
-      mScrollPosition = GUI.BeginScrollView(Rect(0, 0, mSpellsAreaSize.x, mSpellsAreaSize.y),
+      mScrollPosition = GUI.BeginScrollView(Rect(0, 0, mSpellsAreaSize.x, mSpellsAreaSize.y - mBackButtonRealSize.y - mSpaceBetweenElements),
                                             mScrollPosition, Rect(0, 0, mButtonSize.x + mSpaceBetweenElements * 2, mButtonSize.y * mSpells.Length + mSpaceBetweenElements * (mSpells.Length + 1) ));
 
       var buttonPosition = Vector2(mSpaceBetweenElements, mSpaceBetweenElements);
@@ -71,6 +74,10 @@ public class InGameSpellsScreen
         buttonPosition.y += mButtonSize.y + mSpaceBetweenElements;
       }
       GUI.EndScrollView();
+      if ( GUI.Button(Rect(mSpaceBetweenElements, mSpellsAreaSize.y - mBackButtonRealSize.y, mBackButtonRealSize.x, mBackButtonRealSize.y), mBackButtonText, mButtonStyle) )
+      {
+        result = true;
+      }
     GUI.EndGroup(); // ScrollView Spells group.
 
     // Description section
@@ -108,5 +115,8 @@ public class InGameSpellsScreen
       mPreSelectedSpell = mSpells[0];
       mPreSelectedSpellBehavior = mPreSelectedSpell.GetComponent(BasicMagicAttackBehavior);
     }
+
+    mBackButtonRealSize.x = Screen.width * mBackButtonSize.x;
+    mBackButtonRealSize.y = Screen.height * mBackButtonSize.y;
   }
 }
