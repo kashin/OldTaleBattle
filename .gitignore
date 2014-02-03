@@ -11,7 +11,7 @@ Assets/GameData/Assets/
 *.unityproj
 *.sln
 *.userprefs
-*.meta
+#*.meta
 
 
 # Free assets folder
