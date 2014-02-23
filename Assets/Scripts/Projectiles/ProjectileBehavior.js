@@ -6,6 +6,7 @@ public var mcSpeed: float = 0.5f;
 public var mcLifeTime: float = 0.2f;
 public var mcCollideWithPlayer: boolean = false;
 public var mcCollideWithEnemy: boolean = true;
+public var destroyAfterCollision: boolean = true;
 
 // projectile's name
 var mcName = "";
@@ -85,11 +86,12 @@ function OnTriggerEnter(other : Collider)
   {
     collisionHandled = true;
   }
-  if (collisionHandled)
+  if (collisionHandled && destroyAfterCollision)
   {
     Destroy(gameObject, mcLifeTime);
   }
 }
+
 /*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
   protected function colliderIsPlayer(other : Collider): boolean
   {
