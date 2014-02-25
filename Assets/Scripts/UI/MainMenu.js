@@ -168,7 +168,7 @@ function Start()
   mcSpaceBetweenButtons = mcButtonSize.y * mcSpaceBetweenButtonsAuto;
   mcSettingsValuesPos.x = mcSpaceBetweenButtons;
 
-  var maxButtonHeight = mcScreenHeight / (mcAvailableLevels.Length + 3); // magic number 3 is 'exit + settins + back' buttons.
+  var maxButtonHeight = mcScreenHeight / (mcAvailableLevels.Length + 5); // magic number 3 is 'exit + settins + back' buttons + 2 button's size for main label.
   if (mcButtonSize.y > maxButtonHeight)
   {
     mcButtonSize.y = maxButtonHeight;
