@@ -88,4 +88,15 @@ public class BasicAttackStats
     mManaCost = value;
   }
   /// TODO: add stamina cost.
+
+  /*------------------------------------------ CHARACTER ANIMATION ------------------------------------------*/
+  var mCharacterAnimation = "Attack";
+  public function get CharacterAnimation(): String
+  {
+    return mCharacterAnimation;
+  }
+  public function set CharacterAnimation(value: String)
+  {
+    mCharacterAnimation = value;
+  }
 }

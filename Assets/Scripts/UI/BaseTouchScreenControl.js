@@ -96,6 +96,13 @@ function OnMouseDown()
   }
 }
 
+function OnMouseUp()
+{
+  if (mcHandleMouseButtonPressed)
+  {
+    handleOnMouseUp();
+  }
+}
 
 /*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
 // Empty here, should be overriden by other classes
@@ -115,6 +122,9 @@ protected function handleTouchCanceled(touch: Touch)
 {}
 
 protected function handleOnMouseDown()
+{}
+
+protected function handleOnMouseUp()
 {}
 
 /*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
@@ -140,3 +150,5 @@ function onGameDifficultyChanged(gameDifficulty: GameDifficulty)
 {}
 
 }
+
+@script RequireComponent (GUITexture)
