@@ -105,9 +105,10 @@ public function increaseWillPower(increase: int)
 
 
 /*------------------------------------------  AGILITY  ------------------------------------------*/
-/// Increases posibility to avoid attacks.
-// TODO: add this possiblity to avoid attack.
+/// Increases posibility to avoid attacks. Affects available Action points in story mode.
+// TODO: add possiblity to avoid attack.
 var mcAgility: int = 10;
+
 var mcBaseAgility: int = 10;
 
 
