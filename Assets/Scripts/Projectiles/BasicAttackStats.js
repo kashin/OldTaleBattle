@@ -87,6 +87,21 @@ public class BasicAttackStats
     }
     mManaCost = value;
   }
+
+  /// makes sense only for story mode attacks
+  var mActoinPointsCost: int = 10;
+  public function get ActionPointsCost(): int
+  {
+    return mActoinPointsCost;
+  }
+  public function set ActionPointsCost(value: int)
+  {
+    if (value < 0)
+    {
+      value = 0;
+    }
+    mActoinPointsCost = value;
+  }
   /// TODO: add stamina cost.
 
   /*------------------------------------------ CHARACTER ANIMATION ------------------------------------------*/

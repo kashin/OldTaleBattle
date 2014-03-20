@@ -108,9 +108,45 @@ public function increaseWillPower(increase: int)
 /// Increases posibility to avoid attacks. Affects available Action points in story mode.
 // TODO: add possiblity to avoid attack.
 var mcAgility: int = 10;
+public function get Agility(): int
+{
+  return mcAgility;
+}
+public function set Agility(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcAgility = value;
+
+  ActionPoints = mcBaseAgility + (mcAgility - mcBaseAgility); // + 1 point per each additional will power point.
+}
 
 var mcBaseAgility: int = 10;
 
+public function increaseAgility(increase: int)
+{
+  if (AvailableSkillPoints > 0)
+  {
+    Agility += increase;
+  }
+  useAvailableSkillPoints(increase);
+}
+
+var mcActionPoints: int = 10;
+public function get ActionPoints() : int
+{
+  return mcActionPoints;
+}
+public function set ActionPoints(value: int)
+{
+  if (value < 0)
+  {
+    value = 0;
+  }
+  mcActionPoints = value;
+}
 
 
 
@@ -384,9 +420,11 @@ public function useMagicAttack(position: Vector3, rotation: Quaternion)
 /*------------------------------------------  METHODS  ------------------------------------------*/
 function Start()
 {
-  Strength = mcStrength; // sets MaxHealth as well.
-  Intelligent = mcIntelligent; // Sets MaxMana as well.
+  // 'set' stats to initialize MaxHealth/Mana/ActionPoints/etc. stats as well.
+  Strength = mcStrength;
+  Intelligent = mcIntelligent;
   WillPower = mcWillPower;
+  Agility = mcAgility;
   Health = MaxHealth;
   Mana = MaxMana;
   MagicAttack = mcMagicAttack;

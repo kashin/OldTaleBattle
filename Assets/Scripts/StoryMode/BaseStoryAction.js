@@ -4,20 +4,39 @@ public class BaseStoryAction extends BaseTouchScreenControl
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var mStoryUIDirector: StoryUIDirector;
 public var mAttackObject: GameObject;
+public var mTurnAction: GameObject;
 
 /*------------------------------------------ TEXTURES ------------------------------------------*/
 public var mPressedActionTexture: Texture;
 
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
-
-
-/*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
-public function onGameStateChanged(gameState: GameState)
+private var mAttackStats: BasicAttackStats;
+public function get AttackStats(): BasicAttackStats
 {
-  super.onGameStateChanged(gameState);
-  // action's visibility do not depend on application settings.
-  guiTexture.enabled = (gameState == GameState.Playing || gameState == GameState.Tutorial);
+  return mAttackStats;
+}
+public function set AttackStats(value: BasicAttackStats)
+{
+  mAttackStats = value;
+}
+
+/*------------------------------------------ MONOBEHAVIOR METHODS ------------------------------------------*/
+function Start ()
+{
+  super.Start();
+  if (mAttackObject != null)
+  {
+    var component = mAttackObject.GetComponent(ProjectileBehavior);
+    if (component != null)
+    {
+      mAttackStats = component.AttackStats;
+    }
+  }
+  else
+  {
+    Debug.LogWarning("Action do not have an attached attack object!");
+  }
 }
 
 /*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
@@ -63,6 +82,14 @@ private function setPressedState(value: boolean)
 	guiTexture.texture = value ? mPressedActionTexture : mcControlTexture;
 }
 
+
+/*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
+public function onGameStateChanged(gameState: GameState)
+{
+  super.onGameStateChanged(gameState);
+  // action's visibility do not depend on application settings.
+  guiTexture.enabled = (gameState == GameState.Playing || gameState == GameState.Tutorial);
+}
 
 }
 
