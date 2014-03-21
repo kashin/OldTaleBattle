@@ -41,11 +41,6 @@ function Start ()
 
 /*------------------------------------------ PROTECTED METHODS ------------------------------------------*/
 
-function onTouchControlsEnabledChanged(enabled: boolean)
-{
-  mcScreenControlEnabled = enabled;
-}
-
 ///---------- BaseTouchScreenControl protected methods
 protected function handleTouchBegan(touch: Touch)
 {
@@ -67,6 +62,11 @@ protected function handleOnMouseUp()
 	actionPressed();
 }
 
+protected function isScreenControlEnabled(): boolean
+{
+  return true;
+}
+
 /*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
 private function actionPressed()
 {
@@ -80,15 +80,6 @@ private function actionPressed()
 private function setPressedState(value: boolean)
 {
 	guiTexture.texture = value ? mPressedActionTexture : mcControlTexture;
-}
-
-
-/*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
-public function onGameStateChanged(gameState: GameState)
-{
-  super.onGameStateChanged(gameState);
-  // action's visibility do not depend on application settings.
-  guiTexture.enabled = (gameState == GameState.Playing || gameState == GameState.Tutorial);
 }
 
 }

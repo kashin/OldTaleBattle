@@ -6,10 +6,11 @@ public class StoryUIDirector extends BasicUIComponent
 	public var availableSpellsActions: GameObject[];
 	public var availableMeleeActions: GameObject[];
   public var actionPointsUI: GameObject;
+  public var endTurnButton: GameObject;
 	public var playerStats: PlayerStats;
 
   /// autosize specifies size as % of a screen's width
-  public var leftSpaceAutoSize: float = 0.2f;
+  public var leftSpaceAutoSize: float = 0.18f;
   public var actionsAutoSize: float = 0.08f;
   public var spaceBetweenActionsAutoSize: float = 0.01f;
   public var percentageForPeekedActionsSize: float = 0.5f;
@@ -17,6 +18,7 @@ public class StoryUIDirector extends BasicUIComponent
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 	private var selfTransform: Transform;
   private var actionPointsText: ActionPointsText;
+  private var endTurnButtonComponent: EndTurnButton;
 
   /// holds all currently picked actions for a turn.
 	private var turnActions: List.<BaseStoryAction> = new List.<BaseStoryAction>();
@@ -69,6 +71,8 @@ public class StoryUIDirector extends BasicUIComponent
   }
 
 /*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
+
+  // creating BattleUI
   private function createBattleUI()
   {
     // Create Action Points panel
@@ -81,6 +85,18 @@ public class StoryUIDirector extends BasicUIComponent
       {
         Debug.LogWarning("StoryUIDirector: actionPointsText is null.");
       }
+    }
+
+    // Creating end turn button
+    if (endTurnButton != null)
+    {
+      var endTurnObject = Instantiate(endTurnButton, Vector3(0,0,0), selfTransform.rotation);
+      endTurnObject.transform.parent = selfTransform;
+      var endTurnButtonTexture = endTurnObject.guiTexture;
+      endTurnButtonTexture.pixelInset.width = actionSize;
+      endTurnButtonTexture.pixelInset.height = actionSize;
+
+      endTurnButtonTexture.pixelInset.x = Screen.width - actionSize - spaceBetweenActions;
     }
 
     // creating all available actions and placing them on screen.

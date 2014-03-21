@@ -127,11 +127,17 @@ protected function handleOnMouseDown()
 protected function handleOnMouseUp()
 {}
 
+/// should be overriden in other classes if new control do not depend on application settings.
+protected function isScreenControlEnabled(): boolean
+{
+  return mcScreenControlEnabled;
+}
+
 /*------------------------------------------ GAME EVENTS LISTENER ------------------------------------------*/
 public function onGameStateChanged(gameState: GameState)
 {
   super.onGameStateChanged(gameState);
-  guiTexture.enabled = (gameState == GameState.Playing || gameState == GameState.Tutorial) && mcScreenControlEnabled;
+  guiTexture.enabled = (gameState == GameState.Playing || gameState == GameState.Tutorial) && isScreenControlEnabled();
 }
 
 
@@ -140,7 +146,7 @@ public function onGameStateChanged(gameState: GameState)
 function onTouchControlsEnabledChanged(enabled: boolean)
 {
   mcScreenControlEnabled = enabled;
-  guiTexture.enabled = enabled;
+  guiTexture.enabled = isScreenControlEnabled();
 }
 
 function onSoundEnabledChanged(enabled: boolean)
