@@ -5,10 +5,19 @@ public class StoryUIDirector extends BasicUIComponent
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 	public var availableSpellsActions: GameObject[];
 	public var availableMeleeActions: GameObject[];
+  public var actionPointsUI: GameObject;
 	public var playerStats: PlayerStats;
+
+  /// autosize specifies size as % of a screen's width
+  public var leftSpaceAutoSize: float = 0.2f;
+  public var actionsAutoSize: float = 0.08f;
+  public var spaceBetweenActionsAutoSize: float = 0.01f;
+  public var percentageForPeekedActionsSize: float = 0.5f;
 
 /*------------------------------------------ PRIVATE MEMBERS ------------------------------------------*/
 	private var selfTransform: Transform;
+  private var actionPointsText: ActionPointsText;
+
   /// holds all currently picked actions for a turn.
 	private var turnActions: List.<BaseStoryAction> = new List.<BaseStoryAction>();
   private var availableActionsOnScreen: List.<GameObject> = new List.<GameObject>();
@@ -17,10 +26,10 @@ public class StoryUIDirector extends BasicUIComponent
   private var availableActionPoints: int = 0;
 
   /// positions, etc.
-  // TODO: fix hardcoded values
   private var leftAvailableActionsSpace: int = 50;
   private var spaceBetweenActions: int = 10;
   private var bottomTurnActionsSpace: int = 70;
+  private var actionSize: int = 50;
 
   /// specifies an action's placement on a screen.
   enum ActionPlacement
@@ -39,6 +48,11 @@ public class StoryUIDirector extends BasicUIComponent
       availableActionPoints = playerStats.ActionPoints;
     }
 
+    leftAvailableActionsSpace = Screen.width * leftSpaceAutoSize;
+    spaceBetweenActions = Screen.width * spaceBetweenActionsAutoSize;
+    actionSize = Screen.width * actionsAutoSize;
+    bottomTurnActionsSpace = actionSize + 2 * spaceBetweenActions;
+
     createBattleUI(); // TODO: remove it later when we have a 'start battle' callback.
     newTurnStarted(); // TODO: remove it later when we have a 'start battle' callback.
 	}
@@ -51,11 +65,24 @@ public class StoryUIDirector extends BasicUIComponent
 	public function actionPressed(action: BaseStoryAction)
 	{
       addTurnAction(action);
-	}
+	    actionPointsText.AvailableActionPoints = availableActionPoints;
+  }
 
 /*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
   private function createBattleUI()
   {
+    // Create Action Points panel
+    if (actionPointsUI != null)
+    {
+      var panel = Instantiate(actionPointsUI, Vector3(0,0,0), selfTransform.rotation);
+      actionPointsText = panel.GetComponentInChildren(ActionPointsText);
+      panel.transform.parent = selfTransform;
+      if (actionPointsText == null)
+      {
+        Debug.LogWarning("StoryUIDirector: actionPointsText is null.");
+      }
+    }
+
     // creating all available actions and placing them on screen.
     var position: int = 0;
     for (var i = 0; i < availableMeleeActions.Length; i++)
@@ -96,6 +123,8 @@ public class StoryUIDirector extends BasicUIComponent
     }
     availableTurnActionsOnScreen.Clear();
     turnActions.Clear();
+    actionPointsText.ActionPoints = availableActionPoints;
+    actionPointsText.AvailableActionPoints = availableActionPoints;
   }
 
   private function placeActionOnScreen(actionObject: GameObject, position: int, placement: ActionPlacement)
@@ -106,8 +135,11 @@ public class StoryUIDirector extends BasicUIComponent
       switch(placement)
       {
         case ActionPlacement.AvailableAction:
+          actionGuiTexture.pixelInset.width = actionSize;
+          actionGuiTexture.pixelInset.height = actionSize;
+
           actionGuiTexture.pixelInset.x = spaceBetweenActions * (position + 1) +
-           leftAvailableActionsSpace + actionObject.guiTexture.pixelInset.width * position;
+           leftAvailableActionsSpace + actionGuiTexture.pixelInset.width * position;
           actionGuiTexture.pixelInset.y = 0;
           if (availableActionsOnScreen.IndexOf(actionObject) < 0)
           {
@@ -116,8 +148,11 @@ public class StoryUIDirector extends BasicUIComponent
           break;
 
         case ActionPlacement.TurnAction:
+          actionGuiTexture.pixelInset.width = actionSize * percentageForPeekedActionsSize;
+          actionGuiTexture.pixelInset.height = actionSize * percentageForPeekedActionsSize;
+
           actionGuiTexture.pixelInset.x = spaceBetweenActions * (position + 1) +
-           leftAvailableActionsSpace + actionObject.guiTexture.pixelInset.width * position;
+           leftAvailableActionsSpace + actionGuiTexture.pixelInset.width * position;
           actionGuiTexture.pixelInset.y = bottomTurnActionsSpace;
           if (availableTurnActionsOnScreen.IndexOf(actionObject) < 0)
           {
@@ -130,6 +165,7 @@ public class StoryUIDirector extends BasicUIComponent
           break;
       }
     }
+    actionObject.transform.parent = selfTransform;
   }
 
   private function hasActionPointsForAction(action: BaseStoryAction): boolean
