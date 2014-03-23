@@ -5,6 +5,7 @@ public class EndTurnButton extends BaseTouchScreenControl
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 /// texture(s)
 public var pressedStateTexture: Texture2D;
+public var storyTurnDirector: StoryTurnDirector;
 
 
 
@@ -47,6 +48,7 @@ private function setPressedState(value: boolean)
 
 private function turnEndedPressed()
 {
+  storyTurnDirector.onPlayerTurnEnded();
 }
 
 }

@@ -1,6 +1,6 @@
 ﻿#pragma strict
 
-public class StoryUIDirector extends BasicUIComponent
+public class StoryUIDirector extends BasicUIComponent implements StoryTurnListener
 {
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 	public var availableSpellsActions: GameObject[];
@@ -8,6 +8,7 @@ public class StoryUIDirector extends BasicUIComponent
   public var actionPointsUI: GameObject;
   public var endTurnButton: GameObject;
 	public var playerStats: PlayerStats;
+  public var storyTurnDirector: StoryTurnDirector;
 
   /// autosize specifies size as % of a screen's width
   public var leftSpaceAutoSize: float = 0.18f;
@@ -19,6 +20,7 @@ public class StoryUIDirector extends BasicUIComponent
 	private var selfTransform: Transform;
   private var actionPointsText: ActionPointsText;
   private var endTurnButtonComponent: EndTurnButton;
+  private var actionPointsPanel: GameObject;
 
   /// holds all currently picked actions for a turn.
 	private var turnActions: List.<BaseStoryAction> = new List.<BaseStoryAction>();
@@ -55,8 +57,14 @@ public class StoryUIDirector extends BasicUIComponent
     actionSize = Screen.width * actionsAutoSize;
     bottomTurnActionsSpace = actionSize + 2 * spaceBetweenActions;
 
-    createBattleUI(); // TODO: remove it later when we have a 'start battle' callback.
-    newTurnStarted(); // TODO: remove it later when we have a 'start battle' callback.
+    createBattleUI();
+
+    if (storyTurnDirector == null)
+    {
+      var storyDirectorObject = GameObject.FindGameObjectWithTag("StoryTurnDirector");
+      storyTurnDirector = storyDirectorObject.GetComponent(StoryTurnDirector);
+    }
+    storyTurnDirector.addStoryTurnListener(this, true);
 	}
 
 
@@ -72,15 +80,15 @@ public class StoryUIDirector extends BasicUIComponent
 
 /*------------------------------------------ PRIVATE METHODS ------------------------------------------*/
 
-  // creating BattleUI
+  // create and show BattleUI
   private function createBattleUI()
   {
     // Create Action Points panel
     if (actionPointsUI != null)
     {
-      var panel = Instantiate(actionPointsUI, Vector3(0,0,0), selfTransform.rotation);
-      actionPointsText = panel.GetComponentInChildren(ActionPointsText);
-      panel.transform.parent = selfTransform;
+      actionPointsPanel = Instantiate(actionPointsUI, Vector3(0,0,0), selfTransform.rotation);
+      actionPointsText = actionPointsPanel.GetComponentInChildren(ActionPointsText);
+      actionPointsPanel.transform.parent = selfTransform;
       if (actionPointsText == null)
       {
         Debug.LogWarning("StoryUIDirector: actionPointsText is null.");
@@ -97,6 +105,9 @@ public class StoryUIDirector extends BasicUIComponent
       endTurnButtonTexture.pixelInset.height = actionSize;
 
       endTurnButtonTexture.pixelInset.x = Screen.width - actionSize - spaceBetweenActions;
+
+      endTurnButtonComponent = endTurnObject.GetComponent(EndTurnButton);
+      endTurnButtonComponent.storyTurnDirector = storyTurnDirector;
     }
 
     // creating all available actions and placing them on screen.
@@ -124,8 +135,29 @@ public class StoryUIDirector extends BasicUIComponent
       position++;
     }
   }
+  private function showBattleUI()
+  {
+    endTurnButtonComponent.gameObject.SetActive(true);
+    for (var i = 0; i < availableActionsOnScreen.Count; i++)
+    {
+      availableActionsOnScreen[i].SetActive(true);
+    }
+  }
 
-  private function newTurnStarted()
+  private function hideBattleUI()
+  {
+    endTurnButtonComponent.gameObject.SetActive(false);
+    for (var i = 0; i < availableActionsOnScreen.Count; i++)
+    {
+      availableActionsOnScreen[i].SetActive(false);
+    }
+    for (i = 0; i < availableTurnActionsOnScreen.Count; i++)
+    {
+      availableTurnActionsOnScreen[i].SetActive(false);
+    }
+  }
+
+  private function turnStarted()
   {
     if (playerStats != null)
     {
@@ -139,8 +171,17 @@ public class StoryUIDirector extends BasicUIComponent
     }
     availableTurnActionsOnScreen.Clear();
     turnActions.Clear();
+
+    showBattleUI();
+
     actionPointsText.ActionPoints = availableActionPoints;
     actionPointsText.AvailableActionPoints = availableActionPoints;
+  }
+
+  private function turnEnded()
+  {
+    // TODO: apply actions to Player controller first, then clear and hide everything that we don't need during non-player's turn
+    hideBattleUI();
   }
 
   private function placeActionOnScreen(actionObject: GameObject, position: int, placement: ActionPlacement)
@@ -197,6 +238,19 @@ public class StoryUIDirector extends BasicUIComponent
       availableActionPoints -= action.AttackStats.ActionPointsCost;
       var actionObject = Instantiate(action.mTurnAction, selfTransform.position, selfTransform.rotation);
       placeActionOnScreen(actionObject, availableTurnActionsOnScreen.Count, ActionPlacement.TurnAction);
+    }
+  }
+
+/*------------------------------------------ STORY TURN LISTENER INTERFACE ------------------------------------------*/
+  function onTurnStateChanged(newState: TurnState)
+  {
+    if (newState == TurnState.PlayerTurn)
+    {
+      turnStarted();
+    }
+    else if (newState == TurnState.PlayerAnimation)
+    {
+      turnEnded();
     }
   }
 }
