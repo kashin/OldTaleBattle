@@ -24,6 +24,15 @@ public class StoryUIDirector extends BasicUIComponent implements StoryTurnListen
 
   /// holds all currently picked actions for a turn.
 	private var turnActions: List.<BaseStoryAction> = new List.<BaseStoryAction>();
+  public function get TurnActions(): List.<BaseStoryAction>
+  {
+    return turnActions;
+  }
+  private function set TurnActions(value: List.<BaseStoryAction>)
+  {
+    turnActions = value;
+  }
+
   private var availableActionsOnScreen: List.<GameObject> = new List.<GameObject>();
   private var availableTurnActionsOnScreen:  List.<GameObject> = new List.<GameObject>();
 

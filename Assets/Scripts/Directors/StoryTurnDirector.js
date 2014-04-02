@@ -3,8 +3,8 @@
 enum TurnState
 {
   PlayerTurn,       // used when it is a player's turn
-  EnemyTurn,        // used when it is a player's turn
   PlayerAnimation,  // used when Player's animation is going (between Player's turn and enemy's turn)
+  EnemyTurn,        // used when it is a player's turn
   EnemyAnimation    // used between enemy's and player's turns.
 }
 
