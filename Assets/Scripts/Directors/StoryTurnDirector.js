@@ -2,6 +2,7 @@
 
 enum TurnState
 {
+  ExplorationMode,
   PlayerTurn,       // used when it is a player's turn
   PlayerAnimation,  // used when Player's animation is going (between Player's turn and enemy's turn)
   EnemyTurn,        // used when it is a player's turn
@@ -25,7 +26,7 @@ public var mPlayer: GameObject;
 
 /*------------------------------------------ PROPERTIES ------------------------------------------*/
 /// holds current turn state
-var mTurnState: TurnState;
+var mTurnState: TurnState = TurnState.ExplorationMode;
 public function get CurrentTurnState(): TurnState
 {
   return mTurnState;

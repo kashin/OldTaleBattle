@@ -66,7 +66,7 @@ public class StoryUIDirector extends BasicUIComponent implements StoryTurnListen
     actionSize = Screen.width * actionsAutoSize;
     bottomTurnActionsSpace = actionSize + 2 * spaceBetweenActions;
 
-    createBattleUI();
+    createBattleUI(); // TODO: move it to 'turnStateChanged'
 
     if (storyTurnDirector == null)
     {
