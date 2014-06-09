@@ -60,14 +60,12 @@ function Start()
 
 /*------------------------------------------ CUSTOM METHODS ------------------------------------------*/
 /// triggered by timer and/or 'turn end' button
-// TODO: button's interface
 public function onPlayerTurnEnded()
 {
   CurrentTurnState = TurnState.PlayerAnimation;
 }
 
 /// triggered by Player's animation controller
-// TODO: Contorler's interface
 public function onPlayerAnimationOver()
 {
   CurrentTurnState = TurnState.EnemyTurn;
@@ -83,6 +81,12 @@ public function onEnemyTurnEnded()
 /// triggered by Enemy's animation controller
 // TODO: Enemy Contorler's interface
 public function onEnemyAnimationOver()
+{
+  CurrentTurnState = TurnState.PlayerTurn;
+}
+
+/// triggered by Enemy when Player is close enough.
+public function onEnemyDetectedPlayer()
 {
   CurrentTurnState = TurnState.PlayerTurn;
 }

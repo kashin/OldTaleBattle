@@ -98,4 +98,4 @@ function onTurnStateChanged(newState: TurnState)
 
 }
 
-@script AddComponentMenu ("UI/Story Mode Player Controller")
+@script AddComponentMenu ("Story mode/Story Mode Player Controller")
