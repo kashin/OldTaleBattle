@@ -6,6 +6,7 @@ public class StoryPlayerController extends MonoBehaviour implements StoryTurnLis
 /*------------------------------------------ PUBLIC MEMBERS ------------------------------------------*/
 public var storyTurnDirector: StoryTurnDirector;
 public var storyUIDirector: StoryUIDirector;
+public var playerStats: PlayerStats;
 public var attackAnimation = "Attack";
 public var castAnimation = "Jump";
 public var idleAnimation = "idle";
@@ -28,6 +29,10 @@ function Start()
     {
       storyTurnDirector = turnObject.GetComponent(StoryTurnDirector);
     }
+  }
+  if (playerStats == null)
+  {
+    playerStats = GetComponent(PlayerStats);
   }
   if (storyUIDirector == null)
   {

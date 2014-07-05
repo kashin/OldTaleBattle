@@ -1,4 +1,7 @@
 ﻿import System.Collections.Generic;
+import System.Xml.Serialization;
+import System.Xml;
+import System.IO;
 
 /// This component contains Player's stats and updates Player's speed/damage/etc according to this stats.
 /*------------------------------------------ PLAYER STATS LISTENER INTERFACE ------------------------------------------*/
@@ -13,13 +16,95 @@ interface PlayerStatsListener
 
 private var mcStatsListeners = new List.<PlayerStatsListener>();
 
+@XmlRoot("PlayerStats")
+public class PlayerStatsValues
+{
+  @XmlElement("strength")
+  var strength: int = 10;
 
+  @XmlElement("baseStrength")
+  var baseStrength: int = 10;
+
+  @XmlElement("intelligent")
+  var intelligent: int = 10;
+
+  @XmlElement("baseIntelligent")
+  var baseIntelligent: int = 10;
+
+  @XmlElement("willPower")
+  var willPower: int = 10;
+
+  @XmlElement("baseWillPower")
+  var baseWillPower: int = 10;
+
+  @XmlElement("agility")
+  var agility: int = 10;
+
+  @XmlElement("baseAgility")
+  var baseAgility: int = 10;
+
+  @XmlElement("baseHealth")
+  var baseHealth: int = 100;
+
+  @XmlElement("baseMana")
+  var baseMana: int = 100;
+
+  @XmlElement("baseManaRegeneration")
+  var baseManaRegeneration: int = 10;
+
+  @XmlElement("experience")
+  var experience: int = 0;
+
+  @XmlElement("experienceLevelBase")
+  var experienceLevelBase: int = 100;
+
+  @XmlElement("baseMeleeDamage")
+  var baseMeleeDamage: float = 10.0f;
+
+  public function valuesFromPlayerStats(playerStats: PlayerStats)
+  {
+    agility = playerStats.Agility;
+    baseAgility = playerStats.mcBaseAgility;
+    baseHealth = playerStats.mcBaseHealth;
+    baseIntelligent = playerStats.mcBaseIntelligent;
+    baseMana = playerStats.mcBaseMana;
+    baseManaRegeneration = playerStats.mcBaseManaRegeneration;
+    baseMeleeDamage = playerStats.mcBaseMeleeDamage;
+    baseStrength = playerStats.mcBaseStrength;
+    baseWillPower = playerStats.mcBaseWillPower;
+    experience = playerStats.mcExperience;
+    experienceLevelBase = playerStats.mcExperienceLevelBase;
+    intelligent = playerStats.Intelligent;
+    strength = playerStats.Strength;
+    willPower = playerStats.WillPower;
+  }
+
+  public function valuesToPlayerStats(playerStats: PlayerStats)
+  {
+    playerStats.Agility = agility;
+    playerStats.mcBaseAgility = baseAgility;
+    playerStats.mcBaseHealth = baseHealth;
+    playerStats.mcBaseIntelligent = baseIntelligent;
+    playerStats.mcBaseMana = baseMana;
+    playerStats.mcBaseManaRegeneration = baseManaRegeneration;
+    playerStats.mcBaseMeleeDamage = baseMeleeDamage;
+    playerStats.mcBaseStrength = baseStrength;
+    playerStats.mcBaseWillPower = baseWillPower;
+    playerStats.mcExperience = experience;
+    playerStats.mcExperienceLevelBase = experienceLevelBase;
+    playerStats.mcIntelligent = intelligent;
+    playerStats.mcStrength = strength;
+    playerStats.WillPower = willPower;
+  }
+}
 
 
 /*------------------------------------------  STATS  ------------------------------------------*/
-
+public class PlayerStats extends MonoBehaviour
+{
 /*------------------------------------------  STRENGTH  ------------------------------------------*/
 /// Strength is a stat that increases Player's health and physical(Melee) damage.
+
 var mcStrength: int = 10;
 public function get Strength(): int
 {
@@ -57,6 +142,7 @@ private function set Intelligent(value: int)
   mcIntelligent = value;
   MaxMana = mcBaseMana + (mcBaseMana * 2 * (mcIntelligent - mcBaseIntelligent) / mcBaseIntelligent);
 }
+
 var mcBaseIntelligent: int = 10;
 
 public function increaseIntelligent(increase: int)
@@ -257,7 +343,7 @@ private function set ManaRegeneration(value: int)
   mcManaRegeneration = value;
 }
 
-private var mcBaseManaRegeneration: int = 10;
+var mcBaseManaRegeneration: int = 10;
 
 
 
@@ -277,7 +363,7 @@ private function set Experience(value: int)
   mcExperience = value;
   Level = 1 + mcExperience / mcExperienceLevelBase;
 }
-private var mcExperienceLevelBase: int = 100;
+var mcExperienceLevelBase: int = 100;
 
 
 /*------------------------------------------  LEVEL  ------------------------------------------*/
@@ -355,7 +441,7 @@ public function get MeleeDamage(): int
 {
   return mcMeleeDamage;
 }
-private var mcBaseMeleeDamage: float = 10.0f;
+var mcBaseMeleeDamage: float = 10.0f;
 
 
 /*------------------------------------------  MAGIC ATTACK ------------------------------------------*/
@@ -417,7 +503,7 @@ public function useMagicAttack(position: Vector3, rotation: Quaternion)
 }
 
 
-/*------------------------------------------  METHODS  ------------------------------------------*/
+/*------------------------------------------ MONOBEHAVIOUR METHODS  ------------------------------------------*/
 function Start()
 {
   // 'set' stats to initialize MaxHealth/Mana/ActionPoints/etc. stats as well.
@@ -430,6 +516,7 @@ function Start()
   MagicAttack = mcMagicAttack;
 }
 
+/*------------------------------------------ PUBLIC METHODS  ------------------------------------------*/
 public function applyDamage(damage: Damage)
 {
   // TODO: check type's resistant to calculate the real damage.
@@ -470,6 +557,42 @@ public function addPlayerStatsListener(listener: PlayerStatsListener)
 public function removePlayerStatsListener(listener: PlayerStatsListener)
 {
   mcStatsListeners.Remove(listener);
+}
+
+/*------------------------------------------ SERIALIZER METHODS  ------------------------------------------*/
+// load stats from file
+public static function loadFromFile(filePath: String): PlayerStats
+{
+  var serializer : XmlSerializer = new XmlSerializer(PlayerStatsValues);
+  var stream : Stream = new FileStream(filePath, FileMode.Open);
+  var values : PlayerStatsValues = serializer.Deserialize(stream) as PlayerStatsValues;
+  var result: PlayerStats = new PlayerStats();
+  values.valuesToPlayerStats(result);
+  stream.Close();
+  return result;
+}
+
+// load stats from file to playerStats
+public static function loadFromFile(filePath: String, playerStats: PlayerStats)
+{
+  var serializer : XmlSerializer = new XmlSerializer(PlayerStatsValues);
+  var stream : Stream = new FileStream(filePath, FileMode.Open);
+  var values : PlayerStatsValues = serializer.Deserialize(stream) as PlayerStatsValues;
+  values.valuesToPlayerStats(playerStats);
+  stream.Close();
+}
+
+// save stats to file
+public function saveToFile(filePath: String)
+{
+  var stats: PlayerStatsValues = new PlayerStatsValues();
+  stats.valuesFromPlayerStats(this);
+  var serializer : XmlSerializer = new XmlSerializer(PlayerStatsValues);
+  var stream : Stream = new FileStream(filePath, FileMode.Create);
+  serializer.Serialize(stream, stats);
+  stream.Close();
+}
+
 }
 
 @script AddComponentMenu ("Player/Player Stats")
