@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<PlayerStats xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <strength>10</strength>
+  <baseStrength>10</baseStrength>
+  <intelligent>10</intelligent>
+  <baseIntelligent>10</baseIntelligent>
+  <willPower>10</willPower>
+  <baseWillPower>10</baseWillPower>
+  <agility>20</agility>
+  <baseAgility>10</baseAgility>
+  <baseHealth>100</baseHealth>
+  <baseMana>100</baseMana>
+  <baseManaRegeneration>10</baseManaRegeneration>
+  <experience>0</experience>
+  <experienceLevelBase>100</experienceLevelBase>
+  <baseMeleeDamage>10</baseMeleeDamage>
+</PlayerStats>
